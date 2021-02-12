@@ -52,12 +52,16 @@ type Lista struct {
 type NodoG struct{
 	Indice string
 	NombreDepartamento string
+	tienda []TiendasN
+	Siguiente *NodoG
+	Anterior *NodoG
+}
+
+type TiendasN struct{
 	NombreTienda string
 	Descripcion string
 	Contacto string
 	Calificacion int
-	Siguiente *NodoG
-	Anterior *NodoG
 }
 
 type ListaM struct{
@@ -183,39 +187,103 @@ func (L *Lista) CrearMatriz()string{
 			imp = imp.Siguiente
 		}
 	}
-	tam := len(indices)+ len(departamentos)
 	linkM := &ListaM{}
 	linkE := &ListaE{}
 	linkMB := &ListaMB{}
 	linkB := &ListaB{}
 	linkR := &ListaR{}
+	imp = L.Cabeza
+	for imp != nil {
 		for j := 0; j < len(indices); j++ {
-			imp = L.Cabeza
-			for i := 0; i < tam; i++ {
-			if imp.Indice == indices[j] {
+			listaTiend := []TiendasN{}
+			if imp.Indice == indices[j] && imp != nil {
 				for k := 0; k < len(departamentos); k++ {
-					if imp.Departamento.NombreDepartamento == departamentos[k]{
+					if imp.Departamento.NombreDepartamento == departamentos[k] {
 						tienda := imp.Departamento.Tienda
-						nuevo := NodoG{Indice: imp.Indice, NombreDepartamento: imp.Departamento.NombreDepartamento, NombreTienda: tienda.NombreTienda, Descripcion: tienda.Descripcion, Contacto: tienda.Contacto, Calificacion: tienda.Calificacion}
+						listaTiend = append(listaTiend, TiendasN{NombreTienda: tienda.NombreTienda, Descripcion: tienda.Descripcion, Contacto: tienda.Contacto, Calificacion: tienda.Calificacion})
+						nuevo := NodoG{Indice: imp.Indice, NombreDepartamento: imp.Departamento.NombreDepartamento, tienda: listaTiend}
 						if tienda.Calificacion == 1 {
-							linkR.InsertarR(&nuevo)
-						}else if tienda.Calificacion == 2 {
-							linkB.InsertarB(&nuevo)
-						}else if tienda.Calificacion == 3 {
-							linkMB.InsertarMB(&nuevo)
-						}else if tienda.Calificacion == 4 {
-							linkE.InsertarE(&nuevo)
-						}else if tienda.Calificacion == 5 {
-							linkM.InsertarM(&nuevo)
+							impr := linkR.Cabeza
+							if impr != nil {
+								if len(impr.tienda) != 0 {
+									if imp.Indice == impr.Indice && imp.Departamento.NombreDepartamento == impr.NombreDepartamento {
+										impr.tienda = append(impr.tienda, TiendasN{NombreTienda: tienda.NombreTienda, Descripcion: tienda.Descripcion, Contacto: tienda.Contacto, Calificacion: tienda.Calificacion})
+									} else {
+										linkR.InsertarR(&nuevo)
+									}
+								}
+							} else {
+								linkR.InsertarR(&nuevo)
+							}
+						} else if tienda.Calificacion == 2 {
+							impr := linkB.Cabeza
+							if impr != nil {
+								if len(impr.tienda) != 0 {
+									if imp.Indice == impr.Indice && imp.Departamento.NombreDepartamento == impr.NombreDepartamento {
+										impr.tienda = append(impr.tienda, TiendasN{NombreTienda: tienda.NombreTienda, Descripcion: tienda.Descripcion, Contacto: tienda.Contacto, Calificacion: tienda.Calificacion})
+									} else {
+										linkB.InsertarB(&nuevo)
+									}
+								}
+							} else {
+								linkB.InsertarB(&nuevo)
+							}
+						} else if tienda.Calificacion == 3 {
+							impr := linkMB.Cabeza
+							if impr != nil {
+								if len(impr.tienda) != 0 {
+									if imp.Indice == impr.Indice && imp.Departamento.NombreDepartamento == impr.NombreDepartamento {
+										impr.tienda = append(impr.tienda, TiendasN{NombreTienda: tienda.NombreTienda, Descripcion: tienda.Descripcion, Contacto: tienda.Contacto, Calificacion: tienda.Calificacion})
+									} else {
+										linkMB.InsertarMB(&nuevo)
+									}
+								}
+							} else {
+								linkMB.InsertarMB(&nuevo)
+							}
+						} else if tienda.Calificacion == 4 {
+							impr := linkE.Cabeza
+							if impr != nil {
+								if len(impr.tienda) != 0 {
+									if imp.Indice == impr.Indice && imp.Departamento.NombreDepartamento == impr.NombreDepartamento {
+										impr.tienda = append(impr.tienda, TiendasN{NombreTienda: tienda.NombreTienda, Descripcion: tienda.Descripcion, Contacto: tienda.Contacto, Calificacion: tienda.Calificacion})
+									} else {
+										linkE.InsertarE(&nuevo)
+									}
+								}
+							} else {
+								linkE.InsertarE(&nuevo)
+							}
+						} else if tienda.Calificacion == 5 {
+							impr := linkM.Cabeza
+							if impr != nil {
+								if len(impr.tienda) != 0 {
+									if imp.Indice == impr.Indice && imp.Departamento.NombreDepartamento == impr.NombreDepartamento {
+										impr.tienda = append(impr.tienda, TiendasN{NombreTienda: tienda.NombreTienda, Descripcion: tienda.Descripcion, Contacto: tienda.Contacto, Calificacion: tienda.Calificacion})
+									} else {
+										linkM.InsertarM(&nuevo)
+									}
+								}
+							} else {
+								linkM.InsertarM(&nuevo)
+							}
 						}
 					}
 				}
-
 			}
-			imp = imp.Siguiente
+		}
+		imp = imp.Siguiente
+	}
+	arreglo(2, 3)
+	return ""
+}
+
+func arreglo(filas int, columnas int){
+	for i := 0; i < filas; i++ {
+		for j := 0; j < columnas; j++ {
+
 		}
 	}
-	return ""
 }
 
 func existe(arreglo []string, busqueda string) bool{
