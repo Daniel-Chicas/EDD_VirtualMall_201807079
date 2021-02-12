@@ -2,7 +2,6 @@ package listas
 
 import (
 	"fmt"
-	"strconv"
 )
 
 type General struct{
@@ -90,29 +89,53 @@ type ListaR struct{
 	Cola *NodoG
 }
 
-type Arreglo struct{
+type NodoArray struct{
 	Indice string
 	Departamento string
-	Magnifica []tiendaF
-	Excelente []tiendaF
-	MuyBuena []tiendaF
-	Buena []tiendaF
-	Regular []tiendaF
+	listM ListaMA
+	listE ListaEA
+	listMB ListaMBA
+	listB ListaBA
+	listR ListaRA
+	Siguiente *Tiendas
+	Anterior *Tiendas
 }
 
-type tiendaF struct{
-	NombreT string
-	DescripcionT string
-	ContactoT string
+type TiendasAr struct{
+	NombreTienda string
+	Descripcion string
+	Contacto string
 	Calificacion int
-	Siguiente *tiendaF
-	Anterior *tiendaF
+	Siguiente *TiendasAr
+	Anterior *TiendasAr
 }
 
-type ListaTienda struct{
-	Cabeza *tiendaF
-	Cola *tiendaF
+
+type ListaMA struct{
+	Cabeza *TiendasAr
+	Cola *TiendasAr
 }
+
+type ListaEA struct{
+	Cabeza *TiendasAr
+	Cola *TiendasAr
+}
+
+type ListaMBA struct{
+	Cabeza *TiendasAr
+	Cola *TiendasAr
+}
+
+type ListaBA struct{
+	Cabeza *TiendasAr
+	Cola *TiendasAr
+}
+
+type ListaRA struct{
+	Cabeza *TiendasAr
+	Cola *TiendasAr
+}
+
 
 func (L *Lista) Insertar(nuevo *Nodo) string{
 	if L.Cabeza == nil{
@@ -180,6 +203,70 @@ func (L *ListaB) InsertarB(nuevo *NodoG) string{
 }
 
 func (L *ListaR) InsertarR(nuevo *NodoG) string{
+	if L.Cabeza == nil{
+		L.Cabeza = nuevo
+		L.Cola = nuevo
+	}else{
+
+		L.Cola.Siguiente = nuevo
+		nuevo.Anterior = L.Cola
+		L.Cola = nuevo
+	}
+	return ""
+}
+
+func (L *ListaMA) InsertarMA(nuevo *TiendasAr) string{
+	if L.Cabeza == nil{
+		L.Cabeza = nuevo
+		L.Cola = nuevo
+	}else{
+		L.Cola.Siguiente = nuevo
+		nuevo.Anterior = L.Cola
+		L.Cola = nuevo
+	}
+	return ""
+}
+
+func (L *ListaEA) InsertarEA(nuevo *TiendasAr) string{
+	if L.Cabeza == nil{
+		L.Cabeza = nuevo
+		L.Cola = nuevo
+	}else{
+
+		L.Cola.Siguiente = nuevo
+		nuevo.Anterior = L.Cola
+		L.Cola = nuevo
+	}
+	return ""
+}
+
+func (L *ListaMBA) InsertarMBA(nuevo *TiendasAr) string{
+	if L.Cabeza == nil{
+		L.Cabeza = nuevo
+		L.Cola = nuevo
+	}else{
+
+		L.Cola.Siguiente = nuevo
+		nuevo.Anterior = L.Cola
+		L.Cola = nuevo
+	}
+	return ""
+}
+
+func (L *ListaBA) InsertarBA(nuevo *TiendasAr) string{
+	if L.Cabeza == nil{
+		L.Cabeza = nuevo
+		L.Cola = nuevo
+	}else{
+
+		L.Cola.Siguiente = nuevo
+		nuevo.Anterior = L.Cola
+		L.Cola = nuevo
+	}
+	return ""
+}
+
+func (L *ListaRA) InsertarRA(nuevo *TiendasAr) string{
 	if L.Cabeza == nil{
 		L.Cabeza = nuevo
 		L.Cola = nuevo
@@ -300,22 +387,31 @@ func (L *Lista) CrearMatriz()string{
 		imp = imp.Siguiente
 	}
 	linkT := &Lista{}
-	linkT.CrearArray(indices, departamentos, *linkM, *linkE, *linkMB, *linkB, *linkR)
+	vector := linkT.CrearArray(indices, departamentos, *linkM, *linkE, *linkMB, *linkB, *linkR)
+	fmt.Println(vector)
 	return ""
 }
 
-func (L *Lista) CrearArray(indices []string, departamentos []string, m ListaM, e ListaE, mb ListaMB, b ListaB, r ListaR) {
+func (L *Lista) CrearArray(indices []string, departamentos []string, m ListaM, e ListaE, mb ListaMB, b ListaB, r ListaR) []NodoArray{
 	CM := m.Cabeza
 	CE := e.Cabeza
 	CMB := mb.Cabeza
 	CB := b.Cabeza
 	CR := r.Cabeza
+	var Vector []NodoArray
 	for i := 0; i < len(indices); i++ {
 		for j := 0; j < len(departamentos); j++ {
+			linkMA := &ListaMA{}
+			linkEA := &ListaEA{}
+			linkMBA := &ListaMBA{}
+			linkBA := &ListaBA{}
+			linkRA := &ListaRA{}
 			if CM != nil {
 				if CM.Indice == indices[i] && CM.NombreDepartamento == departamentos[j] {
 					for k := 0; k < len(CM.tienda); k++ {
-						fmt.Println("SI\t" + CM.Indice + "-->" + CM.NombreDepartamento + "-->" + CM.tienda[k].NombreTienda + "-->" + strconv.Itoa(CM.tienda[k].Calificacion))
+						tienda := CM.tienda[k]
+						nuevo := TiendasAr{NombreTienda: tienda.NombreTienda, Descripcion: tienda.Descripcion, Contacto: tienda.Contacto, Calificacion: tienda.Calificacion}
+						linkMA.InsertarMA(&nuevo)
 					}
 					CM = CM.Siguiente
 				}
@@ -323,7 +419,9 @@ func (L *Lista) CrearArray(indices []string, departamentos []string, m ListaM, e
 			if CE != nil {
 				if CE.Indice == indices[i] && CE.NombreDepartamento == departamentos[j] {
 					for k := 0; k < len(CE.tienda); k++ {
-						fmt.Println("SI\t" + CE.Indice + "-->" + CE.NombreDepartamento + "-->" + CE.tienda[k].NombreTienda + "-->" + strconv.Itoa(CE.tienda[k].Calificacion))
+						tienda := CE.tienda[k]
+						nuevo := TiendasAr{NombreTienda: tienda.NombreTienda, Descripcion: tienda.Descripcion, Contacto: tienda.Contacto, Calificacion: tienda.Calificacion}
+						linkEA.InsertarEA(&nuevo)
 					}
 					CE = CE.Siguiente
 				}
@@ -331,7 +429,9 @@ func (L *Lista) CrearArray(indices []string, departamentos []string, m ListaM, e
 			if CMB != nil {
 				if CMB.Indice == indices[i] && CMB.NombreDepartamento == departamentos[j] {
 					for k := 0; k < len(CMB.tienda); k++ {
-						fmt.Println("SI\t" + CMB.Indice + "-->" + CMB.NombreDepartamento + "-->" + CMB.tienda[k].NombreTienda + "-->" + strconv.Itoa(CMB.tienda[k].Calificacion))
+						tienda := CMB.tienda[k]
+						nuevo := TiendasAr{NombreTienda: tienda.NombreTienda, Descripcion: tienda.Descripcion, Contacto: tienda.Contacto, Calificacion: tienda.Calificacion}
+						linkMBA.InsertarMBA(&nuevo)
 					}
 					CMB = CMB.Siguiente
 				}
@@ -339,7 +439,9 @@ func (L *Lista) CrearArray(indices []string, departamentos []string, m ListaM, e
 			if CB != nil {
 				if CB.Indice == indices[i] && CB.NombreDepartamento == departamentos[j] {
 					for k := 0; k < len(CB.tienda); k++ {
-						fmt.Println("SI\t" + CB.Indice + "-->" + CB.NombreDepartamento + "-->" + CB.tienda[k].NombreTienda + "-->" + strconv.Itoa(CB.tienda[k].Calificacion))
+						tienda := CB.tienda[k]
+						nuevo := TiendasAr{NombreTienda: tienda.NombreTienda, Descripcion: tienda.Descripcion, Contacto: tienda.Contacto, Calificacion: tienda.Calificacion}
+						linkBA.InsertarBA(&nuevo)
 					}
 					CB = CB.Siguiente
 				}
@@ -347,27 +449,17 @@ func (L *Lista) CrearArray(indices []string, departamentos []string, m ListaM, e
 			if CR != nil {
 				if CR.Indice == indices[i] && CR.NombreDepartamento == departamentos[j] {
 					for k := 0; k < len(CR.tienda); k++ {
-						fmt.Println("SI\t" + CR.Indice + "-->" + CR.NombreDepartamento + "-->" + CR.tienda[k].NombreTienda + "-->" + strconv.Itoa(CR.tienda[k].Calificacion))
+						tienda := CR.tienda[k]
+						nuevo := TiendasAr{NombreTienda: tienda.NombreTienda, Descripcion: tienda.Descripcion, Contacto: tienda.Contacto, Calificacion: tienda.Calificacion}
+						linkRA.InsertarRA(&nuevo)
 					}
 					CR = CR.Siguiente
 				}
 			}
-			fmt.Println("\t\tAGREGO ESTO AL ARREGLO---------------------------")
+			Vector = append(Vector, NodoArray{Indice: indices[i], Departamento: departamentos[j], listM: *linkMA, listE: *linkEA, listMB: *linkMBA, listB: *linkBA, listR: *linkRA})
 		}
 	}
-}
-
-func (L *ListaTienda) Insertar(nuevo *tiendaF) string{
-	if L.Cabeza == nil{
-		L.Cabeza = nuevo
-		L.Cola = nuevo
-	}else{
-
-		L.Cola.Siguiente = nuevo
-		nuevo.Anterior = L.Cola
-		L.Cola = nuevo
-	}
-	return ""
+	return Vector
 }
 
 func existe(arreglo []string, busqueda string) bool{

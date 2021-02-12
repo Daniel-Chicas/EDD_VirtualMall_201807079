@@ -14,6 +14,7 @@ var nodo listas.Nodo
 var departamentos listas.Departamentos
 var tiendas listas.Tienda
 var list listas.Lista
+var vector listas.NodoArray
 
 func main(){
 	router := mux.NewRouter()
