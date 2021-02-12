@@ -4,6 +4,8 @@ import (
 	"fmt"
 )
 
+var Vector []NodoArray
+
 type General struct{
 	Inicio []Datos `json:"Datos"`
 }
@@ -92,13 +94,9 @@ type ListaR struct{
 type NodoArray struct{
 	Indice string
 	Departamento string
-	listM ListaMA
-	listE ListaEA
-	listMB ListaMBA
-	listB ListaBA
-	listR ListaRA
-	Siguiente *Tiendas
-	Anterior *Tiendas
+	listGA ListaGA
+	Siguiente *TiendasAr
+	Anterior *TiendasAr
 }
 
 type TiendasAr struct{
@@ -110,32 +108,10 @@ type TiendasAr struct{
 	Anterior *TiendasAr
 }
 
-
-type ListaMA struct{
+type ListaGA struct{
 	Cabeza *TiendasAr
 	Cola *TiendasAr
 }
-
-type ListaEA struct{
-	Cabeza *TiendasAr
-	Cola *TiendasAr
-}
-
-type ListaMBA struct{
-	Cabeza *TiendasAr
-	Cola *TiendasAr
-}
-
-type ListaBA struct{
-	Cabeza *TiendasAr
-	Cola *TiendasAr
-}
-
-type ListaRA struct{
-	Cabeza *TiendasAr
-	Cola *TiendasAr
-}
-
 
 func (L *Lista) Insertar(nuevo *Nodo) string{
 	if L.Cabeza == nil{
@@ -215,63 +191,11 @@ func (L *ListaR) InsertarR(nuevo *NodoG) string{
 	return ""
 }
 
-func (L *ListaMA) InsertarMA(nuevo *TiendasAr) string{
+func (L *ListaGA) InsertarGA(nuevo *TiendasAr) string{
 	if L.Cabeza == nil{
 		L.Cabeza = nuevo
 		L.Cola = nuevo
 	}else{
-		L.Cola.Siguiente = nuevo
-		nuevo.Anterior = L.Cola
-		L.Cola = nuevo
-	}
-	return ""
-}
-
-func (L *ListaEA) InsertarEA(nuevo *TiendasAr) string{
-	if L.Cabeza == nil{
-		L.Cabeza = nuevo
-		L.Cola = nuevo
-	}else{
-
-		L.Cola.Siguiente = nuevo
-		nuevo.Anterior = L.Cola
-		L.Cola = nuevo
-	}
-	return ""
-}
-
-func (L *ListaMBA) InsertarMBA(nuevo *TiendasAr) string{
-	if L.Cabeza == nil{
-		L.Cabeza = nuevo
-		L.Cola = nuevo
-	}else{
-
-		L.Cola.Siguiente = nuevo
-		nuevo.Anterior = L.Cola
-		L.Cola = nuevo
-	}
-	return ""
-}
-
-func (L *ListaBA) InsertarBA(nuevo *TiendasAr) string{
-	if L.Cabeza == nil{
-		L.Cabeza = nuevo
-		L.Cola = nuevo
-	}else{
-
-		L.Cola.Siguiente = nuevo
-		nuevo.Anterior = L.Cola
-		L.Cola = nuevo
-	}
-	return ""
-}
-
-func (L *ListaRA) InsertarRA(nuevo *TiendasAr) string{
-	if L.Cabeza == nil{
-		L.Cabeza = nuevo
-		L.Cola = nuevo
-	}else{
-
 		L.Cola.Siguiente = nuevo
 		nuevo.Anterior = L.Cola
 		L.Cola = nuevo
@@ -398,65 +322,68 @@ func (L *Lista) CrearArray(indices []string, departamentos []string, m ListaM, e
 	CMB := mb.Cabeza
 	CB := b.Cabeza
 	CR := r.Cabeza
-	var Vector []NodoArray
 	for i := 0; i < len(indices); i++ {
 		for j := 0; j < len(departamentos); j++ {
-			linkMA := &ListaMA{}
-			linkEA := &ListaEA{}
-			linkMBA := &ListaMBA{}
-			linkBA := &ListaBA{}
-			linkRA := &ListaRA{}
+			linkGA := &ListaGA{}
 			if CM != nil {
 				if CM.Indice == indices[i] && CM.NombreDepartamento == departamentos[j] {
 					for k := 0; k < len(CM.tienda); k++ {
 						tienda := CM.tienda[k]
 						nuevo := TiendasAr{NombreTienda: tienda.NombreTienda, Descripcion: tienda.Descripcion, Contacto: tienda.Contacto, Calificacion: tienda.Calificacion}
-						linkMA.InsertarMA(&nuevo)
+						linkGA.InsertarGA(&nuevo)
 					}
 					CM = CM.Siguiente
 				}
 			}
+			Vector = append(Vector, NodoArray{Indice: indices[i], Departamento: departamentos[j], listGA: *linkGA})
+			linkGA = &ListaGA{}
 			if CE != nil {
 				if CE.Indice == indices[i] && CE.NombreDepartamento == departamentos[j] {
 					for k := 0; k < len(CE.tienda); k++ {
 						tienda := CE.tienda[k]
 						nuevo := TiendasAr{NombreTienda: tienda.NombreTienda, Descripcion: tienda.Descripcion, Contacto: tienda.Contacto, Calificacion: tienda.Calificacion}
-						linkEA.InsertarEA(&nuevo)
+						linkGA.InsertarGA(&nuevo)
 					}
 					CE = CE.Siguiente
 				}
+			Vector = append(Vector, NodoArray{Indice: indices[i], Departamento: departamentos[j], listGA: *linkGA})
+			linkGA = &ListaGA{}
 			}
 			if CMB != nil {
 				if CMB.Indice == indices[i] && CMB.NombreDepartamento == departamentos[j] {
 					for k := 0; k < len(CMB.tienda); k++ {
 						tienda := CMB.tienda[k]
 						nuevo := TiendasAr{NombreTienda: tienda.NombreTienda, Descripcion: tienda.Descripcion, Contacto: tienda.Contacto, Calificacion: tienda.Calificacion}
-						linkMBA.InsertarMBA(&nuevo)
+						linkGA.InsertarGA(&nuevo)
 					}
 					CMB = CMB.Siguiente
 				}
 			}
+			Vector = append(Vector, NodoArray{Indice: indices[i], Departamento: departamentos[j], listGA: *linkGA})
+			linkGA = &ListaGA{}
 			if CB != nil {
 				if CB.Indice == indices[i] && CB.NombreDepartamento == departamentos[j] {
 					for k := 0; k < len(CB.tienda); k++ {
 						tienda := CB.tienda[k]
 						nuevo := TiendasAr{NombreTienda: tienda.NombreTienda, Descripcion: tienda.Descripcion, Contacto: tienda.Contacto, Calificacion: tienda.Calificacion}
-						linkBA.InsertarBA(&nuevo)
+						linkGA.InsertarGA(&nuevo)
 					}
 					CB = CB.Siguiente
 				}
 			}
+			Vector = append(Vector, NodoArray{Indice: indices[i], Departamento: departamentos[j], listGA: *linkGA})
+			linkGA = &ListaGA{}
 			if CR != nil {
 				if CR.Indice == indices[i] && CR.NombreDepartamento == departamentos[j] {
 					for k := 0; k < len(CR.tienda); k++ {
 						tienda := CR.tienda[k]
 						nuevo := TiendasAr{NombreTienda: tienda.NombreTienda, Descripcion: tienda.Descripcion, Contacto: tienda.Contacto, Calificacion: tienda.Calificacion}
-						linkRA.InsertarRA(&nuevo)
+						linkGA.InsertarGA(&nuevo)
 					}
 					CR = CR.Siguiente
 				}
 			}
-			Vector = append(Vector, NodoArray{Indice: indices[i], Departamento: departamentos[j], listM: *linkMA, listE: *linkEA, listMB: *linkMBA, listB: *linkBA, listR: *linkRA})
+			Vector = append(Vector, NodoArray{Indice: indices[i], Departamento: departamentos[j], listGA: *linkGA})
 		}
 	}
 	return Vector
