@@ -89,6 +89,30 @@ type ListaR struct{
 	Cola *NodoG
 }
 
+type Arreglo struct{
+	Indice string
+	Departamento string
+	Magnifica []tiendaF
+	Excelente []tiendaF
+	MuyBuena []tiendaF
+	Buena []tiendaF
+	Regular []tiendaF
+}
+
+type tiendaF struct{
+	NombreT string
+	DescripcionT string
+	ContactoT string
+	Calificacion int
+	Siguiente *tiendaF
+	Anterior *tiendaF
+}
+
+type ListaTienda struct{
+	Cabeza *tiendaF
+	Cola *tiendaF
+}
+
 func (L *Lista) Insertar(nuevo *Nodo) string{
 	if L.Cabeza == nil{
 		L.Cabeza = nuevo
@@ -274,16 +298,66 @@ func (L *Lista) CrearMatriz()string{
 		}
 		imp = imp.Siguiente
 	}
-	arreglo(2, 3)
+	linkT := &ListaTienda{}
+	linkT.CrearArray(indices, departamentos, *linkM, *linkE, *linkMB, *linkB, *linkR)
 	return ""
 }
 
-func arreglo(filas int, columnas int){
-	for i := 0; i < filas; i++ {
-		for j := 0; j < columnas; j++ {
+func (L *ListaTienda) CrearArray(indices []string, departamentos []string, m ListaM, e ListaE, mb ListaMB, b ListaB, r ListaR){
+	//var Vector []Arreglo
+	CM := m.Cabeza
+	CE := e.Cabeza
+	CMB := mb.Cabeza
+	CB := b.Cabeza
+	CR := r.Cabeza
+	for i := 0; i < len(indices); i++ {
+		for j := 0; j < len(departamentos); j++ {
+			if CM.Indice == indices[i] && CM.NombreDepartamento == departamentos[j] {
+				for k := 0; k < len(CM.tienda); k++ {
+					fmt.Println("SI\t"+CM.Indice+"-->"+CM.NombreDepartamento+"-->"+CM.tienda[k].NombreTienda)
+				}
+				CM = CM.Siguiente
+			}
+			if CE.Indice == indices[i] && CE.NombreDepartamento == departamentos[j] {
+				for k := 0; k < len(CE.tienda); k++ {
+					fmt.Println("SI\t"+CE.Indice+"-->"+CE.NombreDepartamento+"-->"+CE.tienda[k].NombreTienda)
+				}
+				CE = CE.Siguiente
+			}
+			if CMB.Indice == indices[i] && CMB.NombreDepartamento == departamentos[j] {
+				for k := 0; k < len(CMB.tienda); k++ {
+					fmt.Println("SI\t"+CMB.Indice+"-->"+CMB.NombreDepartamento+"-->"+CMB.tienda[k].NombreTienda)
+				}
+				CMB = CMB.Siguiente
+			}
+			if CB.Indice == indices[i] && CB.NombreDepartamento == departamentos[j] {
+				for k := 0; k < len(CB.tienda); k++ {
+					fmt.Println("SI\t"+CB.Indice+"-->"+CB.NombreDepartamento+"-->"+CB.tienda[k].NombreTienda)
+				}
+				CB = CB.Siguiente
+			}
+			if CR.Indice == indices[i] && CR.NombreDepartamento == departamentos[j] {
+				for k := 0; k < len(CR.tienda); k++ {
+					fmt.Println("SI\t"+CR.Indice+"-->"+CR.NombreDepartamento+"-->"+CR.tienda[k].NombreTienda)
+				}
+				CR = CR.Siguiente
+			}
 
 		}
 	}
+}
+
+func (L *ListaTienda) Insertar(nuevo *tiendaF) string{
+	if L.Cabeza == nil{
+		L.Cabeza = nuevo
+		L.Cola = nuevo
+	}else{
+
+		L.Cola.Siguiente = nuevo
+		nuevo.Anterior = L.Cola
+		L.Cola = nuevo
+	}
+	return ""
 }
 
 func existe(arreglo []string, busqueda string) bool{
