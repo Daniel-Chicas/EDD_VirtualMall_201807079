@@ -2,6 +2,7 @@ package listas
 
 import (
 	"fmt"
+	"strconv"
 )
 
 type General struct{
@@ -298,13 +299,12 @@ func (L *Lista) CrearMatriz()string{
 		}
 		imp = imp.Siguiente
 	}
-	linkT := &ListaTienda{}
+	linkT := &Lista{}
 	linkT.CrearArray(indices, departamentos, *linkM, *linkE, *linkMB, *linkB, *linkR)
 	return ""
 }
 
-func (L *ListaTienda) CrearArray(indices []string, departamentos []string, m ListaM, e ListaE, mb ListaMB, b ListaB, r ListaR){
-	//var Vector []Arreglo
+func (L *Lista) CrearArray(indices []string, departamentos []string, m ListaM, e ListaE, mb ListaMB, b ListaB, r ListaR) {
 	CM := m.Cabeza
 	CE := e.Cabeza
 	CMB := mb.Cabeza
@@ -312,37 +312,47 @@ func (L *ListaTienda) CrearArray(indices []string, departamentos []string, m Lis
 	CR := r.Cabeza
 	for i := 0; i < len(indices); i++ {
 		for j := 0; j < len(departamentos); j++ {
-			if CM.Indice == indices[i] && CM.NombreDepartamento == departamentos[j] {
-				for k := 0; k < len(CM.tienda); k++ {
-					fmt.Println("SI\t"+CM.Indice+"-->"+CM.NombreDepartamento+"-->"+CM.tienda[k].NombreTienda)
+			if CM != nil {
+				if CM.Indice == indices[i] && CM.NombreDepartamento == departamentos[j] {
+					for k := 0; k < len(CM.tienda); k++ {
+						fmt.Println("SI\t" + CM.Indice + "-->" + CM.NombreDepartamento + "-->" + CM.tienda[k].NombreTienda + "-->" + strconv.Itoa(CM.tienda[k].Calificacion))
+					}
+					CM = CM.Siguiente
 				}
-				CM = CM.Siguiente
 			}
-			if CE.Indice == indices[i] && CE.NombreDepartamento == departamentos[j] {
-				for k := 0; k < len(CE.tienda); k++ {
-					fmt.Println("SI\t"+CE.Indice+"-->"+CE.NombreDepartamento+"-->"+CE.tienda[k].NombreTienda)
+			if CE != nil {
+				if CE.Indice == indices[i] && CE.NombreDepartamento == departamentos[j] {
+					for k := 0; k < len(CE.tienda); k++ {
+						fmt.Println("SI\t" + CE.Indice + "-->" + CE.NombreDepartamento + "-->" + CE.tienda[k].NombreTienda + "-->" + strconv.Itoa(CE.tienda[k].Calificacion))
+					}
+					CE = CE.Siguiente
 				}
-				CE = CE.Siguiente
 			}
-			if CMB.Indice == indices[i] && CMB.NombreDepartamento == departamentos[j] {
-				for k := 0; k < len(CMB.tienda); k++ {
-					fmt.Println("SI\t"+CMB.Indice+"-->"+CMB.NombreDepartamento+"-->"+CMB.tienda[k].NombreTienda)
+			if CMB != nil {
+				if CMB.Indice == indices[i] && CMB.NombreDepartamento == departamentos[j] {
+					for k := 0; k < len(CMB.tienda); k++ {
+						fmt.Println("SI\t" + CMB.Indice + "-->" + CMB.NombreDepartamento + "-->" + CMB.tienda[k].NombreTienda + "-->" + strconv.Itoa(CMB.tienda[k].Calificacion))
+					}
+					CMB = CMB.Siguiente
 				}
-				CMB = CMB.Siguiente
 			}
-			if CB.Indice == indices[i] && CB.NombreDepartamento == departamentos[j] {
-				for k := 0; k < len(CB.tienda); k++ {
-					fmt.Println("SI\t"+CB.Indice+"-->"+CB.NombreDepartamento+"-->"+CB.tienda[k].NombreTienda)
+			if CB != nil {
+				if CB.Indice == indices[i] && CB.NombreDepartamento == departamentos[j] {
+					for k := 0; k < len(CB.tienda); k++ {
+						fmt.Println("SI\t" + CB.Indice + "-->" + CB.NombreDepartamento + "-->" + CB.tienda[k].NombreTienda + "-->" + strconv.Itoa(CB.tienda[k].Calificacion))
+					}
+					CB = CB.Siguiente
 				}
-				CB = CB.Siguiente
 			}
-			if CR.Indice == indices[i] && CR.NombreDepartamento == departamentos[j] {
-				for k := 0; k < len(CR.tienda); k++ {
-					fmt.Println("SI\t"+CR.Indice+"-->"+CR.NombreDepartamento+"-->"+CR.tienda[k].NombreTienda)
+			if CR != nil {
+				if CR.Indice == indices[i] && CR.NombreDepartamento == departamentos[j] {
+					for k := 0; k < len(CR.tienda); k++ {
+						fmt.Println("SI\t" + CR.Indice + "-->" + CR.NombreDepartamento + "-->" + CR.tienda[k].NombreTienda + "-->" + strconv.Itoa(CR.tienda[k].Calificacion))
+					}
+					CR = CR.Siguiente
 				}
-				CR = CR.Siguiente
 			}
-
+			fmt.Println("\t\tAGREGO ESTO AL ARREGLO---------------------------")
 		}
 	}
 }
