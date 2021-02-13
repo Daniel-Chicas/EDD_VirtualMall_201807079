@@ -1,4 +1,4 @@
-package listas
+package Listas
 
 import (
 	"fmt"
@@ -204,7 +204,7 @@ func (L *ListaGA) InsertarGA(nuevo *TiendasAr) string{
 	return ""
 }
 
-func (L *Lista) CrearMatriz()string{
+func (L *Lista) CrearMatriz() []NodoArray{
 	var indices []string
 	var departamentos []string
 	imp := L.Cabeza
@@ -312,12 +312,11 @@ func (L *Lista) CrearMatriz()string{
 		imp = imp.Siguiente
 	}
 	linkT := &Lista{}
-	vector := linkT.CrearArray(indices, departamentos, *linkM, *linkE, *linkMB, *linkB, *linkR)
-	fmt.Println(vector)
-	return ""
+	linkT.CrearArray(indices, departamentos, *linkM, *linkE, *linkMB, *linkB, *linkR)
+	return Vector
 }
 
-func (L *Lista) CrearArray(indices []string, departamentos []string, m ListaM, e ListaE, mb ListaMB, b ListaB, r ListaR) []NodoArray{
+func (L *Lista) CrearArray(indices []string, departamentos []string, m ListaM, e ListaE, mb ListaMB, b ListaB, r ListaR){
 	CM := m.Cabeza
 	CE := e.Cabeza
 	CMB := mb.Cabeza
@@ -387,7 +386,6 @@ func (L *Lista) CrearArray(indices []string, departamentos []string, m ListaM, e
 			Vector = append(Vector, NodoArray{Indice: indices[i], Departamento: departamentos[j], Calificacion: 5, listGA: *linkGA})
 		}
 	}
-	return Vector
 }
 
 func existe(arreglo []string, busqueda string) bool{

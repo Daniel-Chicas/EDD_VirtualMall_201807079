@@ -1,20 +1,22 @@
 package main
 
 import (
+	"./Listas"
+	"./Reportes"
 	"encoding/json"
 	"fmt"
+	"github.com/gorilla/mux"
 	"io/ioutil"
 	"log"
-	"./listas"
-	"github.com/gorilla/mux"
 	"net/http"
 )
-var ms listas.General
-var nodo listas.Nodo
-var departamentos listas.Departamentos
-var tiendas listas.Tienda
-var list listas.Lista
-var vector listas.NodoArray
+var ms Listas.General
+var nodo Listas.Nodo
+var departamentos Listas.Departamentos
+var tiendas Listas.Tienda
+var list Listas.Lista
+var reportes Reportes.Lista
+var Vector []Listas.NodoArray
 
 func main(){
 	router := mux.NewRouter()
@@ -46,14 +48,15 @@ func cargar(w http.ResponseWriter, r *http.Request){
 				tiendas.Descripcion = c.Descripcion
 				tiendas.Contacto = c.Contacto
 				tiendas.Calificacion = c.Calificacion
-				tienda := listas.Tiendas{NombreTienda: c.Nombre, Descripcion: c.Descripcion, Contacto: c.Contacto, Calificacion: c.Calificacion}
-				depa := listas.Departamentos{NombreDepartamento: departamentos.NombreDepartamento, Tienda: tienda}
-				nuevo := listas.Nodo{Indice: a.Indice, Departamento: depa }
+				tienda := Listas.Tiendas{NombreTienda: c.Nombre, Descripcion: c.Descripcion, Contacto: c.Contacto, Calificacion: c.Calificacion}
+				depa := Listas.Departamentos{NombreDepartamento: departamentos.NombreDepartamento, Tienda: tienda}
+				nuevo := Listas.Nodo{Indice: a.Indice, Departamento: depa }
 				fmt.Fprint(w, list.Insertar(&nuevo))
 			}
 		}
 	}
-	fmt.Fprint(w, list.CrearMatriz())
+
+	Vector = list.CrearMatriz()
 	w.Header().Set("Content-type", "application/json")
 	if list.Cabeza == nil{
 		mensaje := Mensaje{"NO SE HA PODIDO CARGAR EL ARCHIVO"}
@@ -69,7 +72,8 @@ func cargar(w http.ResponseWriter, r *http.Request){
 }
 
 func arreglo(w http.ResponseWriter, r *http.Request){
-
+	archivo := reportes.Arreglo(Vector)
+	fmt.Println(archivo)
 }
 
 type Mensaje struct {
