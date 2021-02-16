@@ -11,7 +11,6 @@ import (
 )
 
 type Lista struct {
-
 }
 
 func (L *Lista) Arreglo(vector []Listas.NodoArray) string{
@@ -38,39 +37,9 @@ func (L *Lista) Arreglo(vector []Listas.NodoArray) string{
 			contador = contador +10
 		}
 	}
-	return cadena.String()
-}
 
-/*func (L *Lista) Arreglo(vector []Listas.NodoArray) string{
-	var f *os.File
-	var cadena strings.Builder
-	for i := 0; i < len(vector); i++ {
-		posicion := vector[i].ListGA.Cabeza
-		pv := vector[i]
-		if(i % 10 == 0 || i == len(vector)){
-			if(i!=0){
-				guardarArchivo(cadena.String(), "Archivo_"+vector[i-1].Departamento+".dot")
-			}
-			fmt.Fprintf(&cadena, "digraph "+pv.Indice+pv.Departamento+"{\n")
-			fmt.Fprintf(&cadena, "node[shape=record];\n")
-			if posicion == nil {
-				escribirArchivo(posicion, &cadena, posicion)
-			}else{
-					escribirArchivo(posicion.Anterior, &cadena, posicion)
-			}
-		}else{
-			if posicion == nil {
-				escribirArchivo(posicion, &cadena, posicion)
-			}else{
-					escribirArchivo(posicion.Anterior, &cadena, posicion)
-					posicion = posicion.Siguiente
-			}
-		}
-	}
-	return ""
+	return "Los archivos han sido creados."
 }
-}*/
-var existencias []Listas.NodoTienda
 
 func grafico(anterior *Listas.NodoTienda, s *strings.Builder, actual *Listas.NodoTienda) {
 	if anterior != nil {

@@ -5,6 +5,8 @@ import (
 )
 
 var Vector []NodoArray
+var Indices []string
+var Depar []string
 
 type General struct{
 	Inicio []Datos `json:"Datos"`
@@ -203,21 +205,18 @@ func (L *ListaGA) InsertarGA(nuevo *NodoTienda) string{
 }
 
 func (L *Lista) CrearMatriz() []NodoArray{
-	var indices []string
-	var departamentos []string
 	imp := L.Cabeza
 	for imp != nil{
-		existencia := existe(indices, imp.Indice)
-		existes := existe(departamentos, imp.Departamento.NombreDepartamento)
+		existencia := existe(Indices, imp.Indice)
+		existes := existe(Depar, imp.Departamento.NombreDepartamento)
 		if existencia == true && existes == true{
-
 			imp = imp.Siguiente
 		}else {
 			if existencia == false{
-				indices = append(indices, imp.Indice)
+				Indices = append(Indices, imp.Indice)
 			}
 			if existes == false{
-				departamentos = append(departamentos, imp.Departamento.NombreDepartamento)
+				Depar = append(Depar, imp.Departamento.NombreDepartamento)
 			}
 			imp = imp.Siguiente
 		}
@@ -229,11 +228,11 @@ func (L *Lista) CrearMatriz() []NodoArray{
 	linkR := &ListaR{}
 	imp = L.Cabeza
 	for imp != nil {
-		for j := 0; j < len(indices); j++ {
+		for j := 0; j < len(Indices); j++ {
 			listaTiend := []TiendasN{}
-			if imp.Indice == indices[j] && imp != nil {
-				for k := 0; k < len(departamentos); k++ {
-					if imp.Departamento.NombreDepartamento == departamentos[k] {
+			if imp.Indice == Indices[j] && imp != nil {
+				for k := 0; k < len(Depar); k++ {
+					if imp.Departamento.NombreDepartamento == Depar[k] {
 						tienda := imp.Departamento.Tienda
 						listaTiend = append(listaTiend, TiendasN{NombreTienda: tienda.NombreTienda, Descripcion: tienda.Descripcion, Contacto: tienda.Contacto, Calificacion: tienda.Calificacion})
 						nuevo := NodoG{Indice: imp.Indice, NombreDepartamento: imp.Departamento.NombreDepartamento, Tienda: listaTiend}
@@ -310,7 +309,7 @@ func (L *Lista) CrearMatriz() []NodoArray{
 		imp = imp.Siguiente
 	}
 	linkT := &Lista{}
-	linkT.CrearArray(indices, departamentos, *linkM, *linkE, *linkMB, *linkB, *linkR)
+	linkT.CrearArray(Indices, Depar, *linkM, *linkE, *linkMB, *linkB, *linkR)
 	return Vector
 }
 
@@ -384,7 +383,6 @@ func (L *Lista) CrearArray(indices []string, departamentos []string, m ListaM, e
 			Vector = append(Vector, NodoArray{Indice: indices[i], Departamento: departamentos[j], Calificacion: 5, ListGA: *linkGA})
 		}
 	}
-	//fmt.Println(Vector[4].listGA.Cabeza.NombreTienda)
 }
 
 func existe(arreglo []string, busqueda string) bool{
@@ -404,4 +402,34 @@ func (L *Lista) Imprimir()string{
 		imp = imp.Siguiente
 	}
 	return "Ya se ingresó"
+}
+
+func (L *Lista) Indi() []string{
+	imp := L.Cabeza
+	for imp != nil{
+		existencia := existe(Indices, imp.Indice)
+		if existencia == true{
+			imp = imp.Siguiente
+		}else {
+			if existencia == false{
+				Indices = append(Indices, imp.Indice)
+			}
+			imp = imp.Siguiente
+		}
+	}
+	return Indices
+}
+
+func (L *Lista) Departa() []string{
+	imp := L.Cabeza
+	for imp != nil{
+		existes := existe(Depar, imp.Departamento.NombreDepartamento)
+		if existes == true{
+			imp = imp.Siguiente
+		}else {
+			Depar = append(Depar, imp.Departamento.NombreDepartamento)
+			imp = imp.Siguiente
+		}
+	}
+	return Depar
 }
