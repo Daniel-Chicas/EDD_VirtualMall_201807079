@@ -54,7 +54,7 @@ type Lista struct {
 type NodoG struct{
 	Indice string
 	NombreDepartamento string
-	tienda []TiendasN
+	Tienda []TiendasN
 	Siguiente *NodoG
 	Anterior *NodoG
 }
@@ -95,23 +95,21 @@ type NodoArray struct{
 	Indice string
 	Departamento string
 	Calificacion int
-	listGA ListaGA
-	Siguiente *TiendasAr
-	Anterior *TiendasAr
+	ListGA ListaGA
 }
 
-type TiendasAr struct{
+type NodoTienda struct{
 	NombreTienda string
 	Descripcion string
 	Contacto string
 	Calificacion int
-	Siguiente *TiendasAr
-	Anterior *TiendasAr
+	Siguiente *NodoTienda
+	Anterior *NodoTienda
 }
 
 type ListaGA struct{
-	Cabeza *TiendasAr
-	Cola *TiendasAr
+	Cabeza *NodoTienda
+	Cola *NodoTienda
 }
 
 func (L *Lista) Insertar(nuevo *Nodo) string{
@@ -192,7 +190,7 @@ func (L *ListaR) InsertarR(nuevo *NodoG) string{
 	return ""
 }
 
-func (L *ListaGA) InsertarGA(nuevo *TiendasAr) string{
+func (L *ListaGA) InsertarGA(nuevo *NodoTienda) string{
 	if L.Cabeza == nil{
 		L.Cabeza = nuevo
 		L.Cola = nuevo
@@ -238,13 +236,13 @@ func (L *Lista) CrearMatriz() []NodoArray{
 					if imp.Departamento.NombreDepartamento == departamentos[k] {
 						tienda := imp.Departamento.Tienda
 						listaTiend = append(listaTiend, TiendasN{NombreTienda: tienda.NombreTienda, Descripcion: tienda.Descripcion, Contacto: tienda.Contacto, Calificacion: tienda.Calificacion})
-						nuevo := NodoG{Indice: imp.Indice, NombreDepartamento: imp.Departamento.NombreDepartamento, tienda: listaTiend}
+						nuevo := NodoG{Indice: imp.Indice, NombreDepartamento: imp.Departamento.NombreDepartamento, Tienda: listaTiend}
 						if tienda.Calificacion == 1 {
 							impr := linkR.Cabeza
 							if impr != nil {
-								if len(impr.tienda) != 0 {
+								if len(impr.Tienda) != 0 {
 									if imp.Indice == impr.Indice && imp.Departamento.NombreDepartamento == impr.NombreDepartamento {
-										impr.tienda = append(impr.tienda, TiendasN{NombreTienda: tienda.NombreTienda, Descripcion: tienda.Descripcion, Contacto: tienda.Contacto, Calificacion: tienda.Calificacion})
+										impr.Tienda = append(impr.Tienda, TiendasN{NombreTienda: tienda.NombreTienda, Descripcion: tienda.Descripcion, Contacto: tienda.Contacto, Calificacion: tienda.Calificacion})
 									} else {
 										linkR.InsertarR(&nuevo)
 									}
@@ -255,9 +253,9 @@ func (L *Lista) CrearMatriz() []NodoArray{
 						} else if tienda.Calificacion == 2 {
 							impr := linkB.Cabeza
 							if impr != nil {
-								if len(impr.tienda) != 0 {
+								if len(impr.Tienda) != 0 {
 									if imp.Indice == impr.Indice && imp.Departamento.NombreDepartamento == impr.NombreDepartamento {
-										impr.tienda = append(impr.tienda, TiendasN{NombreTienda: tienda.NombreTienda, Descripcion: tienda.Descripcion, Contacto: tienda.Contacto, Calificacion: tienda.Calificacion})
+										impr.Tienda = append(impr.Tienda, TiendasN{NombreTienda: tienda.NombreTienda, Descripcion: tienda.Descripcion, Contacto: tienda.Contacto, Calificacion: tienda.Calificacion})
 									} else {
 										linkB.InsertarB(&nuevo)
 									}
@@ -268,9 +266,9 @@ func (L *Lista) CrearMatriz() []NodoArray{
 						} else if tienda.Calificacion == 3 {
 							impr := linkMB.Cabeza
 							if impr != nil {
-								if len(impr.tienda) != 0 {
+								if len(impr.Tienda) != 0 {
 									if imp.Indice == impr.Indice && imp.Departamento.NombreDepartamento == impr.NombreDepartamento {
-										impr.tienda = append(impr.tienda, TiendasN{NombreTienda: tienda.NombreTienda, Descripcion: tienda.Descripcion, Contacto: tienda.Contacto, Calificacion: tienda.Calificacion})
+										impr.Tienda = append(impr.Tienda, TiendasN{NombreTienda: tienda.NombreTienda, Descripcion: tienda.Descripcion, Contacto: tienda.Contacto, Calificacion: tienda.Calificacion})
 									} else {
 										linkMB.InsertarMB(&nuevo)
 									}
@@ -281,9 +279,9 @@ func (L *Lista) CrearMatriz() []NodoArray{
 						} else if tienda.Calificacion == 4 {
 							impr := linkE.Cabeza
 							if impr != nil {
-								if len(impr.tienda) != 0 {
+								if len(impr.Tienda) != 0 {
 									if imp.Indice == impr.Indice && imp.Departamento.NombreDepartamento == impr.NombreDepartamento {
-										impr.tienda = append(impr.tienda, TiendasN{NombreTienda: tienda.NombreTienda, Descripcion: tienda.Descripcion, Contacto: tienda.Contacto, Calificacion: tienda.Calificacion})
+										impr.Tienda = append(impr.Tienda, TiendasN{NombreTienda: tienda.NombreTienda, Descripcion: tienda.Descripcion, Contacto: tienda.Contacto, Calificacion: tienda.Calificacion})
 									} else {
 										linkE.InsertarE(&nuevo)
 									}
@@ -294,9 +292,9 @@ func (L *Lista) CrearMatriz() []NodoArray{
 						} else if tienda.Calificacion == 5 {
 							impr := linkM.Cabeza
 							if impr != nil {
-								if len(impr.tienda) != 0 {
+								if len(impr.Tienda) != 0 {
 									if imp.Indice == impr.Indice && imp.Departamento.NombreDepartamento == impr.NombreDepartamento {
-										impr.tienda = append(impr.tienda, TiendasN{NombreTienda: tienda.NombreTienda, Descripcion: tienda.Descripcion, Contacto: tienda.Contacto, Calificacion: tienda.Calificacion})
+										impr.Tienda = append(impr.Tienda, TiendasN{NombreTienda: tienda.NombreTienda, Descripcion: tienda.Descripcion, Contacto: tienda.Contacto, Calificacion: tienda.Calificacion})
 									} else {
 										linkM.InsertarM(&nuevo)
 									}
@@ -327,65 +325,66 @@ func (L *Lista) CrearArray(indices []string, departamentos []string, m ListaM, e
 			linkGA := &ListaGA{}
 			if CR != nil {
 				if CR.Indice == indices[i] && CR.NombreDepartamento == departamentos[j] {
-					for k := 0; k < len(CR.tienda); k++ {
-						tienda := CR.tienda[k]
-						nuevo := TiendasAr{NombreTienda: tienda.NombreTienda, Descripcion: tienda.Descripcion, Contacto: tienda.Contacto, Calificacion: tienda.Calificacion}
+					for k := 0; k < len(CR.Tienda); k++ {
+						tienda := CR.Tienda[k]
+						nuevo := NodoTienda{NombreTienda: tienda.NombreTienda, Descripcion: tienda.Descripcion, Contacto: tienda.Contacto, Calificacion: tienda.Calificacion}
 						linkGA.InsertarGA(&nuevo)
 					}
 					CR = CR.Siguiente
 				}
 			}
-			Vector = append(Vector, NodoArray{Indice: indices[i], Departamento: departamentos[j], Calificacion: 1, listGA: *linkGA})
+			Vector = append(Vector, NodoArray{Indice: indices[i], Departamento: departamentos[j], Calificacion: 1, ListGA: *linkGA})
 			linkGA = &ListaGA{}
 			if CB != nil {
 				if CB.Indice == indices[i] && CB.NombreDepartamento == departamentos[j] {
-					for k := 0; k < len(CB.tienda); k++ {
-						tienda := CB.tienda[k]
-						nuevo := TiendasAr{NombreTienda: tienda.NombreTienda, Descripcion: tienda.Descripcion, Contacto: tienda.Contacto, Calificacion: tienda.Calificacion}
+					for k := 0; k < len(CB.Tienda); k++ {
+						tienda := CB.Tienda[k]
+						nuevo := NodoTienda{NombreTienda: tienda.NombreTienda, Descripcion: tienda.Descripcion, Contacto: tienda.Contacto, Calificacion: tienda.Calificacion}
 						linkGA.InsertarGA(&nuevo)
 					}
 					CB = CB.Siguiente
 				}
 			}
-			Vector = append(Vector, NodoArray{Indice: indices[i], Departamento: departamentos[j], Calificacion: 2, listGA: *linkGA})
+			Vector = append(Vector, NodoArray{Indice: indices[i], Departamento: departamentos[j], Calificacion: 2, ListGA: *linkGA})
 			linkGA = &ListaGA{}
 			if CMB != nil {
 				if CMB.Indice == indices[i] && CMB.NombreDepartamento == departamentos[j] {
-					for k := 0; k < len(CMB.tienda); k++ {
-						tienda := CMB.tienda[k]
-						nuevo := TiendasAr{NombreTienda: tienda.NombreTienda, Descripcion: tienda.Descripcion, Contacto: tienda.Contacto, Calificacion: tienda.Calificacion}
+					for k := 0; k < len(CMB.Tienda); k++ {
+						tienda := CMB.Tienda[k]
+						nuevo := NodoTienda{NombreTienda: tienda.NombreTienda, Descripcion: tienda.Descripcion, Contacto: tienda.Contacto, Calificacion: tienda.Calificacion}
 						linkGA.InsertarGA(&nuevo)
 					}
 					CMB = CMB.Siguiente
 				}
 			}
-			Vector = append(Vector, NodoArray{Indice: indices[i], Departamento: departamentos[j], Calificacion: 3, listGA: *linkGA})
+			Vector = append(Vector, NodoArray{Indice: indices[i], Departamento: departamentos[j], Calificacion: 3, ListGA: *linkGA})
 			linkGA = &ListaGA{}
 			if CE != nil {
 				if CE.Indice == indices[i] && CE.NombreDepartamento == departamentos[j] {
-					for k := 0; k < len(CE.tienda); k++ {
-						tienda := CE.tienda[k]
-						nuevo := TiendasAr{NombreTienda: tienda.NombreTienda, Descripcion: tienda.Descripcion, Contacto: tienda.Contacto, Calificacion: tienda.Calificacion}
+					for k := 0; k < len(CE.Tienda); k++ {
+						tienda := CE.Tienda[k]
+						nuevo := NodoTienda{NombreTienda: tienda.NombreTienda, Descripcion: tienda.Descripcion, Contacto: tienda.Contacto, Calificacion: tienda.Calificacion}
 						linkGA.InsertarGA(&nuevo)
 					}
 					CE = CE.Siguiente
 				}
 			}
-			Vector = append(Vector, NodoArray{Indice: indices[i], Departamento: departamentos[j], Calificacion: 4, listGA: *linkGA})
+			Vector = append(Vector, NodoArray{Indice: indices[i], Departamento: departamentos[j], Calificacion: 4, ListGA: *linkGA})
 			linkGA = &ListaGA{}
 			if CM != nil {
 				if CM.Indice == indices[i] && CM.NombreDepartamento == departamentos[j] {
-					for k := 0; k < len(CM.tienda); k++ {
-						tienda := CM.tienda[k]
-						nuevo := TiendasAr{NombreTienda: tienda.NombreTienda, Descripcion: tienda.Descripcion, Contacto: tienda.Contacto, Calificacion: tienda.Calificacion}
+					for k := 0; k < len(CM.Tienda); k++ {
+						tienda := CM.Tienda[k]
+						nuevo := NodoTienda{NombreTienda: tienda.NombreTienda, Descripcion: tienda.Descripcion, Contacto: tienda.Contacto, Calificacion: tienda.Calificacion}
 						linkGA.InsertarGA(&nuevo)
 					}
 					CM = CM.Siguiente
 				}
 			}
-			Vector = append(Vector, NodoArray{Indice: indices[i], Departamento: departamentos[j], Calificacion: 5, listGA: *linkGA})
+			Vector = append(Vector, NodoArray{Indice: indices[i], Departamento: departamentos[j], Calificacion: 5, ListGA: *linkGA})
 		}
 	}
+	//fmt.Println(Vector[4].listGA.Cabeza.NombreTienda)
 }
 
 func existe(arreglo []string, busqueda string) bool{

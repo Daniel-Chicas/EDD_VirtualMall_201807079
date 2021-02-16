@@ -69,12 +69,14 @@ func cargar(w http.ResponseWriter, r *http.Request){
 		json.Unmarshal(reqBody, &ms)
 		json.NewEncoder(w).Encode(mensaje)
 	}
-}
+} //ORDENAR TIENDAS POR ASCII
 
 func arreglo(w http.ResponseWriter, r *http.Request){
 	archivo := reportes.Arreglo(Vector)
 	fmt.Println(archivo)
 }
+
+
 
 type Mensaje struct {
 	Retorna string `json:"Regresa"`
