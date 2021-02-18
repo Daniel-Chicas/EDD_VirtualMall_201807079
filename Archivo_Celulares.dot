@@ -1,0 +1,13 @@
+digraph Deportes{
+node[shape=record];
+nodeBComida1[label="{B|Comida}|||1"];
+nodeBComida2[label="{B|Comida}|||2"];
+nodeBComida3[label="{B|Comida}|||3"];
+nodeBComida4[label="{B|Comida}|||4"];
+nodeBComida5[label="{B|Comida}|||5"];
+nodeBCelulares1[label="{B|Celulares}|||1"];
+nodeBCelulares2[label="{B|Celulares}|||2"];
+nodeBCelulares3[label="{B|Celulares}|||3"];
+nodeBCelulares4[label="{B|Celulares}|||4"];
+node0xc0000a6460[label="{B|Celulares}|Bayoneta|bayoneta@gmail.com|5"];
+}

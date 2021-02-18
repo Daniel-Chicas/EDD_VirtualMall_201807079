@@ -119,7 +119,6 @@ func (L *Lista) Insertar(nuevo *Nodo) string{
 		L.Cabeza = nuevo
 		L.Cola = nuevo
 	}else{
-
 		L.Cola.Siguiente = nuevo
 		nuevo.Anterior = L.Cola
 		L.Cola = nuevo

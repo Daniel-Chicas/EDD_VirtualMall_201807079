@@ -22,15 +22,20 @@ var list Listas.Lista
 var reportes Reportes.Lista
 var Vector []Listas.NodoArray
 var tiendaEsp TiendaEspecifica.General
+var tiendaEl TiendaEspecifica.GeneralEliminar
 var buscar TiendaEspecifica.Buscar
+var eliminar TiendaEspecifica.Eliminar
 
 
 func main(){
 	router := mux.NewRouter()
 	router.HandleFunc("/", inicio).Methods("Get")
-	router.HandleFunc("/cargartienda", cargar).Methods("Post")
+	router.HandleFunc("/cargartienda", cargar).Methods("Post") //ORDENAR TIENDAS POR ASCII
 	router.HandleFunc("/getArreglo", arreglo).Methods("Get")
 	router.HandleFunc("/TiendaEspecifica", tiendaEspecifica).Methods("Post")
+	router.HandleFunc("/id/{numero}", busquedaposicion).Methods("Get")
+	router.HandleFunc("/Eliminar", eliminarTienda).Methods("Delete")
+	router.HandleFunc("/guardar", guardarTodo).Methods("Get")
 	log.Fatal(http.ListenAndServe(":3000", router))
 }
 
@@ -76,7 +81,7 @@ func cargar(w http.ResponseWriter, r *http.Request){
 		json.Unmarshal(reqBody, &ms)
 		json.NewEncoder(w).Encode(mensaje)
 	}
-} //ORDENAR TIENDAS POR ASCII
+}
 
 func arreglo(w http.ResponseWriter, r *http.Request){
 	reqBody, err := ioutil.ReadAll(r.Body)
@@ -105,12 +110,12 @@ func tiendaEspecifica (w http.ResponseWriter, r *http.Request){
 			mens := strings.Split(mensaje, "&")
 			cali, _ := strconv.Atoi(mens[3])
 			retorno := TiendaEs{mens[0], mens[1], mens[2], cali}
-			w.WriteHeader(http.StatusCreated)
+			w.WriteHeader(http.StatusFound)
 			json.Unmarshal(reqBody, &ms)
 			json.NewEncoder(w).Encode(retorno)
 		}else{
 			mensaje := Mensaje{"Revise el archivo de entrada."}
-			w.WriteHeader(http.StatusCreated)
+			w.WriteHeader(http.StatusFound)
 			json.Unmarshal(reqBody, &ms)
 			json.NewEncoder(w).Encode(mensaje)
 		}
@@ -122,11 +127,137 @@ func tiendaEspecifica (w http.ResponseWriter, r *http.Request){
 	}
 }
 
+func busquedaposicion (w http.ResponseWriter, r *http.Request){
+	vars := mux.Vars(r)
+	var busca []busquedaTienda
+	posicion,_ := strconv.Atoi(vars["numero"])
+	retorna := buscar.BusquedaPosicion(Vector, posicion)
+	if retorna != "" {
+		if retorna == "No hay tienda." || retorna == "Posición inválida."{
+			mensaje := Mensaje{retorna}
+			w.WriteHeader(http.StatusLocked)
+			json.NewEncoder(w).Encode(mensaje)
+		}else{
+			tiendasGen := strings.Split(retorna, "%")
+			for i := 1; i < len(tiendasGen); i++ {
+				tiendaE := strings.Split(tiendasGen[i], "&")
+				nombre := tiendaE[0]
+				descripcion := tiendaE[1]
+				contacto := tiendaE[2]
+				cal,_ := strconv.Atoi(tiendaE[3])
+				buscarT := busquedaTienda{Nombre: nombre, Descripcion: descripcion, Contacto: contacto, Calificacion: cal}
+				busca = append(busca, buscarT)
+			}
+			mensaje := general{busca}
+			w.WriteHeader(http.StatusFound)
+			json.NewEncoder(w).Encode(mensaje)
+		}
+	}else{
+		mensaje := Mensaje{"Debe ingresar un listado de tiendas."}
+		w.WriteHeader(http.StatusLocked)
+		json.NewEncoder(w).Encode(mensaje)
+	}
+}
+
+func eliminarTienda (w http.ResponseWriter, r * http.Request) {
+	Indi := list.Indi()
+	Departa := list.Departa()
+	reqBody, err := ioutil.ReadAll(r.Body)
+	if err != nil {
+		fmt.Fprint(w, "Error al insertar")
+	}
+	if Indi != nil && Departa != nil {
+		json.Unmarshal(reqBody, &tiendaEl)
+		eliminar.NombreB = tiendaEl.Nombre
+		eliminar.Categ = tiendaEl.Categoria
+		eliminar.Cal = tiendaEl.Calificacion
+		Vector = eliminar.Eliminar(Vector, Indi, Departa)
+		mensaje := Mensaje{Retorna: "La tienda ha sido eliminada con éxito."}
+		w.WriteHeader(http.StatusAccepted)
+		json.NewEncoder(w).Encode(mensaje)
+	}
+}
+
+func guardarTodo (w http.ResponseWriter, r *http.Request){
+	var tiendasRE []TiendaR
+	var DepartamentosRE []DepartamentoR
+	var datosRE []DatosR
+	var generalRE GeneralR
+	indi := list.Indi()
+	departa := list.Departa()
+	vector := Vector
+	//tama := len(indi) * len(departa)
+	//for l := 0; l < tama; l++ {
+		for j := 0; j < len(indi); j++ {
+			for k := 0; k < len(departa); k++ {
+				for i := 0; i < len(vector); i++ {
+					if vector[i].Indice == indi[j] {
+						if vector[i].Departamento == departa[k] {
+							imp := vector[i].ListGA.Cabeza
+							for imp != nil {
+								tiendasRE = append(tiendasRE, TiendaR{Nombre: imp.NombreTienda, Descripcion: imp.Descripcion, Contacto: imp.Contacto, Calificacion: imp.Calificacion})
+								imp = imp.Siguiente
+							}
+						}
+					}
+				}
+				DepartamentosRE = append(DepartamentosRE, DepartamentoR{NombreDepa: departa[k], Tiendas: tiendasRE})
+				tiendasRE = nil
+			}
+			datosRE = append(datosRE, DatosR{Indice: indi[j], Departamentos: DepartamentosRE})
+			DepartamentosRE = nil
+		}
+	generalRE = GeneralR{Inicio: datosRE}
+	w.WriteHeader(http.StatusFound)
+	json.NewEncoder(w).Encode(generalRE)
+}
+
+func existe(arreglo []string, busqueda string) bool{
+	for _, numero := range arreglo{
+		if numero == busqueda{
+			return true
+		}
+	}
+	return false
+}
+
+type GeneralR struct{
+	Inicio []DatosR `json:"Datos"`
+}
+
+type DatosR struct{
+	Indice string `json:"Indice"`
+	Departamentos []DepartamentoR `json:"Departamentos"`
+}
+
+type DepartamentoR struct{
+	NombreDepa string `json:"Nombre"`
+	Tiendas []TiendaR `json:"Tiendas"`
+}
+
+type TiendaR struct{
+	Nombre string `json:"Nombre"`
+	Descripcion string `json:"Descripcion"`
+	Contacto string `json:"Contacto"`
+	Calificacion int `json:"Calificacion"`
+}
+
 type Mensaje struct {
 	Retorna string `json:"Alerta"`
 }
 
 type TiendaEs struct{
+	Nombre string `json:"Nombre"`
+	Descripcion string `json:"Descripcion"`
+	Contacto string `json:"Contacto"`
+	Calificacion int `json:"Calificacion"`
+}
+
+type general struct{
+	Tiendas []busquedaTienda `json:"Tiendas"`
+}
+
+type busquedaTienda struct{
 	Nombre string `json:"Nombre"`
 	Descripcion string `json:"Descripcion"`
 	Contacto string `json:"Contacto"`
