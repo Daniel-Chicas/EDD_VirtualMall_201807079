@@ -212,15 +212,6 @@ func guardarTodo (w http.ResponseWriter, r *http.Request){
 	json.NewEncoder(w).Encode(generalRE)
 }
 
-func existe(arreglo []string, busqueda string) bool{
-	for _, numero := range arreglo{
-		if numero == busqueda{
-			return true
-		}
-	}
-	return false
-}
-
 type GeneralR struct{
 	Inicio []DatosR `json:"Datos"`
 }

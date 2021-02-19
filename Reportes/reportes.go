@@ -17,25 +17,28 @@ func (L *Lista) Arreglo(vector []Listas.NodoArray) string{
 	respuesta := "No se ha cargado ningun listado de tiendas."
 	if vector != nil {
 		var cadena strings.Builder
-		var contador int = 10
+		var contador int = 5
 		fmt.Fprintf(&cadena, "digraph "+vector[contador-1].Departamento+"{\n")
 		fmt.Fprintf(&cadena, "node[shape=record];\n")
+
 		for i := 0; i < len(vector); i++ {
+
 			if i<contador{
 				posicion := vector[i].ListGA
-				if posicion.Cabeza == nil {
-					fmt.Fprintf(&cadena, "node"+vector[i].Indice+vector[i].Departamento+strconv.Itoa(vector[i].Calificacion)+"[label=\"{%v|%v}|%v|%v|%v\"];\n", vector[i].Indice,vector[i].Departamento, "", "", vector[i].Calificacion)
-				}else{
-					grafico(posicion.Cabeza, &cadena, posicion.Cabeza.Siguiente, vector[i].Departamento,vector[i].Indice)
+				fmt.Fprintf(&cadena, "node"+strconv.Itoa(i)+"[label=\"{%v|%v}|{%v|%v}\"];\n", "Indice: "+vector[i].Indice, "Depa:"+vector[i].Departamento, "Pos: "+strconv.Itoa(i) , "Calificación: "+strconv.Itoa(vector[i].Calificacion))
+				fmt.Fprintf(&cadena, "node%v->node%v;\n", i, i-1)
+				if posicion.Cabeza != nil {
+					grafico(&cadena, &posicion, i)
 				}
 			}
 			if i == contador-1 {
+
 				fmt.Fprintf(&cadena, "}")
-				guardarArchivo(cadena.String(), "Archivo_"+vector[i].Departamento+".dot")
+				guardarArchivo(cadena.String(), "Archivo_"+strconv.Itoa(contador)+".dot")
 				cadena.Reset()
 				fmt.Fprintf(&cadena, "digraph "+vector[contador-1].Departamento+"{\n")
 				fmt.Fprintf(&cadena, "node[shape=record];\n")
-				contador = contador +10
+				contador = contador +5
 			}
 		}
 		respuesta = "Los archivos han sido creados"
@@ -43,14 +46,24 @@ func (L *Lista) Arreglo(vector []Listas.NodoArray) string{
 	return respuesta
 }
 
-func grafico(anterior *Listas.NodoTienda, s *strings.Builder, actual *Listas.NodoTienda, departamento string, indice string) {
-	if anterior != nil {
-		fmt.Fprintf(s, "node%p[label=\"{%v|%v}|%v|%v|%v\"];\n", &(*anterior), indice,departamento, anterior.NombreTienda, anterior.Contacto, anterior.Calificacion)
-		if actual != nil && actual!=anterior{
-			fmt.Fprintf(s, "node%p->node%p;\n", &(*actual), &(*anterior))
-			fmt.Fprintf(s, "node%p->node%p;\n", &(*anterior), &(*actual))
+func grafico(s *strings.Builder, lista *Listas.ListaGA, i int) {
+	imp := lista.Cabeza
+	for imp!=nil {
+		sig := imp.Siguiente
+		ant := imp.Anterior
+		fmt.Fprintf(s, "node%p[label=\"{%v|%v}\"];\n", &(*imp), imp.NombreTienda, imp.Contacto)
+		if imp == lista.Cabeza {
+			fmt.Fprintf(s, "node%v->node%p;\n", strconv.Itoa(i), &(*imp))
+			if imp.Siguiente!=nil {
+				fmt.Fprintf(s, "node%p->node%p;\n", &(*imp), &(*sig))
+			}
+		}else if imp.Siguiente !=nil {
+			fmt.Fprintf(s, "node%p->node%p;\n", &(*imp), &(*ant))
+			fmt.Fprintf(s, "node%p->node%p;\n", &(*imp), &(*sig))
+		}else if imp.Siguiente == nil {
+			fmt.Fprintf(s, "node%p->node%p;\n", &(*imp), &(*ant))
 		}
-		grafico(anterior.Siguiente, s, anterior, departamento, indice)
+		imp = imp.Siguiente
 	}
 }
 
