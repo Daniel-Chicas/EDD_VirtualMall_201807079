@@ -25,8 +25,7 @@ func (L *Lista) Arreglo(vector []Listas.NodoArray) string{
 
 			if i<contador{
 				posicion := vector[i].ListGA
-				fmt.Fprintf(&cadena, "node"+strconv.Itoa(i)+"[label=\"{%v|%v}|{%v|%v}\"];\n", "Indice: "+vector[i].Indice, "Depa:"+vector[i].Departamento, "Pos: "+strconv.Itoa(i) , "Calificación: "+strconv.Itoa(vector[i].Calificacion))
-				fmt.Fprintf(&cadena, "node%v->node%v;\n", i, i-1)
+				fmt.Fprintf(&cadena, "node"+strconv.Itoa(i)+"[label=\"{%v|%v}|{%v|%v}\"];\n", "Indice: "+vector[i].Indice, vector[i].Departamento, "Pos: "+strconv.Itoa(i) , "Calificación: "+strconv.Itoa(vector[i].Calificacion))
 				if posicion.Cabeza != nil {
 					grafico(&cadena, &posicion, i)
 				}
