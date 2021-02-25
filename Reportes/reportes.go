@@ -14,11 +14,12 @@ type Lista struct {
 }
 
 func (L *Lista) Arreglo(vector []Listas.NodoArray) string{
+	var cuenta = 0
 	respuesta := "No se ha cargado ningun listado de tiendas."
 	if vector != nil {
 		var cadena strings.Builder
 		var contador int = 5
-		fmt.Fprintf(&cadena, "digraph "+vector[contador-1].Departamento+"{\n")
+		fmt.Fprintf(&cadena, "digraph Daniel"+strconv.Itoa(cuenta)+"{\n")
 		fmt.Fprintf(&cadena, "node[shape=record];\n")
 
 		for i := 0; i < len(vector); i++ {
@@ -31,11 +32,11 @@ func (L *Lista) Arreglo(vector []Listas.NodoArray) string{
 				}
 			}
 			if i == contador-1 {
-
 				fmt.Fprintf(&cadena, "}")
-				guardarArchivo(cadena.String(), "Archivo_"+strconv.Itoa(contador)+".dot")
+				guardarArchivo(cadena.String(), "Archivo_"+strconv.Itoa(cuenta)+".dot")
 				cadena.Reset()
-				fmt.Fprintf(&cadena, "digraph "+vector[contador-1].Departamento+"{\n")
+				cuenta++
+				fmt.Fprintf(&cadena, "digraph Daniel"+strconv.Itoa(cuenta)+"{\n")
 				fmt.Fprintf(&cadena, "node[shape=record];\n")
 				contador = contador +5
 			}

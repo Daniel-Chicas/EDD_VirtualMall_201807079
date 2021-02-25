@@ -307,9 +307,23 @@ func (L *Lista) CrearMatriz() []NodoArray{
 			}
 		}
 		imp = imp.Siguiente
+		linkT := &Lista{}
+		if imp == nil {
+			linkT.CrearArray(Indices, Depar, *linkM, *linkE, *linkMB, *linkB, *linkR)
+			linkM = &ListaM{}
+			linkE = &ListaE{}
+			linkMB = &ListaMB{}
+			linkB = &ListaB{}
+			linkR = &ListaR{}
+		}else if imp.Departamento.NombreDepartamento != imp.Anterior.Departamento.NombreDepartamento{
+			linkT.CrearArray(Indices, Depar, *linkM, *linkE, *linkMB, *linkB, *linkR)
+			linkM = &ListaM{}
+			linkE = &ListaE{}
+			linkMB = &ListaMB{}
+			linkB = &ListaB{}
+			linkR = &ListaR{}
+		}
 	}
-	linkT := &Lista{}
-	linkT.CrearArray(Indices, Depar, *linkM, *linkE, *linkMB, *linkB, *linkR)
 	return Vector
 }
 
@@ -345,9 +359,6 @@ func insercion(listaNodos []NodoTienda) *ListaGA{
 	return linkGA
 }
 
-
-
-
 func (L *Lista) CrearArray(indices []string, departamentos []string, m ListaM, e ListaE, mb ListaMB, b ListaB, r ListaR){
 	CM := m.Cabeza
 	CE := e.Cabeza
@@ -367,10 +378,9 @@ func (L *Lista) CrearArray(indices []string, departamentos []string, m ListaM, e
 					}
 					listaAgregar = insercion(listado)
 					listado = nil
-					CR = CR.Siguiente
+					Vector = append(Vector, NodoArray{Indice: indices[i], Departamento: departamentos[j], Calificacion: 1, ListGA: *listaAgregar})
 				}
 			}
-			Vector = append(Vector, NodoArray{Indice: indices[i], Departamento: departamentos[j], Calificacion: 1, ListGA: *listaAgregar})
 			listaAgregar = &ListaGA{}
 			if CB != nil {
 				if CB.Indice == indices[i] && CB.NombreDepartamento == departamentos[j] {
@@ -381,10 +391,9 @@ func (L *Lista) CrearArray(indices []string, departamentos []string, m ListaM, e
 					}
 					listaAgregar = insercion(listado)
 					listado = nil
-					CB = CB.Siguiente
+					Vector = append(Vector, NodoArray{Indice: indices[i], Departamento: departamentos[j], Calificacion: 2, ListGA: *listaAgregar})
 				}
 			}
-			Vector = append(Vector, NodoArray{Indice: indices[i], Departamento: departamentos[j], Calificacion: 2, ListGA: *listaAgregar})
 			listaAgregar = &ListaGA{}
 			if CMB != nil {
 				if CMB.Indice == indices[i] && CMB.NombreDepartamento == departamentos[j] {
@@ -395,10 +404,9 @@ func (L *Lista) CrearArray(indices []string, departamentos []string, m ListaM, e
 					}
 					listaAgregar = insercion(listado)
 					listado = nil
-					CMB = CMB.Siguiente
+					Vector = append(Vector, NodoArray{Indice: indices[i], Departamento: departamentos[j], Calificacion: 3, ListGA: *listaAgregar})
 				}
 			}
-			Vector = append(Vector, NodoArray{Indice: indices[i], Departamento: departamentos[j], Calificacion: 3, ListGA: *listaAgregar})
 			listaAgregar = &ListaGA{}
 			if CE != nil {
 				if CE.Indice == indices[i] && CE.NombreDepartamento == departamentos[j] {
@@ -409,10 +417,9 @@ func (L *Lista) CrearArray(indices []string, departamentos []string, m ListaM, e
 					}
 					listaAgregar = insercion(listado)
 					listado = nil
-					CE = CE.Siguiente
+					Vector = append(Vector, NodoArray{Indice: indices[i], Departamento: departamentos[j], Calificacion: 4, ListGA: *listaAgregar})
 				}
 			}
-			Vector = append(Vector, NodoArray{Indice: indices[i], Departamento: departamentos[j], Calificacion: 4, ListGA: *listaAgregar})
 			listaAgregar = &ListaGA{}
 			if CM != nil {
 				if CM.Indice == indices[i] && CM.NombreDepartamento == departamentos[j] {
@@ -423,10 +430,9 @@ func (L *Lista) CrearArray(indices []string, departamentos []string, m ListaM, e
 					}
 					listaAgregar = insercion(listado)
 					listado = nil
-					CM = CM.Siguiente
+					Vector = append(Vector, NodoArray{Indice: indices[i], Departamento: departamentos[j], Calificacion: 5, ListGA: *listaAgregar})
 				}
 			}
-			Vector = append(Vector, NodoArray{Indice: indices[i], Departamento: departamentos[j], Calificacion: 5, ListGA: *listaAgregar})
 		}
 	}
 }
