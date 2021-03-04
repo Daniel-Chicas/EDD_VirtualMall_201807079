@@ -24,24 +24,13 @@ type Buscar struct{
 	Cal int
 }
 
-type Eliminar struct{
-	Categ string
-	NombreB string
-	Cal int
-}
-
 func (B * Buscar) Buscar(vector []Listas.NodoArray, Indices []string, Departamentos []string) string{
 	var cadena string
-	indice := strings.Split(B.NombreB, "")
-	posFila := Posicion(Indices, indice[0])
-	posColumna := Posicion(Departamentos, B.Depa)
-	Primero := posFila-0
-	Segundo := Primero * len(Departamentos) + posColumna
-	Tercero := Segundo*5+(B.Cal-1)
+	Tercero := B.posicionTercero(Indices, Departamentos)
 	imp := vector[Tercero].ListGA.Cabeza
 	for imp != nil {
 		if imp.NombreTienda == B.NombreB {
-			cadena = imp.NombreTienda+"&"+imp.Descripcion+"&"+imp.Contacto+"&"+strconv.Itoa(imp.Calificacion)
+			cadena = imp.NombreTienda+"&"+imp.Descripcion+"&"+imp.Contacto+"&"+strconv.Itoa(imp.Calificacion)+"&"+imp.Logo
 		}
 		imp = imp.Siguiente
 	}
@@ -67,7 +56,7 @@ func (B *Buscar) BusquedaPosicion (vector []Listas.NodoArray, posicion int) stri
 			cadena = "No hay tienda."
 		}else{
 			for imp != nil {
-				cadena = cadena+"%"+imp.NombreTienda+"&"+imp.Descripcion+"&"+imp.Contacto+"&"+strconv.Itoa(imp.Calificacion)
+				cadena = cadena+"%"+imp.NombreTienda+"&"+imp.Descripcion+"&"+imp.Contacto+"&"+strconv.Itoa(imp.Calificacion)+"&"+imp.Logo
 				imp = imp.Siguiente
 			}
 		}
@@ -75,15 +64,10 @@ func (B *Buscar) BusquedaPosicion (vector []Listas.NodoArray, posicion int) stri
 	return cadena
 }
 
-func (BE *Eliminar) Eliminar(vector []Listas.NodoArray, Indices []string, Departamentos []string) []Listas.NodoArray{
-	indice := strings.Split(BE.NombreB, "")
-	posFila := Posicion(Indices, indice[0])
-	posColumna := Posicion(Departamentos, BE.Categ)
-	Primero := posFila-0
-	Segundo := Primero * len(Departamentos) + posColumna
-	Tercero := Segundo*5+(BE.Cal-1)
+func (BE *Buscar) Eliminar(vector []Listas.NodoArray, Indices []string, Departamentos []string) []Listas.NodoArray{
+	Tercero := BE.posicionTercero(Indices, Departamentos)
 	lista := vector[Tercero].ListGA
-	impC := lista.Cabeza
+	impC := vector[Tercero].ListGA.Cabeza
 	for impC != nil {
 		if impC.NombreTienda == BE.NombreB {
 			if impC == lista.Cabeza {
@@ -112,3 +96,12 @@ func (BE *Eliminar) Eliminar(vector []Listas.NodoArray, Indices []string, Depart
 	return vector
 }
 
+func (B *Buscar) posicionTercero(Indices []string, Departamentos []string) int{
+	indice := strings.Split(B.NombreB, "")
+	posFila := Posicion(Indices, indice[0])
+	posColumna := Posicion(Departamentos, B.Depa)
+	Primero := posFila-0
+	Segundo := Primero * len(Departamentos) + posColumna
+	Tercero := Segundo*5+(B.Cal-1)
+	return Tercero
+}

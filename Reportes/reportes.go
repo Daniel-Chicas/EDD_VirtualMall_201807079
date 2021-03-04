@@ -4,6 +4,7 @@ import (
 	"../Listas"
 	"fmt"
 	"io/ioutil"
+	"math/rand"
 	"os"
 	"os/exec"
 	"strconv"
@@ -26,9 +27,10 @@ func (L *Lista) Arreglo(vector []Listas.NodoArray) string{
 
 			if i<contador{
 				posicion := vector[i].ListGA
-				fmt.Fprintf(&cadena, "node"+strconv.Itoa(i)+"[label=\"{%v|%v}|{%v|%v}\"];\n", "Indice: "+vector[i].Indice, vector[i].Departamento, "Pos: "+strconv.Itoa(i) , "Calificación: "+strconv.Itoa(vector[i].Calificacion))
+				colores := [10]string{"gray", "red", "blue", "yellow", "green", "orange", "brown", "pink", "violet", "purple"}
+				fmt.Fprintf(&cadena, "node"+strconv.Itoa(i)+"[color="+colores[rand.Intn(9)]+", fillcolor="+colores[rand.Intn(9)]+", label=\"{%v|%v}|{%v|%v}\"];\n", "Indice: "+vector[i].Indice, vector[i].Departamento, "Pos: "+strconv.Itoa(i) , "Calificación: "+strconv.Itoa(vector[i].Calificacion))
 				if posicion.Cabeza != nil {
-					grafico(&cadena, &posicion, i)
+					grafico(&cadena, &posicion, i, colores)
 				}
 			}
 			if i == contador-1 {
@@ -46,12 +48,12 @@ func (L *Lista) Arreglo(vector []Listas.NodoArray) string{
 	return respuesta
 }
 
-func grafico(s *strings.Builder, lista *Listas.ListaGA, i int) {
+func grafico(s *strings.Builder, lista *Listas.ListaGA, i int, colores [10]string) {
 	imp := lista.Cabeza
 	for imp!=nil {
 		sig := imp.Siguiente
 		ant := imp.Anterior
-		fmt.Fprintf(s, "node%p[label=\"{%v|%v}\"];\n", &(*imp), imp.NombreTienda, imp.Contacto)
+		fmt.Fprintf(s, "node%p[color="+colores[rand.Intn(9)]+", label=\"{%v|%v}\"];\n", &(*imp), imp.NombreTienda, imp.Contacto)
 		if imp == lista.Cabeza {
 			fmt.Fprintf(s, "node%v->node%p;\n", strconv.Itoa(i), &(*imp))
 			if imp.Siguiente!=nil {

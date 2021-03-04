@@ -4,6 +4,7 @@ import (
 	"./Listas"
 	"./Reportes"
 	"./TiendaEspecifica"
+	"./Inventario"
 	"encoding/json"
 	"fmt"
 	"github.com/gorilla/mux"
@@ -13,7 +14,7 @@ import (
 	"strconv"
 	"strings"
 )
-
+var metodosArbol Inventario.Arbol
 var ms Listas.General
 var nodo Listas.Nodo
 var departamentos Listas.Departamentos
@@ -24,7 +25,9 @@ var Vector []Listas.NodoArray
 var tiendaEsp TiendaEspecifica.General
 var tiendaEl TiendaEspecifica.GeneralEliminar
 var buscar TiendaEspecifica.Buscar
-var eliminar TiendaEspecifica.Eliminar
+var eliminar TiendaEspecifica.Buscar
+var arbol Inventario.General
+var nodoArbol Inventario.NodoArbol
 
 
 func main(){
@@ -61,7 +64,8 @@ func cargar(w http.ResponseWriter, r *http.Request){
 				tiendas.Descripcion = c.Descripcion
 				tiendas.Contacto = c.Contacto
 				tiendas.Calificacion = c.Calificacion
-				tienda := Listas.Tiendas{NombreTienda: c.Nombre, Descripcion: c.Descripcion, Contacto: c.Contacto, Calificacion: c.Calificacion}
+				tiendas.Logo = c.Logo
+				tienda := Listas.Tiendas{NombreTienda: c.Nombre, Descripcion: c.Descripcion, Contacto: c.Contacto, Calificacion: c.Calificacion, Logo: c.Logo}
 				depa := Listas.Departamentos{NombreDepartamento: departamentos.NombreDepartamento, Tienda: tienda}
 				nuevo := Listas.Nodo{Indice: a.Indice, Departamento: depa }
 				fmt.Fprint(w, list.Insertar(&nuevo))
@@ -69,6 +73,35 @@ func cargar(w http.ResponseWriter, r *http.Request){
 		}
 	}
 	Vector = list.CrearMatriz()
+	Indi := list.Indi()
+	Departa := list.Departa()
+	json.Unmarshal(reqBody, &arbol)
+	for i := 0; i < len(arbol.Inventarios); i++ {
+		NombreTienda := arbol.Inventarios[i].NombreTienda
+		Departamento := arbol.Inventarios[i].Departamento
+		Calificacion := arbol.Inventarios[i].Calificacion
+		Tercero := posicionTercero(NombreTienda, Departamento,Calificacion, Indi, Departa)
+		imp := Vector[Tercero].ListGA.Cabeza
+		for imp != nil {
+			if imp.NombreTienda == NombreTienda {
+				arbolPosicion := imp.Inventario.NuevoArbol()
+				Productos := arbol.Inventarios[i].Productos
+				for j := 0; j < len(Productos); j++ {
+					a := Productos[j]
+					nodoArbol.NombreProducto = a.NombreProducto
+					nodoArbol.Codigo = a.Codigo
+					nodoArbol.Descripcion = a.Descripcion
+					nodoArbol.Precio = a.PrecioP
+					nodoArbol.Cantidad = a.Cantidad
+					nodoArbol.Imagen = a.Imagen
+					arbolPosicion.Insertar(nodoArbol.NombreProducto, nodoArbol.Codigo, nodoArbol.Descripcion, nodoArbol.Precio, nodoArbol.Cantidad, nodoArbol.Imagen)
+				}
+				imp.Inventario = *arbolPosicion
+			}
+			imp = imp.Siguiente
+		}
+	}
+
 	w.Header().Set("Content-type", "application/json")
 	if list.Cabeza == nil{
 		mensaje := Mensaje{"NO SE HA PODIDO CARGAR EL ARCHIVO"}
@@ -109,7 +142,7 @@ func tiendaEspecifica (w http.ResponseWriter, r *http.Request){
 		if mensaje != "" {
 			mens := strings.Split(mensaje, "&")
 			cali, _ := strconv.Atoi(mens[3])
-			retorno := TiendaEs{mens[0], mens[1], mens[2], cali}
+			retorno := TiendaEs{mens[0], mens[1], mens[2], cali, mens[4]}
 			w.WriteHeader(http.StatusFound)
 			json.Unmarshal(reqBody, &ms)
 			json.NewEncoder(w).Encode(retorno)
@@ -144,8 +177,9 @@ func busquedaposicion (w http.ResponseWriter, r *http.Request){
 				nombre := tiendaE[0]
 				descripcion := tiendaE[1]
 				contacto := tiendaE[2]
+				Logo := tiendaE[4]
 				cal,_ := strconv.Atoi(tiendaE[3])
-				buscarT := busquedaTienda{Nombre: nombre, Descripcion: descripcion, Contacto: contacto, Calificacion: cal}
+				buscarT := busquedaTienda{Nombre: nombre, Descripcion: descripcion, Contacto: contacto, Calificacion: cal, Logo: Logo}
 				busca = append(busca, buscarT)
 			}
 			mensaje := general{busca}
@@ -169,7 +203,7 @@ func eliminarTienda (w http.ResponseWriter, r * http.Request) {
 	if Indi != nil && Departa != nil {
 		json.Unmarshal(reqBody, &tiendaEl)
 		eliminar.NombreB = tiendaEl.Nombre
-		eliminar.Categ = tiendaEl.Categoria
+		eliminar.Depa = tiendaEl.Categoria
 		eliminar.Cal = tiendaEl.Calificacion
 		Vector = eliminar.Eliminar(Vector, Indi, Departa)
 		mensaje := Mensaje{Retorna: "La tienda ha sido eliminada con éxito."}
@@ -195,7 +229,7 @@ func guardarTodo (w http.ResponseWriter, r *http.Request){
 						if vector[i].Departamento == departa[k] {
 							imp := vector[i].ListGA.Cabeza
 							for imp != nil {
-								tiendasRE = append(tiendasRE, TiendaR{Nombre: imp.NombreTienda, Descripcion: imp.Descripcion, Contacto: imp.Contacto, Calificacion: imp.Calificacion})
+								tiendasRE = append(tiendasRE, TiendaR{Nombre: imp.NombreTienda, Descripcion: imp.Descripcion, Contacto: imp.Contacto, Calificacion: imp.Calificacion, Logo: imp.Logo})
 								imp = imp.Siguiente
 							}
 						}
@@ -231,6 +265,7 @@ type TiendaR struct{
 	Descripcion string `json:"Descripcion"`
 	Contacto string `json:"Contacto"`
 	Calificacion int `json:"Calificacion"`
+	Logo string `json:"Logo"`
 }
 
 type Mensaje struct {
@@ -242,6 +277,7 @@ type TiendaEs struct{
 	Descripcion string `json:"Descripcion"`
 	Contacto string `json:"Contacto"`
 	Calificacion int `json:"Calificacion"`
+	Logo string `json:"Logo"`
 }
 
 type general struct{
@@ -253,4 +289,24 @@ type busquedaTienda struct{
 	Descripcion string `json:"Descripcion"`
 	Contacto string `json:"Contacto"`
 	Calificacion int `json:"Calificacion"`
+	Logo string `json:"Logo"`
+}
+
+func posicionTercero(Nombre string, Depa string, Calificacion int, Indices []string, Departamentos []string) int{
+	indice := strings.Split(Nombre, "")
+	posFila := Posicion(Indices, indice[0])
+	posColumna := Posicion(Departamentos, Depa)
+	Primero := posFila-0
+	Segundo := Primero * len(Departamentos) + posColumna
+	Tercero := Segundo*5+(Calificacion-1)
+	return Tercero
+}
+
+func Posicion(arreglo []string, busqueda string) int {
+	for indice, valor := range arreglo {
+		if valor == busqueda {
+			return indice
+		}
+	}
+	return -1
 }
