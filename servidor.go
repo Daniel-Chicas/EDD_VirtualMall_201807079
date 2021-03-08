@@ -5,6 +5,7 @@ import (
 	"./Reportes"
 	"./TiendaEspecifica"
 	"./Inventario"
+	"./MatrizDispersa"
 	"encoding/json"
 	"fmt"
 	"github.com/gorilla/mux"
@@ -14,7 +15,6 @@ import (
 	"strconv"
 	"strings"
 )
-var metodosArbol Inventario.Arbol
 var ms Listas.General
 var nodo Listas.Nodo
 var departamentos Listas.Departamentos
@@ -28,6 +28,9 @@ var buscar TiendaEspecifica.Buscar
 var eliminar TiendaEspecifica.Buscar
 var arbol Inventario.General
 var nodoArbol Inventario.NodoArbol
+var matriz MatrizDispersa.General
+var listaAnual MatrizDispersa.ListaAnio
+var ListaMensual MatrizDispersa.ListaMes
 
 
 func main(){
@@ -83,7 +86,7 @@ func cargar(w http.ResponseWriter, r *http.Request){
 		Tercero := posicionTercero(NombreTienda, Departamento,Calificacion, Indi, Departa)
 		imp := Vector[Tercero].ListGA.Cabeza
 		for imp != nil {
-			if imp.NombreTienda == NombreTienda {
+			if imp.NombreTienda == NombreTienda{
 				arbolPosicion := imp.Inventario.NuevoArbol()
 				Productos := arbol.Inventarios[i].Productos
 				for j := 0; j < len(Productos); j++ {
@@ -102,6 +105,37 @@ func cargar(w http.ResponseWriter, r *http.Request){
 		}
 	}
 
+	json.Unmarshal(reqBody, &matriz)
+	var entrada [] MatrizDispersa.NodoEntrada
+	for i := 0; i < len(matriz.Pedidos); i++ {
+	fecha := matriz.Pedidos[i].Fecha
+	NombreTienda := matriz.Pedidos[i].NombreTienda
+	Departamento := matriz.Pedidos[i].Departamento
+	Calificacion := matriz.Pedidos[i].Calificacion
+	Productos := matriz.Pedidos[i].Productos
+	for j := 0; j < len(Productos); j++ {
+			nodoEntrada := MatrizDispersa.NodoEntrada{fecha, NombreTienda,Departamento,Calificacion, Productos[j].Codigo}
+			entrada = append(entrada, nodoEntrada)
+		}
+	}
+	if len(entrada) != 0 {
+		a := MatrizDispersa.NodoEntrada{}
+/*
+		for i := 0; i < len(entrada); i++ {
+			fmt.Println("Fecha = "+entrada[i].Fecha+"--> Codigo:"+strconv.Itoa(entrada[i].ProductoCodigo))
+		}
+ */
+		entrada = *burbuja(entrada)
+
+		fmt.Println("----------------------------------------------------------------------------------------------------------------")
+/*
+		for i := 0; i < len(entrada); i++ {
+			fmt.Println("Fecha :"+entrada[i].Fecha+"--> Codigo:"+strconv.Itoa(entrada[i].ProductoCodigo))
+		}
+		fmt.Println("*******************************************************************************************************")
+ */
+		a.LlenarMatriz(entrada)
+	}
 	w.Header().Set("Content-type", "application/json")
 	if list.Cabeza == nil{
 		mensaje := Mensaje{"NO SE HA PODIDO CARGAR EL ARCHIVO"}
@@ -309,4 +343,27 @@ func Posicion(arreglo []string, busqueda string) int {
 		}
 	}
 	return -1
+}
+
+func burbuja(listaNodos []MatrizDispersa.NodoEntrada) *[]MatrizDispersa.NodoEntrada{
+	var i,j int
+	var aux MatrizDispersa.NodoEntrada
+	for i = 0; i < len(listaNodos)-1; i++ {
+		for j = 0; j < len(listaNodos)-i-1 ; j++ {
+			siguiente := listaNodos[j+1]
+			anterior := listaNodos[j]
+			listaSig := strings.Split(siguiente.Fecha, "-")
+			listaAnt := strings.Split(anterior.Fecha, "-")
+			mesSig, _ := strconv.Atoi(listaSig[1])
+			anioSig, _ := strconv.Atoi(listaSig[2])
+			mesAnt, _ := strconv.Atoi(listaAnt[1])
+			anioAnt, _ := strconv.Atoi(listaAnt[2])
+			if mesSig+anioSig < mesAnt+anioAnt{
+				aux = listaNodos[j+1]
+				listaNodos[j+1] = listaNodos[j]
+				listaNodos[j] = aux
+			}
+		}
+	}
+	return &listaNodos
 }

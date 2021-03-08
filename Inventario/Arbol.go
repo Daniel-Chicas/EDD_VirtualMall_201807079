@@ -34,7 +34,7 @@ type NodoArbol struct{
 
 
 type Arbol struct{
-	raiz *NodoArbol
+	Raiz *NodoArbol
 }
 
 func (this *Arbol) NuevoArbol() *Arbol{
@@ -173,5 +173,5 @@ func insertar(ra *NodoArbol, nombre string, codigo int, descripcion string, prec
 func (L *Arbol) Insertar(nombre string, codigo int, descripcion string, precio float64, cantidad int, imagen string){
 	b := false
 	a := &b
-	L.raiz = insertar(L.raiz, nombre, codigo, descripcion, precio, cantidad, imagen, a)
+	L.Raiz = insertar(L.Raiz, nombre, codigo, descripcion, precio, cantidad, imagen, a)
 }
