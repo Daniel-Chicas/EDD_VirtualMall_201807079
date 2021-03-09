@@ -29,9 +29,7 @@ var eliminar TiendaEspecifica.Buscar
 var arbol Inventario.General
 var nodoArbol Inventario.NodoArbol
 var matriz MatrizDispersa.General
-var listaAnual MatrizDispersa.ListaAnio
-var ListaMensual MatrizDispersa.ListaMes
-
+var listaAnioa MatrizDispersa.ListaAnio
 
 func main(){
 	router := mux.NewRouter()
@@ -113,28 +111,39 @@ func cargar(w http.ResponseWriter, r *http.Request){
 	Departamento := matriz.Pedidos[i].Departamento
 	Calificacion := matriz.Pedidos[i].Calificacion
 	Productos := matriz.Pedidos[i].Productos
-	for j := 0; j < len(Productos); j++ {
-			nodoEntrada := MatrizDispersa.NodoEntrada{fecha, NombreTienda,Departamento,Calificacion, Productos[j].Codigo}
-			entrada = append(entrada, nodoEntrada)
+	Tercero := posicionTercero(NombreTienda, Departamento,Calificacion, Indi, Departa)
+	imp := Vector[Tercero].ListGA.Cabeza
+	for imp != nil {
+		for j := 0; j < len(Productos); j++ {
+			if imp.NombreTienda == NombreTienda && imp.Calificacion == Calificacion {
+				a := inOrden(imp.Inventario.Raiz, Productos[j].Codigo)
+				if a == true {
+					nodoEntrada := MatrizDispersa.NodoEntrada{fecha, NombreTienda,Departamento,Calificacion, Productos[j].Codigo}
+					entrada = append(entrada, nodoEntrada)
+					}
+				}
+			}
+		imp = imp.Siguiente
 		}
 	}
 	if len(entrada) != 0 {
 		a := MatrizDispersa.NodoEntrada{}
-/*
-		for i := 0; i < len(entrada); i++ {
-			fmt.Println("Fecha = "+entrada[i].Fecha+"--> Codigo:"+strconv.Itoa(entrada[i].ProductoCodigo))
-		}
- */
 		entrada = *burbuja(entrada)
-
-		fmt.Println("----------------------------------------------------------------------------------------------------------------")
-/*
-		for i := 0; i < len(entrada); i++ {
-			fmt.Println("Fecha :"+entrada[i].Fecha+"--> Codigo:"+strconv.Itoa(entrada[i].ProductoCodigo))
+		listaAnioa = *a.LlenarMatriz(entrada)
+		/*
+		imp := listaAnioa.Cabeza
+		for imp != nil {
+			impr := imp.ListaMatricesMes.Cabeza
+			for impr != nil{
+				impr.MatrizMes.Imprimir()
+				impr.MatrizMes.Imprimir2()
+				fmt.Println("++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++")
+				fmt.Println("++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++")
+				impr = impr.Siguiente
+			}
+			imp = imp.Siguiente
 		}
-		fmt.Println("*******************************************************************************************************")
- */
-		a.LlenarMatriz(entrada)
+		 */
 	}
 	w.Header().Set("Content-type", "application/json")
 	if list.Cabeza == nil{
@@ -366,4 +375,21 @@ func burbuja(listaNodos []MatrizDispersa.NodoEntrada) *[]MatrizDispersa.NodoEntr
 		}
 	}
 	return &listaNodos
+}
+
+func inOrden(raiz *Inventario.NodoArbol, codigo int) bool{
+	if raiz!=nil {
+		if raiz.Codigo == codigo {
+			return true
+		}
+		a := inOrden(raiz.Izq, codigo)
+		if a == true {
+			return true
+		}
+		b := inOrden(raiz.Der, codigo)
+		if b == true {
+			return true
+		}
+	}
+	return false
 }
