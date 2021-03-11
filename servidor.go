@@ -168,18 +168,6 @@ func cargar(w http.ResponseWriter, r *http.Request){
 			impa := listaAnioa.Cabeza
 			for impa != nil{
 				impa.ListaMatricesMes = metodosMatriz.BurbujaMes(*impa.ListaMatricesMes)
-				/*
-				impm := impa.ListaMatricesMes.Cabeza
-				for impm != nil{
-					impm.MatrizMes.Imprimir()
-					impm.MatrizMes.Imprimir2()
-					fmt.Println()
-					fmt.Println("---------------------------------------------------------------------------------------------------------")
-					fmt.Println("---------------------------------------------------------------------------------------------------------")
-					fmt.Println()
-
-					impm = impm.Siguiente
-				}*/
 				impa = impa.Siguiente
 			}
 		}
@@ -302,8 +290,6 @@ func guardarTodo (w http.ResponseWriter, r *http.Request){
 	indi := list.Indi()
 	departa := list.Departa()
 	vector := Vector
-	//tama := len(indi) * len(departa)
-	//for l := 0; l < tama; l++ {
 		for j := 0; j < len(indi); j++ {
 			for k := 0; k < len(departa); k++ {
 				for i := 0; i < len(vector); i++ {
@@ -364,13 +350,13 @@ func carrito (w http.ResponseWriter, r *http.Request){
 						}
 						existeMes := EncontrarMes(&listaAnioa, anio, mes)
 						if existeMes == false {
-							imp := listaAnioa.Cabeza
-							for imp != nil {
-								if imp.Anio == anio {
+							impm := listaAnioa.Cabeza
+							for impm != nil {
+								if impm.Anio == anio {
 									nodoMes := MatrizDispersa.NodoMes{Mes: mes, MatrizMes: &MatrizDispersa.Matriz{Mes: mes, Anio: anio}}
-									imp.ListaMatricesMes.Insertar(&nodoMes)
+									impm.ListaMatricesMes.Insertar(&nodoMes)
 								}
-								imp = imp.Siguiente
+								impm = impm.Siguiente
 							}
 						}
 
@@ -420,6 +406,9 @@ func carrito (w http.ResponseWriter, r *http.Request){
 			}
 			impa = impa.Siguiente
 		}
+		mensaje := Mensaje{Retorna: "¡PRODUCTOS VENDIDOS!"}
+		w.WriteHeader(http.StatusAccepted)
+		json.NewEncoder(w).Encode(mensaje)
 	}
 }
 
