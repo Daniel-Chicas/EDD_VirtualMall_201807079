@@ -1,11 +1,12 @@
 package main
 
 import (
+	"./Inventario"
 	"./Listas"
+	"./MatrizDispersa"
 	"./Reportes"
 	"./TiendaEspecifica"
-	"./Inventario"
-	"./MatrizDispersa"
+	"./Compras"
 	"encoding/json"
 	"fmt"
 	"github.com/gorilla/mux"
@@ -29,17 +30,20 @@ var eliminar TiendaEspecifica.Buscar
 var arbol Inventario.General
 var nodoArbol Inventario.NodoArbol
 var matriz MatrizDispersa.General
+var metodosMatriz MatrizDispersa.Matriz
 var listaAnioa MatrizDispersa.ListaAnio
+var carritojson Compras.General
 
 func main(){
 	router := mux.NewRouter()
 	router.HandleFunc("/", inicio).Methods("Get")
-	router.HandleFunc("/cargartienda", cargar).Methods("Post") //ORDENAR TIENDAS POR ASCII
+	router.HandleFunc("/cargarArchivos", cargar).Methods("Post") //ORDENAR TIENDAS POR ASCII
 	router.HandleFunc("/getArreglo", arreglo).Methods("Get")
 	router.HandleFunc("/TiendaEspecifica", tiendaEspecifica).Methods("Post")
 	router.HandleFunc("/id/{numero}", busquedaposicion).Methods("Get")
 	router.HandleFunc("/Eliminar", eliminarTienda).Methods("Delete")
 	router.HandleFunc("/guardar", guardarTodo).Methods("Get")
+	router.HandleFunc("/carritoCompras", carrito).Methods("Post")
 	log.Fatal(http.ListenAndServe(":3000", router))
 }
 
@@ -73,77 +77,112 @@ func cargar(w http.ResponseWriter, r *http.Request){
 			}
 		}
 	}
+
 	Vector = list.CrearMatriz()
 	Indi := list.Indi()
 	Departa := list.Departa()
-	json.Unmarshal(reqBody, &arbol)
-	for i := 0; i < len(arbol.Inventarios); i++ {
-		NombreTienda := arbol.Inventarios[i].NombreTienda
-		Departamento := arbol.Inventarios[i].Departamento
-		Calificacion := arbol.Inventarios[i].Calificacion
-		Tercero := posicionTercero(NombreTienda, Departamento,Calificacion, Indi, Departa)
-		imp := Vector[Tercero].ListGA.Cabeza
-		for imp != nil {
-			if imp.NombreTienda == NombreTienda{
-				arbolPosicion := imp.Inventario.NuevoArbol()
-				Productos := arbol.Inventarios[i].Productos
-				for j := 0; j < len(Productos); j++ {
-					a := Productos[j]
-					nodoArbol.NombreProducto = a.NombreProducto
-					nodoArbol.Codigo = a.Codigo
-					nodoArbol.Descripcion = a.Descripcion
-					nodoArbol.Precio = a.PrecioP
-					nodoArbol.Cantidad = a.Cantidad
-					nodoArbol.Imagen = a.Imagen
-					arbolPosicion.Insertar(nodoArbol.NombreProducto, nodoArbol.Codigo, nodoArbol.Descripcion, nodoArbol.Precio, nodoArbol.Cantidad, nodoArbol.Imagen)
-				}
-				imp.Inventario = *arbolPosicion
-			}
-			imp = imp.Siguiente
-		}
-	}
-
-	json.Unmarshal(reqBody, &matriz)
-	var entrada [] MatrizDispersa.NodoEntrada
-	for i := 0; i < len(matriz.Pedidos); i++ {
-	fecha := matriz.Pedidos[i].Fecha
-	NombreTienda := matriz.Pedidos[i].NombreTienda
-	Departamento := matriz.Pedidos[i].Departamento
-	Calificacion := matriz.Pedidos[i].Calificacion
-	Productos := matriz.Pedidos[i].Productos
-	Tercero := posicionTercero(NombreTienda, Departamento,Calificacion, Indi, Departa)
-	imp := Vector[Tercero].ListGA.Cabeza
-	for imp != nil {
-		for j := 0; j < len(Productos); j++ {
-			if imp.NombreTienda == NombreTienda && imp.Calificacion == Calificacion {
-				a := inOrden(imp.Inventario.Raiz, Productos[j].Codigo)
-				if a == true {
-					nodoEntrada := MatrizDispersa.NodoEntrada{fecha, NombreTienda,Departamento,Calificacion, Productos[j].Codigo}
-					entrada = append(entrada, nodoEntrada)
+	if len(Vector) != 0 {
+		json.Unmarshal(reqBody, &arbol)
+		for i := 0; i < len(arbol.Inventarios); i++ {
+			NombreTienda := arbol.Inventarios[i].NombreTienda
+			Departamento := arbol.Inventarios[i].Departamento
+			Calificacion := arbol.Inventarios[i].Calificacion
+			Tercero := posicionTercero(NombreTienda, Departamento,Calificacion, Indi, Departa)
+			imp := Vector[Tercero].ListGA.Cabeza
+			for imp != nil {
+				if imp.NombreTienda == NombreTienda{
+					arbolPosicion := imp.Inventario.NuevoArbol()
+					Productos := arbol.Inventarios[i].Productos
+					for j := 0; j < len(Productos); j++ {
+						a := Productos[j]
+						nodoArbol.NombreProducto = a.NombreProducto
+						nodoArbol.Codigo = a.Codigo
+						nodoArbol.Descripcion = a.Descripcion
+						nodoArbol.Precio = a.PrecioP
+						nodoArbol.Cantidad = a.Cantidad
+						nodoArbol.Imagen = a.Imagen
+						arbolPosicion.Insertar(nodoArbol.NombreProducto, nodoArbol.Codigo, nodoArbol.Descripcion, nodoArbol.Precio, nodoArbol.Cantidad, nodoArbol.Imagen)
 					}
+					imp.Inventario = *arbolPosicion
+				}
+				imp = imp.Siguiente
+			}
+		}
+
+		json.Unmarshal(reqBody, &matriz)
+		for i := 0; i < len(matriz.Pedidos); i++ {
+			fecha := matriz.Pedidos[i].Fecha
+			mes,_ := strconv.Atoi(strings.Split(fecha, "-")[1])
+			anio,_ := strconv.Atoi(strings.Split(fecha, "-")[2])
+			existeAnio := EncontrarAnio(&listaAnioa, anio)
+			if existeAnio == false {
+				var listaMes MatrizDispersa.ListaMes
+				nodoAnio := MatrizDispersa.NodoAnio{Anio: anio, ListaMatricesMes: &listaMes}
+				listaAnioa.Insertar(&nodoAnio)
+
+			}
+			existeMes := EncontrarMes(&listaAnioa, anio, mes)
+			if existeMes == false {
+				imp := listaAnioa.Cabeza
+				for imp != nil {
+					if imp.Anio == anio {
+						nodoMes := MatrizDispersa.NodoMes{Mes: mes, MatrizMes: &MatrizDispersa.Matriz{Mes: mes, Anio: anio}}
+						imp.ListaMatricesMes.Insertar(&nodoMes)
+					}
+					imp = imp.Siguiente
 				}
 			}
-		imp = imp.Siguiente
-		}
-	}
-	if len(entrada) != 0 {
-		a := MatrizDispersa.NodoEntrada{}
-		entrada = *burbuja(entrada)
-		listaAnioa = *a.LlenarMatriz(entrada)
-		/*
-		imp := listaAnioa.Cabeza
-		for imp != nil {
-			impr := imp.ListaMatricesMes.Cabeza
-			for impr != nil{
-				impr.MatrizMes.Imprimir()
-				impr.MatrizMes.Imprimir2()
-				fmt.Println("++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++")
-				fmt.Println("++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++")
-				impr = impr.Siguiente
+			NombreTienda := matriz.Pedidos[i].NombreTienda
+			Departamento := matriz.Pedidos[i].Departamento
+			Calificacion := matriz.Pedidos[i].Calificacion
+			Productos := matriz.Pedidos[i].Productos
+			Tercero := posicionTercero(NombreTienda, Departamento,Calificacion, Indi, Departa)
+			for j := 0; j < len(Productos); j++ {
+				imp := Vector[Tercero].ListGA.Cabeza
+				for imp != nil {
+					if imp.NombreTienda == NombreTienda && imp.Calificacion == Calificacion {
+						a := inOrden(imp.Inventario.Raiz, Productos[j].Codigo)
+						if a == true {
+							impa := listaAnioa.Cabeza
+							for impa != nil {
+								if impa.Anio == anio {
+									impr := impa.ListaMatricesMes.Cabeza
+									for impr != nil {
+										if impr.Mes == mes {
+											nodoPedido := metodosMatriz.NuevoNodoPedido(fecha, NombreTienda, Departamento,Calificacion,Productos[j].Codigo)
+											impr.MatrizMes.Insertar(nodoPedido)
+										}
+										impr = impr.Siguiente
+									}
+								}
+								impa = impa.Siguiente
+							}
+						}
+					}
+					imp = imp.Siguiente
+				}
 			}
-			imp = imp.Siguiente
 		}
-		 */
+		if listaAnioa.Cabeza != nil {
+			listaAnioa = *metodosMatriz.BurbujaAnio(listaAnioa)
+			impa := listaAnioa.Cabeza
+			for impa != nil{
+				impa.ListaMatricesMes = metodosMatriz.BurbujaMes(*impa.ListaMatricesMes)
+				/*
+				impm := impa.ListaMatricesMes.Cabeza
+				for impm != nil{
+					impm.MatrizMes.Imprimir()
+					impm.MatrizMes.Imprimir2()
+					fmt.Println()
+					fmt.Println("---------------------------------------------------------------------------------------------------------")
+					fmt.Println("---------------------------------------------------------------------------------------------------------")
+					fmt.Println()
+
+					impm = impm.Siguiente
+				}*/
+				impa = impa.Siguiente
+			}
+		}
 	}
 	w.Header().Set("Content-type", "application/json")
 	if list.Cabeza == nil{
@@ -289,6 +328,167 @@ func guardarTodo (w http.ResponseWriter, r *http.Request){
 	json.NewEncoder(w).Encode(generalRE)
 }
 
+func carrito (w http.ResponseWriter, r *http.Request){
+	reqBody, err := ioutil.ReadAll(r.Body)
+	if err!=nil{
+		fmt.Fprint(w, "Error al insertar")
+	}
+	Indi := list.Indi()
+	Departa := list.Departa()
+	json.Unmarshal(reqBody, &carritojson)
+	for i := 0; i < len(carritojson.Pedidos); i++ {
+		a := carritojson.Pedidos[i]
+		fecha := a.Fecha
+		mes,_ := strconv.Atoi(strings.Split(fecha, "-")[1])
+		anio,_ := strconv.Atoi(strings.Split(fecha, "-")[2])
+		Tienda := a.NombreTienda
+		Departamento := a.Departamento
+		Calificacion := a.Calificacion
+		Estado := a.Estado
+		Productos := a.CodigoProductos
+		Tercero := posicionTercero(Tienda, Departamento, Calificacion, Indi, Departa)
+		for j := 0; j < len(Productos); j++ {
+			imp := Vector[Tercero].ListGA.Cabeza
+			CodigoProducto := Productos[j].Codigo
+			Cantidad := Productos[j].Cantidad
+			for imp != nil{
+				if imp.NombreTienda == Tienda && imp.Calificacion == Calificacion {
+					if Estado == "Vendido" {
+
+						existeAnio := EncontrarAnio(&listaAnioa, anio)
+						if existeAnio == false {
+							var listaMes MatrizDispersa.ListaMes
+							nodoAnio := MatrizDispersa.NodoAnio{Anio: anio, ListaMatricesMes: &listaMes}
+							listaAnioa.Insertar(&nodoAnio)
+
+						}
+						existeMes := EncontrarMes(&listaAnioa, anio, mes)
+						if existeMes == false {
+							imp := listaAnioa.Cabeza
+							for imp != nil {
+								if imp.Anio == anio {
+									nodoMes := MatrizDispersa.NodoMes{Mes: mes, MatrizMes: &MatrizDispersa.Matriz{Mes: mes, Anio: anio}}
+									imp.ListaMatricesMes.Insertar(&nodoMes)
+								}
+								imp = imp.Siguiente
+							}
+						}
+
+						arbolTienda := imp.Inventario.Raiz
+						Compras.DescontarProducto(arbolTienda, CodigoProducto, Cantidad)
+						existeProducto := inOrden(imp.Inventario.Raiz, Productos[j].Codigo)
+						if existeProducto == true {
+							impa := listaAnioa.Cabeza
+							for impa != nil {
+								if impa.Anio == anio {
+									impr := impa.ListaMatricesMes.Cabeza
+									for impr != nil {
+										if impr.Mes == mes {
+											nodoPedido := metodosMatriz.NuevoNodoPedido(fecha, Tienda, Departamento,Calificacion,Productos[j].Codigo)
+											impr.MatrizMes.Insertar(nodoPedido)
+										}
+										impr = impr.Siguiente
+									}
+								}
+								impa = impa.Siguiente
+							}
+						}
+
+					}
+				}
+				imp = imp.Siguiente
+			}
+		}
+	}
+	if listaAnioa.Cabeza != nil {
+		listaAnioa = *metodosMatriz.BurbujaAnio(listaAnioa)
+		impa := listaAnioa.Cabeza
+		for impa != nil{
+			impa.ListaMatricesMes = metodosMatriz.BurbujaMes(*impa.ListaMatricesMes)
+			impm := impa.ListaMatricesMes.Cabeza
+			for impm != nil{
+				/*
+				impm.MatrizMes.Imprimir()
+				impm.MatrizMes.Imprimir2()
+				fmt.Println()
+				fmt.Println("---------------------------------------------------------------------------------------------------------")
+				fmt.Println("---------------------------------------------------------------------------------------------------------")
+				fmt.Println()
+
+				 */
+				impm = impm.Siguiente
+			}
+			impa = impa.Siguiente
+		}
+	}
+}
+
+//----------------------------------------------------------------------------------------------------------------------
+
+func posicionTercero(Nombre string, Depa string, Calificacion int, Indices []string, Departamentos []string) int{
+	indice := strings.Split(Nombre, "")
+	posFila := Posicion(Indices, indice[0])
+	posColumna := Posicion(Departamentos, Depa)
+	Primero := posFila-0
+	Segundo := Primero * len(Departamentos) + posColumna
+	Tercero := Segundo*5+(Calificacion-1)
+	return Tercero
+}
+
+func Posicion(arreglo []string, busqueda string) int {
+	for indice, valor := range arreglo {
+		if valor == busqueda {
+			return indice
+		}
+	}
+	return -1
+}
+
+func inOrden(raiz *Inventario.NodoArbol, codigo int) bool{
+	if raiz!=nil {
+		if raiz.Codigo == codigo {
+			return true
+		}
+		a := inOrden(raiz.Izq, codigo)
+		if a == true {
+			return true
+		}
+		b := inOrden(raiz.Der, codigo)
+		if b == true {
+			return true
+		}
+	}
+	return false
+}
+
+func EncontrarAnio(lista *MatrizDispersa.ListaAnio, anio int) bool{
+	impa := lista.Cabeza
+	for impa != nil{
+		if impa.Anio == anio {
+			return true
+		}
+		impa = impa.Siguiente
+	}
+	return false
+}
+
+func EncontrarMes(lista *MatrizDispersa.ListaAnio, anio int, mes int) bool{
+	impa := lista.Cabeza
+	for impa != nil {
+		if impa.Anio == anio {
+			impr := impa.ListaMatricesMes.Cabeza
+			for impr != nil {
+				if impr.Mes == mes {
+					return true
+				}
+				impr = impr.Siguiente
+			}
+		}
+		impa = impa.Siguiente
+	}
+	return false
+}
+
 type GeneralR struct{
 	Inicio []DatosR `json:"Datos"`
 }
@@ -333,63 +533,4 @@ type busquedaTienda struct{
 	Contacto string `json:"Contacto"`
 	Calificacion int `json:"Calificacion"`
 	Logo string `json:"Logo"`
-}
-
-func posicionTercero(Nombre string, Depa string, Calificacion int, Indices []string, Departamentos []string) int{
-	indice := strings.Split(Nombre, "")
-	posFila := Posicion(Indices, indice[0])
-	posColumna := Posicion(Departamentos, Depa)
-	Primero := posFila-0
-	Segundo := Primero * len(Departamentos) + posColumna
-	Tercero := Segundo*5+(Calificacion-1)
-	return Tercero
-}
-
-func Posicion(arreglo []string, busqueda string) int {
-	for indice, valor := range arreglo {
-		if valor == busqueda {
-			return indice
-		}
-	}
-	return -1
-}
-
-func burbuja(listaNodos []MatrizDispersa.NodoEntrada) *[]MatrizDispersa.NodoEntrada{
-	var i,j int
-	var aux MatrizDispersa.NodoEntrada
-	for i = 0; i < len(listaNodos)-1; i++ {
-		for j = 0; j < len(listaNodos)-i-1 ; j++ {
-			siguiente := listaNodos[j+1]
-			anterior := listaNodos[j]
-			listaSig := strings.Split(siguiente.Fecha, "-")
-			listaAnt := strings.Split(anterior.Fecha, "-")
-			mesSig, _ := strconv.Atoi(listaSig[1])
-			anioSig, _ := strconv.Atoi(listaSig[2])
-			mesAnt, _ := strconv.Atoi(listaAnt[1])
-			anioAnt, _ := strconv.Atoi(listaAnt[2])
-			if mesSig+anioSig < mesAnt+anioAnt{
-				aux = listaNodos[j+1]
-				listaNodos[j+1] = listaNodos[j]
-				listaNodos[j] = aux
-			}
-		}
-	}
-	return &listaNodos
-}
-
-func inOrden(raiz *Inventario.NodoArbol, codigo int) bool{
-	if raiz!=nil {
-		if raiz.Codigo == codigo {
-			return true
-		}
-		a := inOrden(raiz.Izq, codigo)
-		if a == true {
-			return true
-		}
-		b := inOrden(raiz.Der, codigo)
-		if b == true {
-			return true
-		}
-	}
-	return false
 }

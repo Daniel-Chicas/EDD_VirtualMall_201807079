@@ -17,31 +17,31 @@ type NodoProductoViene struct {
 }
 
 type NodoCabeceraVertical struct{
-	Este interface{}
+	Departamento string
 	Norte interface{}
 	Sur interface{}
+	Este interface{}
 	Oeste interface{}
-	Departamento string
 }
 
 type NodoCabeceraHorizontal struct{
-	Este interface{}
+	Dia int
 	Norte interface{}
 	Sur interface{}
+	Este interface{}
 	Oeste interface{}
-	Dia int
 }
 
 type NodoPedido struct{
-	Este interface{}
-	Norte interface{}
-	Sur interface{}
-	Oeste interface{}
-	Fecha string
 	NombreTienda string
 	Departamento string
 	Calificacion int
 	CodigoProducto int
+	Norte interface{}
+	Sur interface{}
+	Este interface{}
+	Oeste interface{}
+	Fecha string
 }
 
 type NodoMes struct{
@@ -96,4 +96,70 @@ type NodoEntrada struct {
 	Departamento string
 	Calificacion int
 	ProductoCodigo int
+}
+
+func (M *Matriz) BurbujaMes(listaMeses ListaMes) *ListaMes {
+	var meses []NodoMes
+	imp := listaMeses.Cabeza
+	for imp != nil{
+		nodo := NodoMes{Mes: imp.Mes, MatrizMes: imp.MatrizMes}
+		meses = append(meses, nodo)
+		imp = imp.Siguiente
+	}
+	listaMeses = *burbuja(meses)
+	return &listaMeses
+}
+
+func burbuja(listaNodos []NodoMes) *ListaMes{
+	linkGA := &ListaMes{}
+	var i,j int
+	var aux NodoMes
+	for i = 0; i < len(listaNodos)-1; i++ {
+		for j = 0; j < len(listaNodos)-i-1 ; j++ {
+			siguiente := listaNodos[j+1]
+			anterior := listaNodos[j]
+			if siguiente.Mes < anterior.Mes{
+				aux = listaNodos[j+1]
+				listaNodos[j+1] = listaNodos[j]
+				listaNodos[j] = aux
+			}
+		}
+	}
+	for k := 0; k < len(listaNodos); k++ {
+		linkGA.Insertar(&listaNodos[k])
+	}
+	return linkGA
+}
+
+func (M *Matriz) BurbujaAnio(listaMeses ListaAnio) *ListaAnio {
+	var anios []NodoAnio
+	imp := listaMeses.Cabeza
+	for imp != nil{
+		nodo := NodoAnio{Anio: imp.Anio, ListaMatricesMes: imp.ListaMatricesMes}
+		anios = append(anios, nodo)
+		imp = imp.Siguiente
+	}
+	listaMeses = *burbujaA(anios)
+	return &listaMeses
+}
+
+func burbujaA(listaNodos []NodoAnio) *ListaAnio{
+	linkGA := &ListaAnio{}
+	var i,j int
+	var aux NodoAnio
+	for i = 0; i < len(listaNodos)-1; i++ {
+		for j = 0; j < len(listaNodos)-i-1 ; j++ {
+			siguiente := listaNodos[j+1]
+			anterior := listaNodos[j]
+			if siguiente.Anio < anterior.Anio{
+				aux = listaNodos[j+1]
+				listaNodos[j+1] = listaNodos[j]
+				listaNodos[j] = aux
+			}
+		}
+	}
+	for k := 0; k < len(listaNodos); k++ {
+		linkGA.Insertar(&listaNodos[k])
+	}
+	return linkGA
 }

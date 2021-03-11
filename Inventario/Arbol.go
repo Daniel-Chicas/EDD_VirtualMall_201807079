@@ -129,14 +129,12 @@ func insertar(ra *NodoArbol, nombre string, codigo int, descripcion string, prec
 				ra.Factor = -1
 				break
 			case -1:
-
 				n1 = ra.Izq
 				if n1.Factor==-1 {
 					ra = RotacionII(ra, n1)
 				}else{
 					ra = RotacionID(ra, n1)
 				}
-
 				*ya = false
 			}
 		}
