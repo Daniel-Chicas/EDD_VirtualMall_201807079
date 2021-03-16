@@ -1,7 +1,7 @@
 package Inventario
 
 type General struct {
-	Inventarios []Inventario `json:"Invetarios"`
+	Inventarios []Inventario `json:"Inventarios"`
 }
 
 type Inventario struct {
@@ -15,7 +15,7 @@ type NodoProducto struct {
 	NombreProducto string `json:"Nombre"`
 	Codigo int `json:"Codigo"`
 	Descripcion string `json:"Descripcion"`
-	PrecioP float64 `json:"Precio"`
+	PrecioP int `json:"Precio"`
 	Cantidad int `json:"Cantidad"`
 	Imagen string `json:"Imagen"`
 }
@@ -24,7 +24,7 @@ type NodoArbol struct{
 	NombreProducto string
 	Codigo int
 	Descripcion string
-	Precio float64
+	Precio int
 	Cantidad int
 	Imagen string
 	Factor int
@@ -41,7 +41,7 @@ func (this *Arbol) NuevoArbol() *Arbol{
 	return &Arbol{nil}
 }
 
-func NuevoNodo (nombre string, codigo int, descripcion string, precio float64, cantidad int, imagen string) *NodoArbol{
+func NuevoNodo (nombre string, codigo int, descripcion string, precio int, cantidad int, imagen string) *NodoArbol{
 	return &NodoArbol{nombre, codigo, descripcion, precio, cantidad, imagen, 0, nil, nil}
 }
 
@@ -111,7 +111,7 @@ func RotacionID(n *NodoArbol, n1 *NodoArbol) *NodoArbol{
 	return n2
 }
 
-func insertar(ra *NodoArbol, nombre string, codigo int, descripcion string, precio float64, cantidad int, imagen string, ya *bool) *NodoArbol{
+func insertar(ra *NodoArbol, nombre string, codigo int, descripcion string, precio int, cantidad int, imagen string, ya *bool) *NodoArbol{
 	var n1 *NodoArbol
 	if ra == nil {
 		ra = NuevoNodo(nombre, codigo, descripcion, precio, cantidad, imagen)
@@ -168,7 +168,7 @@ func insertar(ra *NodoArbol, nombre string, codigo int, descripcion string, prec
 	return ra
 }
 
-func (L *Arbol) Insertar(nombre string, codigo int, descripcion string, precio float64, cantidad int, imagen string){
+func (L *Arbol) Insertar(nombre string, codigo int, descripcion string, precio int, cantidad int, imagen string){
 	b := false
 	a := &b
 	L.Raiz = insertar(L.Raiz, nombre, codigo, descripcion, precio, cantidad, imagen, a)

@@ -1,8 +1,0 @@
-digraph Daniel9{
-node[shape=record];
-node45[color=gray, fillcolor=pink, label="{Indice: E|Television y video}|{Pos: 45|Calificación: 1}"];
-node46[color=blue, fillcolor=yellow, label="{Indice: E|Television y video}|{Pos: 46|Calificación: 2}"];
-node47[color=green, fillcolor=yellow, label="{Indice: E|Television y video}|{Pos: 47|Calificación: 3}"];
-node48[color=violet, fillcolor=orange, label="{Indice: E|Television y video}|{Pos: 48|Calificación: 4}"];
-node49[color=blue, fillcolor=red, label="{Indice: E|Television y video}|{Pos: 49|Calificación: 5}"];
-}

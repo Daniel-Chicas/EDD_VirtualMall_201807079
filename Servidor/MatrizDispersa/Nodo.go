@@ -36,6 +36,7 @@ type NodoPedido struct{
 	NombreTienda string
 	Departamento string
 	Calificacion int
+	NombreProducto string
 	CodigoProducto int
 	Norte interface{}
 	Sur interface{}

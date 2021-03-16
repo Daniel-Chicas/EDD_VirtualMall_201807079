@@ -1,8 +1,0 @@
-digraph Daniel6{
-node[shape=record];
-node30[color=violet, fillcolor=orange, label="{Indice: D|Seguridad y vigilancia}|{Pos: 30|Calificación: 1}"];
-node31[color=blue, fillcolor=red, label="{Indice: D|Seguridad y vigilancia}|{Pos: 31|Calificación: 2}"];
-node32[color=gray, fillcolor=violet, label="{Indice: D|Seguridad y vigilancia}|{Pos: 32|Calificación: 3}"];
-node33[color=orange, fillcolor=brown, label="{Indice: D|Seguridad y vigilancia}|{Pos: 33|Calificación: 4}"];
-node34[color=gray, fillcolor=red, label="{Indice: D|Seguridad y vigilancia}|{Pos: 34|Calificación: 5}"];
-}

@@ -1,12 +1,12 @@
 package main
 
 import (
+	"./Compras"
 	"./Inventario"
 	"./Listas"
 	"./MatrizDispersa"
 	"./Reportes"
 	"./TiendaEspecifica"
-	"./Compras"
 	"encoding/json"
 	"fmt"
 	"github.com/gorilla/mux"
@@ -33,6 +33,8 @@ var matriz MatrizDispersa.General
 var metodosMatriz MatrizDispersa.Matriz
 var listaAnioa MatrizDispersa.ListaAnio
 var carritojson Compras.General
+var arregloProductos []Inventario.NodoArbol
+
 
 func main(){
 	router := mux.NewRouter()
@@ -41,10 +43,25 @@ func main(){
 	router.HandleFunc("/getArreglo", arreglo).Methods("Get")
 	router.HandleFunc("/TiendaEspecifica", tiendaEspecifica).Methods("Post")
 	router.HandleFunc("/id/{numero}", busquedaposicion).Methods("Get")
+	router.HandleFunc("/Tienda/{infoTienda}", busquedaProductosTienda).Methods("Get")
 	router.HandleFunc("/Eliminar", eliminarTienda).Methods("Delete")
 	router.HandleFunc("/guardar", guardarTodo).Methods("Get")
 	router.HandleFunc("/carritoCompras", carrito).Methods("Post")
+
 	log.Fatal(http.ListenAndServe(":3000", router))
+}
+
+func indexHandler(w http.ResponseWriter, req *http.Request) {
+	setupResponse(&w, req)
+	if (*req).Method == "OPTIONS" {
+		return
+	}
+}
+
+func setupResponse(w *http.ResponseWriter, req *http.Request) {
+	(*w).Header().Set("Access-Control-Allow-Origin", "*")
+	(*w).Header().Set("Access-Control-Allow-Methods", "POST, GET, OPTIONS, PUT, DELETE")
+	(*w).Header().Set("Access-Control-Allow-Headers", "Accept, Content-Type, Content-Length, Accept-Encoding, X-CSRF-Token, Authorization")
 }
 
 func inicio(w http.ResponseWriter, r *http.Request){
@@ -52,10 +69,19 @@ func inicio(w http.ResponseWriter, r *http.Request){
 }
 
 func cargar(w http.ResponseWriter, r *http.Request){
+	indexHandler(w, r)
 	reqBody, err := ioutil.ReadAll(r.Body)
 	if err!=nil{
 		fmt.Fprint(w, "Error al insertar")
 	}
+	for reqBody[0] != 123{
+		reqBody = remove(reqBody, 0)
+	}
+	for reqBody[len(reqBody)-1] != 125{
+		reqBody = remove(reqBody, len(reqBody)-1)
+	}
+
+
 	json.Unmarshal(reqBody, &ms)
 	for i := 0; i < len(ms.Inicio); i++ {
 		a := ms.Inicio[i]
@@ -98,7 +124,7 @@ func cargar(w http.ResponseWriter, r *http.Request){
 						nodoArbol.NombreProducto = a.NombreProducto
 						nodoArbol.Codigo = a.Codigo
 						nodoArbol.Descripcion = a.Descripcion
-						nodoArbol.Precio = a.PrecioP
+						nodoArbol.Precio =  a.PrecioP
 						nodoArbol.Cantidad = a.Cantidad
 						nodoArbol.Imagen = a.Imagen
 						arbolPosicion.Insertar(nodoArbol.NombreProducto, nodoArbol.Codigo, nodoArbol.Descripcion, nodoArbol.Precio, nodoArbol.Cantidad, nodoArbol.Imagen)
@@ -114,24 +140,6 @@ func cargar(w http.ResponseWriter, r *http.Request){
 			fecha := matriz.Pedidos[i].Fecha
 			mes,_ := strconv.Atoi(strings.Split(fecha, "-")[1])
 			anio,_ := strconv.Atoi(strings.Split(fecha, "-")[2])
-			existeAnio := EncontrarAnio(&listaAnioa, anio)
-			if existeAnio == false {
-				var listaMes MatrizDispersa.ListaMes
-				nodoAnio := MatrizDispersa.NodoAnio{Anio: anio, ListaMatricesMes: &listaMes}
-				listaAnioa.Insertar(&nodoAnio)
-
-			}
-			existeMes := EncontrarMes(&listaAnioa, anio, mes)
-			if existeMes == false {
-				imp := listaAnioa.Cabeza
-				for imp != nil {
-					if imp.Anio == anio {
-						nodoMes := MatrizDispersa.NodoMes{Mes: mes, MatrizMes: &MatrizDispersa.Matriz{Mes: mes, Anio: anio}}
-						imp.ListaMatricesMes.Insertar(&nodoMes)
-					}
-					imp = imp.Siguiente
-				}
-			}
 			NombreTienda := matriz.Pedidos[i].NombreTienda
 			Departamento := matriz.Pedidos[i].Departamento
 			Calificacion := matriz.Pedidos[i].Calificacion
@@ -143,13 +151,34 @@ func cargar(w http.ResponseWriter, r *http.Request){
 					if imp.NombreTienda == NombreTienda && imp.Calificacion == Calificacion {
 						a := inOrden(imp.Inventario.Raiz, Productos[j].Codigo)
 						if a == true {
+
+							existeAnio := EncontrarAnio(&listaAnioa, anio)
+							if existeAnio == false {
+								var listaMes MatrizDispersa.ListaMes
+								nodoAnio := MatrizDispersa.NodoAnio{Anio: anio, ListaMatricesMes: &listaMes}
+								listaAnioa.Insertar(&nodoAnio)
+
+							}
+							existeMes := EncontrarMes(&listaAnioa, anio, mes)
+							if existeMes == false {
+								impm := listaAnioa.Cabeza
+								for impm != nil {
+									if impm.Anio == anio {
+										nodoMes := MatrizDispersa.NodoMes{Mes: mes, MatrizMes: &MatrizDispersa.Matriz{Mes: mes, Anio: anio}}
+										impm.ListaMatricesMes.Insertar(&nodoMes)
+									}
+									impm = impm.Siguiente
+								}
+							}
+
 							impa := listaAnioa.Cabeza
 							for impa != nil {
 								if impa.Anio == anio {
 									impr := impa.ListaMatricesMes.Cabeza
 									for impr != nil {
 										if impr.Mes == mes {
-											nodoPedido := metodosMatriz.NuevoNodoPedido(fecha, NombreTienda, Departamento,Calificacion,Productos[j].Codigo)
+											nombreProducto := inOrdenNombre(imp.Inventario.Raiz, Productos[j].Codigo)
+											nodoPedido := metodosMatriz.NuevoNodoPedido(fecha, NombreTienda, Departamento,Calificacion, nombreProducto,Productos[j].Codigo)
 											impr.MatrizMes.Insertar(nodoPedido)
 										}
 										impr = impr.Siguiente
@@ -168,6 +197,7 @@ func cargar(w http.ResponseWriter, r *http.Request){
 			impa := listaAnioa.Cabeza
 			for impa != nil{
 				impa.ListaMatricesMes = metodosMatriz.BurbujaMes(*impa.ListaMatricesMes)
+				fmt.Println("----------------------------------------------------------------------------------")
 				impa = impa.Siguiente
 			}
 		}
@@ -175,7 +205,7 @@ func cargar(w http.ResponseWriter, r *http.Request){
 	w.Header().Set("Content-type", "application/json")
 	if list.Cabeza == nil{
 		mensaje := Mensaje{"NO SE HA PODIDO CARGAR EL ARCHIVO"}
-		w.WriteHeader(http.StatusCreated)
+		w.WriteHeader(http.StatusFailedDependency)
 		json.Unmarshal(reqBody, &ms)
 		json.NewEncoder(w).Encode(mensaje)
 	}else{
@@ -187,6 +217,7 @@ func cargar(w http.ResponseWriter, r *http.Request){
 }
 
 func arreglo(w http.ResponseWriter, r *http.Request){
+	indexHandler(w, r)
 	reqBody, err := ioutil.ReadAll(r.Body)
 	if err == nil {
 		mensaje := Mensaje{reportes.Arreglo(Vector)}
@@ -197,6 +228,8 @@ func arreglo(w http.ResponseWriter, r *http.Request){
 }
 
 func tiendaEspecifica (w http.ResponseWriter, r *http.Request){
+	indexHandler(w, r)
+
 	Indi := list.Indi()
 	Departa := list.Departa()
 	reqBody, err := ioutil.ReadAll(r.Body)
@@ -231,6 +264,7 @@ func tiendaEspecifica (w http.ResponseWriter, r *http.Request){
 }
 
 func busquedaposicion (w http.ResponseWriter, r *http.Request){
+	indexHandler(w, r)
 	vars := mux.Vars(r)
 	var busca []busquedaTienda
 	posicion,_ := strconv.Atoi(vars["numero"])
@@ -263,7 +297,38 @@ func busquedaposicion (w http.ResponseWriter, r *http.Request){
 	}
 }
 
+func busquedaProductosTienda (w http.ResponseWriter, r *http.Request){
+	indexHandler(w, r)
+	vars := mux.Vars(r)
+	indi := list.Indi()
+	departa := list.Departa()
+	var nodosReg []NodoProductoReg
+	var InventarioTienda []InventarioReg
+	datos := strings.Split(vars["infoTienda"], "&")
+	posicion,_ := strconv.Atoi(datos[2])
+	Tercero := posicionTercero(datos[1], datos[0], posicion, indi, departa)
+		imp := Vector[Tercero].ListGA.Cabeza
+		for imp != nil {
+			if imp.NombreTienda == datos[1]{
+				a := imp.Inventario
+				arregloProductos = nil
+				inOrdenNombreRegresa(a.Raiz)
+				for i := 0; i < len(arregloProductos); i++ {
+					n := arregloProductos[i]
+					nodosReg = append(nodosReg, NodoProductoReg{NombreProducto: n.NombreProducto, Codigo: n.Codigo, Descripcion: n.Descripcion, PrecioP: n.Precio, Cantidad: n.Cantidad, Imagen: n.Imagen})
+				}
+				nodoTienda := InventarioReg{NombreTienda: imp.NombreTienda, Departamento: Vector[posicion].Departamento, Calificacion: imp.Calificacion, Productos: nodosReg}
+				InventarioTienda = append(InventarioTienda, nodoTienda)
+			}
+			imp = imp.Siguiente
+		}
+	w.WriteHeader(http.StatusOK)
+	json.NewEncoder(w).Encode(InventarioTienda)
+}
+
+
 func eliminarTienda (w http.ResponseWriter, r * http.Request) {
+	indexHandler(w, r)
 	Indi := list.Indi()
 	Departa := list.Departa()
 	reqBody, err := ioutil.ReadAll(r.Body)
@@ -283,6 +348,7 @@ func eliminarTienda (w http.ResponseWriter, r * http.Request) {
 }
 
 func guardarTodo (w http.ResponseWriter, r *http.Request){
+	indexHandler(w, r)
 	var tiendasRE []TiendaR
 	var DepartamentosRE []DepartamentoR
 	var datosRE []DatosR
@@ -297,24 +363,31 @@ func guardarTodo (w http.ResponseWriter, r *http.Request){
 						if vector[i].Departamento == departa[k] {
 							imp := vector[i].ListGA.Cabeza
 							for imp != nil {
-								tiendasRE = append(tiendasRE, TiendaR{Nombre: imp.NombreTienda, Descripcion: imp.Descripcion, Contacto: imp.Contacto, Calificacion: imp.Calificacion, Logo: imp.Logo})
+								tiendasRE = append(tiendasRE, TiendaR{Nombre: imp.NombreTienda, Descripcion: imp.Descripcion, Contacto: imp.Contacto, Calificacion: imp.Calificacion, Logo: imp.Logo, PosicionVector: i})
 								imp = imp.Siguiente
 							}
 						}
 					}
 				}
-				DepartamentosRE = append(DepartamentosRE, DepartamentoR{NombreDepa: departa[k], Tiendas: tiendasRE})
+				if tiendasRE != nil {
+					DepartamentosRE = append(DepartamentosRE, DepartamentoR{NombreDepa: departa[k], Tiendas: tiendasRE})
+				}
 				tiendasRE = nil
 			}
-			datosRE = append(datosRE, DatosR{Indice: indi[j], Departamentos: DepartamentosRE})
+			if DepartamentosRE != nil{
+				datosRE = append(datosRE, DatosR{Indice: indi[j], Departamentos: DepartamentosRE})
+			}
 			DepartamentosRE = nil
 		}
 	generalRE = GeneralR{Inicio: datosRE}
-	w.WriteHeader(http.StatusFound)
+
+	w.WriteHeader(http.StatusOK)
 	json.NewEncoder(w).Encode(generalRE)
+
 }
 
 func carrito (w http.ResponseWriter, r *http.Request){
+	indexHandler(w, r)
 	reqBody, err := ioutil.ReadAll(r.Body)
 	if err!=nil{
 		fmt.Fprint(w, "Error al insertar")
@@ -370,7 +443,8 @@ func carrito (w http.ResponseWriter, r *http.Request){
 									impr := impa.ListaMatricesMes.Cabeza
 									for impr != nil {
 										if impr.Mes == mes {
-											nodoPedido := metodosMatriz.NuevoNodoPedido(fecha, Tienda, Departamento,Calificacion,Productos[j].Codigo)
+											nombreProducto := inOrdenNombre(imp.Inventario.Raiz, Productos[j].Codigo)
+											nodoPedido := metodosMatriz.NuevoNodoPedido(fecha, Tienda, Departamento,Calificacion, nombreProducto,Productos[j].Codigo)
 											impr.MatrizMes.Insertar(nodoPedido)
 										}
 										impr = impr.Siguiente
@@ -399,7 +473,9 @@ func carrito (w http.ResponseWriter, r *http.Request){
 				fmt.Println("---------------------------------------------------------------------------------------------------------")
 				fmt.Println("---------------------------------------------------------------------------------------------------------")
 				fmt.Println()
-
+				impm.MatrizMes.DibujarMatriz()
+				/*
+				 */
 				impm = impm.Siguiente
 			}
 			impa = impa.Siguiente
@@ -411,6 +487,10 @@ func carrito (w http.ResponseWriter, r *http.Request){
 }
 
 //----------------------------------------------------------------------------------------------------------------------
+
+func remove(slice []byte, s int) []byte {
+	return append(slice[:s], slice[s+1:]...)
+}
 
 func posicionTercero(Nombre string, Depa string, Calificacion int, Indices []string, Departamentos []string) int{
 	indice := strings.Split(Nombre, "")
@@ -476,6 +556,32 @@ func EncontrarMes(lista *MatrizDispersa.ListaAnio, anio int, mes int) bool{
 	return false
 }
 
+func inOrdenNombre(raiz *Inventario.NodoArbol, codigo int) string{
+	if raiz!=nil {
+		if raiz.Codigo == codigo {
+			return raiz.NombreProducto
+		}
+		a := inOrdenNombre(raiz.Izq, codigo)
+		if a != "" {
+			return a
+		}
+		b := inOrdenNombre(raiz.Der, codigo)
+		if b != "" {
+			return b
+		}
+	}
+	return ""
+}
+
+func inOrdenNombreRegresa(raiz *Inventario.NodoArbol){
+	if raiz!=nil {
+		inOrdenNombreRegresa(raiz.Izq)
+		nodoIng := Inventario.NodoArbol{NombreProducto: raiz.NombreProducto, Codigo: raiz.Codigo, Factor: raiz.Factor, Cantidad: raiz.Cantidad, Descripcion: raiz.Descripcion, Imagen: raiz.Imagen, Precio: raiz.Precio}
+		arregloProductos = append(arregloProductos, nodoIng)
+		inOrdenNombreRegresa(raiz.Der)
+	}
+}
+
 type GeneralR struct{
 	Inicio []DatosR `json:"Datos"`
 }
@@ -496,6 +602,7 @@ type TiendaR struct{
 	Contacto string `json:"Contacto"`
 	Calificacion int `json:"Calificacion"`
 	Logo string `json:"Logo"`
+	PosicionVector int
 }
 
 type Mensaje struct {
@@ -520,4 +627,25 @@ type busquedaTienda struct{
 	Contacto string `json:"Contacto"`
 	Calificacion int `json:"Calificacion"`
 	Logo string `json:"Logo"`
+}
+
+
+type GeneralReg struct {
+	Inventarios []InventarioReg `json:"Invetarios"`
+}
+
+type InventarioReg struct {
+	NombreTienda string `json:"Tienda"`
+	Departamento string `json:"Departamento"`
+	Calificacion int `json:"Calificacion"`
+	Productos []NodoProductoReg `json:"Productos"`
+}
+
+type NodoProductoReg struct {
+	NombreProducto string `json:"Nombre"`
+	Codigo int `json:"Codigo"`
+	Descripcion string `json:"Descripcion"`
+	PrecioP int `json:"Precio"`
+	Cantidad int `json:"Cantidad"`
+	Imagen string `json:"Imagen"`
 }

@@ -2,6 +2,7 @@ package MatrizDispersa
 
 import (
 	"fmt"
+	"math/rand"
 	"reflect"
 	"strconv"
 	"strings"
@@ -226,7 +227,7 @@ func (M *Matriz) Imprimir(){
 		fmt.Print(aux.(*NodoCabeceraVertical).Departamento, "---------------->")
 		temp := aux.(*NodoCabeceraVertical).Este
 		for temp != nil{
-			fmt.Printf("%v, %v, %v, %v----->", temp.(*NodoPedido).Departamento, temp.(*NodoPedido).NombreTienda, temp.(*NodoPedido).Fecha, temp.(*NodoPedido).CodigoProducto)
+			fmt.Printf("%v, %v,%v, %v, %v----->", temp.(*NodoPedido).Departamento, temp.(*NodoPedido).NombreTienda, temp.(*NodoPedido).Fecha, temp.(*NodoPedido).NombreProducto, temp.(*NodoPedido).CodigoProducto)
 			temp = temp.(*NodoPedido).Este
 		}
 		fmt.Println("\n")
@@ -240,10 +241,10 @@ func (M *Matriz) Imprimir2(){
 		fmt.Print(aux.(*NodoCabeceraHorizontal).Dia, "---------------->")
 		temp := aux.(*NodoCabeceraHorizontal).Sur
 		for temp != nil{
-			fmt.Printf("%v, %v, %v, %v----->", temp.(*NodoPedido).Departamento, temp.(*NodoPedido).NombreTienda, temp.(*NodoPedido).Fecha, temp.(*NodoPedido).CodigoProducto)
+			fmt.Printf("%v, %v, %v, %v, %v----->", temp.(*NodoPedido).Departamento, temp.(*NodoPedido).NombreTienda, temp.(*NodoPedido).Fecha, temp.(*NodoPedido).NombreProducto, temp.(*NodoPedido).CodigoProducto)
 			temp = temp.(*NodoPedido).Sur
 		}
-		fmt.Println("\n")
+		fmt.Println("")
 		aux = aux.(*NodoCabeceraHorizontal).Este
 	}
 }
@@ -252,6 +253,110 @@ func (this *Matriz) NuevaMatriz(mes int, anio int) *Matriz{
 	return &Matriz{mes, anio, nil, nil}
 }
 
-func (this *Matriz) NuevoNodoPedido (fecha string, tienda string, departamento string, calificacion int, codigoProducto int) *NodoPedido{
-	return &NodoPedido{Norte: nil, Oeste: nil, Sur: nil, Este: nil, Fecha: fecha, NombreTienda: tienda, Departamento: departamento, Calificacion: calificacion, CodigoProducto: codigoProducto}
+func (this *Matriz) NuevoNodoPedido (fecha string, tienda string, departamento string, calificacion int, nombreProducto string, codigoProducto int) *NodoPedido{
+	return &NodoPedido{Norte: nil, Oeste: nil, Sur: nil, Este: nil, Fecha: fecha, NombreTienda: tienda, Departamento: departamento, Calificacion: calificacion, NombreProducto: nombreProducto, CodigoProducto: codigoProducto}
+}
+
+func (M *Matriz) DibujarMatriz(){
+	colores := [10]string{"gray", "red", "blue", "yellow", "green", "orange", "brown", "pink", "violet", "purple"}
+	var cadena strings.Builder
+	fmt.Fprintf(&cadena, "digraph Daniel"+strconv.Itoa(M.Anio)+""+strconv.Itoa(M.Mes)+"{\n")
+	fmt.Fprintf(&cadena, "node[shape=box];\n")
+	fmt.Fprintf(&cadena, "MT[label=\"Matriz\", style = filled, color="+colores[rand.Intn(9)]+", group = 1];\n")
+	fmt.Fprintf(&cadena, "e0[shape = point, width = 0];\n")
+	fmt.Fprintf(&cadena, "e0[shape = point, width = 0];\n")
+	var auxVertical interface{} = M.CabeceraV
+	for auxVertical != nil{
+		fmt.Fprintf(&cadena, "node%v[color="+colores[rand.Intn(9)]+", label=\"%v\", group = 1];\n", &(auxVertical.(*NodoCabeceraVertical).Departamento), auxVertical.(*NodoCabeceraVertical).Departamento )
+		if auxVertical.(*NodoCabeceraVertical).Norte == nil {
+			fmt.Fprintf(&cadena, "MT->node%p;\n", &(auxVertical.(*NodoCabeceraVertical).Departamento))
+			if auxVertical.(*NodoCabeceraVertical).Sur != nil{
+				fmt.Fprintf(&cadena, "node%p->node%p;\n", &(auxVertical.(*NodoCabeceraVertical).Departamento), &(auxVertical.(*NodoCabeceraVertical).Sur.(*NodoCabeceraVertical).Departamento))
+			}
+		}else if auxVertical.(*NodoCabeceraVertical).Sur != nil{
+			fmt.Fprintf(&cadena, "node%p->node%p;\n", &(auxVertical.(*NodoCabeceraVertical).Departamento), &(auxVertical.(*NodoCabeceraVertical).Norte.(*NodoCabeceraVertical).Departamento))
+			fmt.Fprintf(&cadena, "node%p->node%p;\n", &(auxVertical.(*NodoCabeceraVertical).Departamento), &(auxVertical.(*NodoCabeceraVertical).Sur.(*NodoCabeceraVertical).Departamento))
+		}else if auxVertical.(*NodoCabeceraVertical).Sur == nil{
+			fmt.Fprintf(&cadena, "node%p->node%p;\n", &(auxVertical.(*NodoCabeceraVertical).Departamento), &(auxVertical.(*NodoCabeceraVertical).Norte.(*NodoCabeceraVertical).Departamento))
+		}
+		auxVertical = auxVertical.(*NodoCabeceraVertical).Sur
+	}
+	var auxHorizontal interface{} = M.CabeceraH
+	var contador = 2
+	var s strings.Builder
+	fmt.Fprintf(&s, "{rank = same;MT;")
+	for auxHorizontal != nil{
+		fmt.Fprintf(&cadena, "node%v[color="+colores[rand.Intn(9)]+", label=\"%v\", group = "+strconv.Itoa(contador)+"];\n", &(auxHorizontal.(*NodoCabeceraHorizontal).Dia), auxHorizontal.(*NodoCabeceraHorizontal).Dia )
+		if auxHorizontal.(*NodoCabeceraHorizontal).Oeste == nil {
+			fmt.Fprintf(&cadena, "MT->node%p;\n", &(auxHorizontal.(*NodoCabeceraHorizontal).Dia))
+			if auxHorizontal.(*NodoCabeceraHorizontal).Este != nil{
+				fmt.Fprintf(&cadena, "node%p->node%p;\n", &(auxHorizontal.(*NodoCabeceraHorizontal).Dia), &(auxHorizontal.(*NodoCabeceraHorizontal).Este.(*NodoCabeceraHorizontal).Dia))
+			}
+		}else if auxHorizontal.(*NodoCabeceraHorizontal).Este != nil{
+			fmt.Fprintf(&cadena, "node%p->node%p;\n", &(auxHorizontal.(*NodoCabeceraHorizontal).Dia), &(auxHorizontal.(*NodoCabeceraHorizontal).Oeste.(*NodoCabeceraHorizontal).Dia))
+			fmt.Fprintf(&cadena, "node%p->node%p;\n", &(auxHorizontal.(*NodoCabeceraHorizontal).Dia), &(auxHorizontal.(*NodoCabeceraHorizontal).Este.(*NodoCabeceraHorizontal).Dia))
+		}else if auxHorizontal.(*NodoCabeceraHorizontal).Este == nil{
+			fmt.Fprintf(&cadena, "node%p->node%p;\n", &(auxHorizontal.(*NodoCabeceraHorizontal).Dia), &(auxHorizontal.(*NodoCabeceraHorizontal).Oeste.(*NodoCabeceraHorizontal).Dia))
+		}
+		fmt.Fprintf(&s, "node%v;",&(auxHorizontal.(*NodoCabeceraHorizontal).Dia))
+		auxHorizontal = auxHorizontal.(*NodoCabeceraHorizontal).Este
+		contador++
+	}
+	fmt.Fprintf(&s, "}")
+	fmt.Fprintf(&cadena, s.String()+"\n")
+
+	var auxV interface{} = M.CabeceraV
+	for auxV != nil{
+		var d strings.Builder
+		temp := auxV.(*NodoCabeceraVertical).Este
+		fmt.Fprintf(&d, "{rank = same;node%v;", &(auxV.(*NodoCabeceraVertical).Departamento))
+		for temp != nil{
+			if temp.(*NodoPedido).Oeste == auxV.(*NodoCabeceraVertical) {
+				fmt.Fprintf(&cadena, "node%p->node%p;\n", &(auxV.(*NodoCabeceraVertical).Departamento), &(temp.(*NodoPedido).CodigoProducto))
+				//if temp.(*NodoPedido).Este != nil {
+				//	fmt.Fprintf(&cadena, "node%p->node%p;\n", &(temp.(*NodoPedido).CodigoProducto), &(temp.(*NodoPedido).Este.(*NodoPedido).CodigoProducto))
+				//}
+			}
+			/*else if temp.(*NodoPedido).Este != nil{
+				fmt.Fprintf(&cadena, "node%p->node%p;\n", &(temp.(*NodoPedido).CodigoProducto), &(temp.(*NodoPedido).Oeste.(*NodoPedido).CodigoProducto))
+				fmt.Fprintf(&cadena, "node%p->node%p;\n", &(temp.(*NodoPedido).CodigoProducto), &(temp.(*NodoPedido).Este.(*NodoPedido).CodigoProducto))
+			}else if temp.(*NodoPedido).Este == nil{
+				fmt.Fprintf(&cadena, "node%p->node%p;\n", &(temp.(*NodoPedido).CodigoProducto), &(temp.(*NodoPedido).Oeste.(*NodoPedido).CodigoProducto))
+			}
+			 */
+			fmt.Fprintf(&d, "node%v;",&(temp.(*NodoPedido).CodigoProducto))
+			temp = temp.(*NodoPedido).Este
+		}
+		fmt.Fprintf(&d, "}")
+		fmt.Fprintf(&cadena, d.String()+"\n")
+		auxV = auxV.(*NodoCabeceraVertical).Sur
+	}
+
+	var aux interface{} = M.CabeceraH
+	contador = 2
+	for aux != nil{
+		temp := aux.(*NodoCabeceraHorizontal).Sur
+		for temp != nil{
+			fmt.Fprintf(&cadena, "node%v[color="+colores[rand.Intn(9)]+", label=\"%v\", group ="+strconv.Itoa(contador)+"];\n", &(temp.(*NodoPedido).CodigoProducto), temp.(*NodoPedido).NombreProducto )
+			if temp.(*NodoPedido).Norte == aux.(*NodoCabeceraHorizontal) {
+				fmt.Fprintf(&cadena, "node%p->node%p;\n", &(aux.(*NodoCabeceraHorizontal).Dia), &(temp.(*NodoPedido).CodigoProducto))
+				if temp.(*NodoPedido).Sur != nil {
+					fmt.Fprintf(&cadena, "node%p->node%p;\n", &(temp.(*NodoPedido).CodigoProducto), &(temp.(*NodoPedido).Sur.(*NodoPedido).CodigoProducto))
+				}
+			}else if temp.(*NodoPedido).Sur != nil{
+				fmt.Fprintf(&cadena, "node%p->node%p;\n", &(temp.(*NodoPedido).CodigoProducto), &(temp.(*NodoPedido).Norte.(*NodoPedido).CodigoProducto))
+				fmt.Fprintf(&cadena, "node%p->node%p;\n", &(temp.(*NodoPedido).CodigoProducto), &(temp.(*NodoPedido).Sur.(*NodoPedido).CodigoProducto))
+			}else if temp.(*NodoPedido).Sur == nil{
+				fmt.Fprintf(&cadena, "node%p->node%p;\n", &(temp.(*NodoPedido).CodigoProducto), &(temp.(*NodoPedido).Norte.(*NodoPedido).CodigoProducto))
+			}
+			temp = temp.(*NodoPedido).Sur
+		}
+		contador++
+		aux = aux.(*NodoCabeceraHorizontal).Este
+	}
+
+
+
+	fmt.Fprintf(&cadena, "}\n")
+	fmt.Println(cadena.String())
 }
