@@ -1,0 +1,8 @@
+digraph Daniel31{
+node[shape=record];
+node155[color=brown, fillcolor=orange, label="{Indice: P|Television y video}|{Pos: 155|Calificación: 1}"];
+node156[color=green, fillcolor=pink, label="{Indice: P|Television y video}|{Pos: 156|Calificación: 2}"];
+node157[color=gray, fillcolor=pink, label="{Indice: P|Television y video}|{Pos: 157|Calificación: 3}"];
+node158[color=orange, fillcolor=red, label="{Indice: P|Television y video}|{Pos: 158|Calificación: 4}"];
+node159[color=red, fillcolor=brown, label="{Indice: P|Television y video}|{Pos: 159|Calificación: 5}"];
+}

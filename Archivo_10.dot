@@ -1,0 +1,8 @@
+digraph Daniel10{
+node[shape=record];
+node50[color=green, fillcolor=yellow, label="{Indice: F|Seguridad y vigilancia}|{Pos: 50|Calificación: 1}"];
+node51[color=red, fillcolor=brown, label="{Indice: F|Seguridad y vigilancia}|{Pos: 51|Calificación: 2}"];
+node52[color=red, fillcolor=green, label="{Indice: F|Seguridad y vigilancia}|{Pos: 52|Calificación: 3}"];
+node53[color=violet, fillcolor=gray, label="{Indice: F|Seguridad y vigilancia}|{Pos: 53|Calificación: 4}"];
+node54[color=green, fillcolor=orange, label="{Indice: F|Seguridad y vigilancia}|{Pos: 54|Calificación: 5}"];
+}

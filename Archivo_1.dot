@@ -1,0 +1,10 @@
+digraph Daniel1{
+node[shape=record];
+node5[color=blue, fillcolor=green, label="{Indice: A|Television y video}|{Pos: 5|Calificación: 1}"];
+node0xc00018a180[color=violet, label="{Agosto, Hernández y Ojeda Asociados|984-358-180}"];
+node5->node0xc00018a180;
+node6[color=gray, fillcolor=blue, label="{Indice: A|Television y video}|{Pos: 6|Calificación: 2}"];
+node7[color=blue, fillcolor=orange, label="{Indice: A|Television y video}|{Pos: 7|Calificación: 3}"];
+node8[color=blue, fillcolor=gray, label="{Indice: A|Television y video}|{Pos: 8|Calificación: 4}"];
+node9[color=orange, fillcolor=red, label="{Indice: A|Television y video}|{Pos: 9|Calificación: 5}"];
+}
