@@ -38,6 +38,8 @@ type NodoPedido struct{
 	Calificacion int
 	NombreProducto string
 	CodigoProducto int
+	Cantidad int
+	Dia string
 	Norte interface{}
 	Sur interface{}
 	Este interface{}

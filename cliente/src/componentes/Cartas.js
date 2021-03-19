@@ -1,8 +1,15 @@
 import React from 'react'
-import ProductosTienda from './ProductosTienda'
 import '../css/Carta.css'
+const axios=require('axios').default
 
 function Cartas(props) {
+    const ver = async()=>{
+        var cadena = props.Departamento+"&"+props.nombre+"&"+props.calificacion
+        const data = await  axios.get('http://localhost:3000/Arbol/'+cadena)
+        console.log(data.data)
+        window.location="http://localhost:8001/VerArbol"
+    }
+
     return (
         <div className="column carta">
             <div className="ui card">
@@ -20,6 +27,9 @@ function Cartas(props) {
                         window.location="http://localhost:8001/Productos/"+props.Departamento+"&"+props.nombre+"&"+props.calificacion; 
                         console.log(props.id)}}>
                         Ver Productos
+                    </div>
+                    <div className="ui basic blue button center fluid" onClick={ver}>
+                        Ver árbol de la tienda
                     </div>
                 </div>
                 <div className="extra content">

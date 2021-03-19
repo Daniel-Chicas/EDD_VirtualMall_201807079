@@ -1,0 +1,21 @@
+.ImportList {
+    background: #22e06bc7;
+    background: -webkit-linear-gradient(to right, #387c77, #22e06bc7);
+    background: linear-gradient(to right, #387c77, #22e06bc7);
+    height: auto;
+}
+
+.mosaico {
+    margin-left: 50px !important;
+    margin-right: 50px !important;
+    height: auto;
+}
+
+.carga{
+    height: 100vh;
+}
+
+#General{
+    border: none !important;
+    background-color:  transparent!important;
+}

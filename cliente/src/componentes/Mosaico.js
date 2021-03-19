@@ -1,10 +1,10 @@
 import React from 'react'
 import Carta from './Cartas'
-
+import '../css/Mosaico.css'
 
 function Mosaico(props) {
     return (
-        <div className="ui segment mosaico container">
+            <div className="ui segment mosaico container">
             <div className="ui four column link cards row">
                 {props.productos.map((c, index) => (
                     c.Departamentos.map((x, contador)=>(
@@ -25,6 +25,7 @@ function Mosaico(props) {
                 ))}
             </div>
         </div>
+        
     )
 }
 

@@ -2,126 +2,14 @@
 <project version="4">
   <component name="ChangeListManager">
     <list default="true" id="0815fef2-8b0d-4182-8273-da12bc9b34af" name="Default Changelist" comment="">
-      <change beforePath="$PROJECT_DIR$/.idea/.gitignore" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/.idea/vcs.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/vcs.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Archivo_0.dot" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/Archivo_0.dot.pdf" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/Archivo_1.dot" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/Archivo_1.dot.pdf" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/Archivo_10.dot" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/Archivo_10.dot.pdf" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/Archivo_11.dot" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/Archivo_11.dot.pdf" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/Archivo_12.dot" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/Archivo_12.dot.pdf" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/Archivo_13.dot" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/Archivo_13.dot.pdf" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/Archivo_14.dot" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/Archivo_14.dot.pdf" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/Archivo_15.dot" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/Archivo_15.dot.pdf" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/Archivo_16.dot" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/Archivo_16.dot.pdf" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/Archivo_17.dot" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/Archivo_17.dot.pdf" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/Archivo_18.dot" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/Archivo_18.dot.pdf" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/Archivo_19.dot" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/Archivo_19.dot.pdf" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/Archivo_2.dot" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/Archivo_2.dot.pdf" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/Archivo_20.dot" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/Archivo_20.dot.pdf" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/Archivo_21.dot" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/Archivo_21.dot.pdf" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/Archivo_22.dot" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/Archivo_22.dot.pdf" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/Archivo_23.dot" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/Archivo_23.dot.pdf" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/Archivo_24.dot" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/Archivo_24.dot.pdf" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/Archivo_25.dot" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/Archivo_25.dot.pdf" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/Archivo_26.dot" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/Archivo_26.dot.pdf" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/Archivo_27.dot" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/Archivo_27.dot.pdf" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/Archivo_28.dot" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/Archivo_28.dot.pdf" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/Archivo_29.dot" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/Archivo_29.dot.pdf" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/Archivo_3.dot" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/Archivo_3.dot.pdf" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/Archivo_30.dot" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/Archivo_30.dot.pdf" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/Archivo_31.dot" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/Archivo_31.dot.pdf" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/Archivo_32.dot" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/Archivo_32.dot.pdf" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/Archivo_33.dot" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/Archivo_33.dot.pdf" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/Archivo_34.dot" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/Archivo_34.dot.pdf" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/Archivo_35.dot" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/Archivo_35.dot.pdf" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/Archivo_36.dot" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/Archivo_36.dot.pdf" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/Archivo_37.dot" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/Archivo_37.dot.pdf" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/Archivo_38.dot" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/Archivo_38.dot.pdf" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/Archivo_39.dot" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/Archivo_39.dot.pdf" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/Archivo_4.dot" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/Archivo_4.dot.pdf" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/Archivo_40.dot" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/Archivo_40.dot.pdf" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/Archivo_41.dot" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/Archivo_41.dot.pdf" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/Archivo_42.dot" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/Archivo_42.dot.pdf" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/Archivo_43.dot" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/Archivo_43.dot.pdf" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/Archivo_44.dot" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/Archivo_44.dot.pdf" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/Archivo_45.dot" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/Archivo_45.dot.pdf" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/Archivo_46.dot" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/Archivo_46.dot.pdf" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/Archivo_47.dot" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/Archivo_47.dot.pdf" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/Archivo_48.dot" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/Archivo_48.dot.pdf" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/Archivo_49.dot" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/Archivo_49.dot.pdf" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/Archivo_5.dot" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/Archivo_5.dot.pdf" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/Archivo_50.dot" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/Archivo_50.dot.pdf" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/Archivo_51.dot" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/Archivo_51.dot.pdf" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/Archivo_6.dot" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/Archivo_6.dot.pdf" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/Archivo_7.dot" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/Archivo_7.dot.pdf" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/Archivo_8.dot" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/Archivo_8.dot.pdf" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/Archivo_9.dot" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/Archivo_9.dot.pdf" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/Compras/Carrito.go" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/EDD_VirtualMall_201807079.exe" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/Inventario/Arbol.go" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/Listas/listaDoble.go" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/MatrizDispersa/Matriz.go" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/MatrizDispersa/Nodo.go" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/README.md" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/Reportes/reportes.go" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/Servidor/Inventario/Arbol.go" beforeDir="false" afterPath="$PROJECT_DIR$/Servidor/Inventario/Arbol.go" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/Matriz" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/Matriz.pdf" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/Servidor/Inventario/DibujoArbol.go" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Servidor/Compras/Carrito.go" beforeDir="false" afterPath="$PROJECT_DIR$/Servidor/Compras/Carrito.go" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/Servidor/MatrizDispersa/Matriz.go" beforeDir="false" afterPath="$PROJECT_DIR$/Servidor/MatrizDispersa/Matriz.go" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/Servidor/MatrizDispersa/Nodo.go" beforeDir="false" afterPath="$PROJECT_DIR$/Servidor/MatrizDispersa/Nodo.go" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/Servidor/servidor.go" beforeDir="false" afterPath="$PROJECT_DIR$/Servidor/servidor.go" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/TiendaEspecifica/tiendaEspecifica.go" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/servidor.go" beforeDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -169,7 +57,7 @@
     <property name="last_opened_file_path" value="$PROJECT_DIR$" />
     <property name="nodejs_package_manager_path" value="npm" />
     <property name="restartRequiresConfirmation" value="false" />
-    <property name="settings.editor.selected.configurable" value="project.propVCSSupport.Mappings" />
+    <property name="settings.editor.selected.configurable" value="project.propVCSSupport.CommitDialog" />
   </component>
   <component name="RecentsManager">
     <key name="MoveFile.RECENT_KEYS">

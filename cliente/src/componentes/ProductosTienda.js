@@ -8,10 +8,10 @@ function ProductosTienda() {
     var direccion2 = direccion[4].split("%20")
     var cadena = ""
     for (let step = 0; step < direccion2.length; step++) {
-        if(step == 0){
+        if(step === 0){
             cadena = direccion2[step]
         }else{
-        cadena = cadena+" "+direccion2[step]
+            cadena = cadena+" "+direccion2[step]
         }
       }
       const [tiendas, settiendas] = useState([])
@@ -20,9 +20,13 @@ function ProductosTienda() {
           async function obtener(){
               if(tiendas.length===0){
                   const data = await axios.get('http://localhost:3000/Tienda/'+cadena)
-                  console.log(data.data[0].Productos)
-                  settiendas(data.data[0].Productos)
-                  setloading(true)
+                  settiendas(data.data[0])
+                  console.log(data.data)
+                  if (data.data[0].Productos!=null) {
+                    setloading(true)
+                  }else{
+                      alert("Debe cargar un archivo de productos o quizá esta tienda no tiene productos")
+                  }
               }
           }
           obtener()

@@ -1,0 +1,32 @@
+.Matriz{
+    background: #22e06bc7;
+    background: -webkit-linear-gradient(to right, #240b36, #22e06bc7);
+    background: linear-gradient(to right, #240b36, #22e06bc7);
+    height: auto !important;
+}
+
+.Arbol{
+        background: #22e06bc7;
+        background: -webkit-linear-gradient(to right, #240b36, #22e06bc7);
+        background: linear-gradient(to right, #240b36, #22e06bc7);
+        height: 100vh !important;
+}
+
+.FondoImagen{
+    background-color:  transparent !important;
+    border: none !important;
+    align-items: center !important;
+    font-size: 100px;
+}
+.DatosMatriz{
+    background-color:  transparent!important;
+    border: none !important;
+    align-items: center !important;
+    font-size: 100px;
+    height: 100vh;
+}
+
+
+#Parra{
+    font-size: 100px;
+}

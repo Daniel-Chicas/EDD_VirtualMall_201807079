@@ -1,0 +1,49 @@
+import {React, useEffect, useState} from 'react'
+import Calendar from 'react-calendar';
+import Tabla from './TablaMatriz'
+import { Button, Segment } from 'semantic-ui-react'
+import '../css/Imagen.css'
+const axios=require('axios').default
+
+function DatosMatriz() {
+    var URLactual = window.location;
+    var direccion = URLactual.toString().split("/")
+    var direccion2 = direccion[4].split("&")
+    var cadena = direccion2[1]+"-1-"+direccion2[0]
+    var fecha = Date.parse(cadena)
+    var fechaG = new Date(fecha)
+    const [value, onChange] = useState(fechaG);
+    const [tiendas, settiendas] = useState([])
+    const encabezado=['id', 'Tienda', 'Departamento', 'Calificación', 'Nombre Producto', 'Código Producto', 'Cantidad']
+    
+    const ver = ()=>{
+        async function obtener(){
+            const dia = value.getDate().toString()
+            const mes = value.getMonth()+1
+            const anio = value.getFullYear()
+            const data = await axios.get('http://localhost:3000/Pedido/'+anio+"&"+mes+"&"+dia)
+            console.log(data.data.Datos)
+            if(data.data.Datos!=null){
+                settiendas(data.data.Datos)
+            }
+        }
+        obtener()
+    }
+    return (
+        <div>
+            <Segment placeholder className="FondoImagen">
+                    <Calendar
+                        onChange={onChange}
+                        value={value}
+                    />
+                <Button inverted color='olive' onClick={ver}>Ver Pedidos del {value.getDate().toString()}</Button>
+            </Segment>
+            <br/>
+            <Tabla  data = {tiendas}
+                    encabezados={encabezado}
+            />
+        </div>
+    )
+}
+
+export default DatosMatriz

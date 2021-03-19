@@ -1,0 +1,13 @@
+digraph Arbol{node[shape="record"];
+node0xc000041bc0[label="{Nombre: Licencia Granito Ratón|Código: 323}|{Cantidad Disponible: 57|Precio: 833}" color="red"];
+node0xc000041b00[label="{Nombre: Fantástico Fresco Embutidos|Código: 322}|{Cantidad Disponible: 106|Precio: 244}" color="green"];
+node0xc000041bc0:f0->node0xc000041b00:f1
+node0xc000041c20[label="{Nombre: Sin marca Granito Toallas|Código: 321}|{Cantidad Disponible: 0|Precio: 106}" color="violet"];
+node0xc000041b00:f0->node0xc000041c20:f1
+node0xc000041a40[label="{Nombre: Práctica Plástico Ratón|Código: 325}|{Cantidad Disponible: 337|Precio: 453}" color="orange"];
+node0xc000041bc0:f2->node0xc000041a40:f1
+node0xc000041b60[label="{Nombre: Ergonómico Fresco Ratón|Código: 324}|{Cantidad Disponible: 101|Precio: 353}" color="blue"];
+node0xc000041a40:f0->node0xc000041b60:f1
+node0xc000041aa0[label="{Nombre: Elegante Hormigón Zapatos|Código: 326}|{Cantidad Disponible: 290|Precio: 15}" color="orange"];
+node0xc000041a40:f2->node0xc000041aa0:f1
+}

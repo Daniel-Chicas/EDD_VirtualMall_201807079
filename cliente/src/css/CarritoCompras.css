@@ -1,0 +1,6 @@
+.Carrito{
+    background: #22e06bc7;
+    background: -webkit-linear-gradient(to right, #387c77, #22e06bc7);
+    background: linear-gradient(to right, #387c77, #22e06bc7);
+    height: auto !important;
+}

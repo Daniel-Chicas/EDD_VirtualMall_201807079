@@ -47,7 +47,10 @@ func main(){
 	router.HandleFunc("/Eliminar", eliminarTienda).Methods("Delete")
 	router.HandleFunc("/guardar", guardarTodo).Methods("Get")
 	router.HandleFunc("/carritoCompras", carrito).Methods("Post")
-
+	router.HandleFunc("/Pedido/{infoPedido}", pedidoMes).Methods("Get")
+	router.HandleFunc("/DatosMatriz", datosMatriz).Methods("Get")
+	router.HandleFunc("/ImagenMatriz/{datos}", imagenMatriz).Methods("Get")
+	router.HandleFunc("/Arbol/{datos}", arbolTienda).Methods("Get")
 	log.Fatal(http.ListenAndServe(":3000", router))
 }
 
@@ -138,6 +141,7 @@ func cargar(w http.ResponseWriter, r *http.Request){
 		json.Unmarshal(reqBody, &matriz)
 		for i := 0; i < len(matriz.Pedidos); i++ {
 			fecha := matriz.Pedidos[i].Fecha
+			dia,_ := strconv.Atoi(strings.Split(fecha, "-")[0])
 			mes,_ := strconv.Atoi(strings.Split(fecha, "-")[1])
 			anio,_ := strconv.Atoi(strings.Split(fecha, "-")[2])
 			NombreTienda := matriz.Pedidos[i].NombreTienda
@@ -178,7 +182,7 @@ func cargar(w http.ResponseWriter, r *http.Request){
 									for impr != nil {
 										if impr.Mes == mes {
 											nombreProducto := inOrdenNombre(imp.Inventario.Raiz, Productos[j].Codigo)
-											nodoPedido := metodosMatriz.NuevoNodoPedido(fecha, NombreTienda, Departamento,Calificacion, nombreProducto,Productos[j].Codigo)
+											nodoPedido := metodosMatriz.NuevoNodoPedido(fecha, NombreTienda, Departamento,Calificacion, nombreProducto,Productos[j].Codigo, 0, strconv.Itoa(dia))
 											impr.MatrizMes.Insertar(nodoPedido)
 										}
 										impr = impr.Siguiente
@@ -197,7 +201,17 @@ func cargar(w http.ResponseWriter, r *http.Request){
 			impa := listaAnioa.Cabeza
 			for impa != nil{
 				impa.ListaMatricesMes = metodosMatriz.BurbujaMes(*impa.ListaMatricesMes)
-				fmt.Println("----------------------------------------------------------------------------------")
+				impm := impa.ListaMatricesMes.Cabeza
+				for impm != nil{
+					//fmt.Println()
+					//fmt.Println("---------------------------------------------------------------------------------------------------------")
+					//fmt.Println("---------------------------------------------------------------------------------------------------------")
+					//fmt.Println()
+					//impm.MatrizMes.DibujarMatriz()
+					/*
+					 */
+					impm = impm.Siguiente
+				}
 				impa = impa.Siguiente
 			}
 		}
@@ -317,15 +331,15 @@ func busquedaProductosTienda (w http.ResponseWriter, r *http.Request){
 					n := arregloProductos[i]
 					nodosReg = append(nodosReg, NodoProductoReg{NombreProducto: n.NombreProducto, Codigo: n.Codigo, Descripcion: n.Descripcion, PrecioP: n.Precio, Cantidad: n.Cantidad, Imagen: n.Imagen})
 				}
-				nodoTienda := InventarioReg{NombreTienda: imp.NombreTienda, Departamento: Vector[posicion].Departamento, Calificacion: imp.Calificacion, Productos: nodosReg}
+				nodoTienda := InventarioReg{NombreTienda: imp.NombreTienda, Departamento: Vector[Tercero].Departamento, Calificacion: imp.Calificacion, Productos: nodosReg}
 				InventarioTienda = append(InventarioTienda, nodoTienda)
 			}
 			imp = imp.Siguiente
 		}
+		//generalRE := GeneralReg{InventarioTienda}
 	w.WriteHeader(http.StatusOK)
 	json.NewEncoder(w).Encode(InventarioTienda)
 }
-
 
 func eliminarTienda (w http.ResponseWriter, r * http.Request) {
 	indexHandler(w, r)
@@ -398,12 +412,12 @@ func carrito (w http.ResponseWriter, r *http.Request){
 	for i := 0; i < len(carritojson.Pedidos); i++ {
 		a := carritojson.Pedidos[i]
 		fecha := a.Fecha
+		dia,_ := strconv.Atoi(strings.Split(fecha, "-")[0])
 		mes,_ := strconv.Atoi(strings.Split(fecha, "-")[1])
 		anio,_ := strconv.Atoi(strings.Split(fecha, "-")[2])
 		Tienda := a.NombreTienda
 		Departamento := a.Departamento
 		Calificacion := a.Calificacion
-		Estado := a.Estado
 		Productos := a.CodigoProductos
 		Tercero := posicionTercero(Tienda, Departamento, Calificacion, Indi, Departa)
 		for j := 0; j < len(Productos); j++ {
@@ -412,8 +426,6 @@ func carrito (w http.ResponseWriter, r *http.Request){
 			Cantidad := Productos[j].Cantidad
 			for imp != nil{
 				if imp.NombreTienda == Tienda && imp.Calificacion == Calificacion {
-					if Estado == "Vendido" {
-
 						existeAnio := EncontrarAnio(&listaAnioa, anio)
 						if existeAnio == false {
 							var listaMes MatrizDispersa.ListaMes
@@ -434,7 +446,8 @@ func carrito (w http.ResponseWriter, r *http.Request){
 						}
 
 						arbolTienda := imp.Inventario.Raiz
-						Compras.DescontarProducto(arbolTienda, CodigoProducto, Cantidad)
+						arbolito := Compras.DescontarProducto(arbolTienda, CodigoProducto, Cantidad)
+						imp.Inventario.Raiz = arbolito
 						existeProducto := inOrden(imp.Inventario.Raiz, Productos[j].Codigo)
 						if existeProducto == true {
 							impa := listaAnioa.Cabeza
@@ -444,7 +457,7 @@ func carrito (w http.ResponseWriter, r *http.Request){
 									for impr != nil {
 										if impr.Mes == mes {
 											nombreProducto := inOrdenNombre(imp.Inventario.Raiz, Productos[j].Codigo)
-											nodoPedido := metodosMatriz.NuevoNodoPedido(fecha, Tienda, Departamento,Calificacion, nombreProducto,Productos[j].Codigo)
+											nodoPedido := metodosMatriz.NuevoNodoPedido(fecha, Tienda, Departamento,Calificacion, nombreProducto,Productos[j].Codigo, Cantidad, strconv.Itoa(dia))
 											impr.MatrizMes.Insertar(nodoPedido)
 										}
 										impr = impr.Siguiente
@@ -453,8 +466,6 @@ func carrito (w http.ResponseWriter, r *http.Request){
 								impa = impa.Siguiente
 							}
 						}
-
-					}
 				}
 				imp = imp.Siguiente
 			}
@@ -467,15 +478,11 @@ func carrito (w http.ResponseWriter, r *http.Request){
 			impa.ListaMatricesMes = metodosMatriz.BurbujaMes(*impa.ListaMatricesMes)
 			impm := impa.ListaMatricesMes.Cabeza
 			for impm != nil{
-				impm.MatrizMes.Imprimir()
-				impm.MatrizMes.Imprimir2()
-				fmt.Println()
-				fmt.Println("---------------------------------------------------------------------------------------------------------")
-				fmt.Println("---------------------------------------------------------------------------------------------------------")
-				fmt.Println()
-				impm.MatrizMes.DibujarMatriz()
-				/*
-				 */
+				//fmt.Println()
+				//fmt.Println("---------------------------------------------------------------------------------------------------------")
+				//fmt.Println("---------------------------------------------------------------------------------------------------------")
+				//fmt.Println()
+				//impm.MatrizMes.DibujarMatriz()
 				impm = impm.Siguiente
 			}
 			impa = impa.Siguiente
@@ -484,6 +491,104 @@ func carrito (w http.ResponseWriter, r *http.Request){
 		w.WriteHeader(http.StatusAccepted)
 		json.NewEncoder(w).Encode(mensaje)
 	}
+}
+
+func pedidoMes(w http.ResponseWriter, r *http.Request){
+	indexHandler(w, r)
+	var regresa MatrizDispersa.GeneralInfo
+	vars := mux.Vars(r)
+	datos := strings.Split(vars["infoPedido"], "&")
+	anio,_ := strconv.Atoi(datos[0])
+	mes,_ := strconv.Atoi(datos[1])
+	dia := datos[2]
+	imp := listaAnioa.Cabeza
+	for imp != nil{
+		if imp.Anio == anio {
+			impm := imp.ListaMatricesMes.Cabeza
+			for impm != nil{
+				if impm.Mes == mes {
+					regresa = impm.MatrizMes.Imprimir(dia)
+				}
+				impm = impm.Siguiente
+			}
+		}
+		imp = imp.Siguiente
+	}
+	w.WriteHeader(http.StatusOK)
+	json.NewEncoder(w).Encode(regresa)
+}
+
+func datosMatriz(w http.ResponseWriter, r *http.Request){
+	indexHandler(w, r)
+	var anios []AnioReg
+	if listaAnioa.Cabeza != nil {
+		listaAnioa = *metodosMatriz.BurbujaAnio(listaAnioa)
+		impa := listaAnioa.Cabeza
+		for impa != nil{
+			impa.ListaMatricesMes = metodosMatriz.BurbujaMes(*impa.ListaMatricesMes)
+			impm := impa.ListaMatricesMes.Cabeza
+			var a []Mes
+			for impm != nil{
+				x := Mes{MesA: impm.Mes}
+				a = append(a, x)
+				impm = impm.Siguiente
+			}
+			anio := AnioReg{Anio: impa.Anio, Meses: a}
+			anios = append(anios, anio)
+			impa = impa.Siguiente
+		}
+	}
+	generalAnios :=GeneralReg{anios}
+	w.WriteHeader(http.StatusAccepted)
+	json.NewEncoder(w).Encode(generalAnios)
+}
+
+func imagenMatriz(w http.ResponseWriter, r *http.Request){
+	indexHandler(w, r)
+	vars := mux.Vars(r)
+	datos := strings.Split(vars["datos"], "&")
+	anio,_ := strconv.Atoi(datos[0])
+	mes,_ := strconv.Atoi(datos[1])
+	imp := listaAnioa.Cabeza
+	var existe = false
+	for imp != nil{
+		if imp.Anio == anio {
+			impm := imp.ListaMatricesMes.Cabeza
+			for impm != nil{
+				if impm.Mes == mes{
+					impm.MatrizMes.DibujarMatriz()
+					existe = true
+				}
+				impm = impm.Siguiente
+			}
+		}
+		imp = imp.Siguiente
+	}
+	if existe == true {
+		mensaje := Mensaje{Retorna: "EDD_VirtualMall_201807079/Matriz.png"}
+		w.WriteHeader(http.StatusOK)
+		json.NewEncoder(w).Encode(mensaje)
+	}
+}
+
+func arbolTienda(w http.ResponseWriter, r *http.Request){
+	indexHandler(w, r)
+	vars := mux.Vars(r)
+	indi := list.Indi()
+	departa := list.Departa()
+	datos := strings.Split(vars["datos"], "&")
+	posicion,_ := strconv.Atoi(datos[2])
+	Tercero := posicionTercero(datos[1], datos[0], posicion, indi, departa)
+	imp := Vector[Tercero].ListGA.Cabeza
+	for imp != nil {
+		if imp.NombreTienda == datos[1]{
+			a := imp.Inventario
+			a.Generar()
+		}
+		imp = imp.Siguiente
+	}
+	w.WriteHeader(http.StatusOK)
+	json.NewEncoder(w).Encode("")
 }
 
 //----------------------------------------------------------------------------------------------------------------------
@@ -629,11 +734,6 @@ type busquedaTienda struct{
 	Logo string `json:"Logo"`
 }
 
-
-type GeneralReg struct {
-	Inventarios []InventarioReg `json:"Invetarios"`
-}
-
 type InventarioReg struct {
 	NombreTienda string `json:"Tienda"`
 	Departamento string `json:"Departamento"`
@@ -648,4 +748,17 @@ type NodoProductoReg struct {
 	PrecioP int `json:"Precio"`
 	Cantidad int `json:"Cantidad"`
 	Imagen string `json:"Imagen"`
+}
+
+type GeneralReg struct{
+	General []AnioReg
+}
+
+type AnioReg struct{
+	Anio int `json:"Anio"`
+	Meses []Mes `json:"Meses"`
+}
+
+type Mes struct{
+	MesA int `json:"MesA"`
 }

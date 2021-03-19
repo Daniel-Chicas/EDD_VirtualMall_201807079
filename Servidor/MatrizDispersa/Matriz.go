@@ -2,7 +2,10 @@ package MatrizDispersa
 
 import (
 	"fmt"
+	"io/ioutil"
 	"math/rand"
+	"os"
+	"os/exec"
 	"reflect"
 	"strconv"
 	"strings"
@@ -221,18 +224,53 @@ func (M *Matriz) Insertar(nuevo *NodoPedido) *Matriz{
 	return &Matriz{}
 }
 
-func (M *Matriz) Imprimir(){
+
+type GeneralInfo struct{
+	CabeceraDepa []string `json:"CabeceraDepartamentos"`
+	CabeceraDia []string `json:"CabeceraDias"`
+	Datos []Dato `json:"Datos"`
+}
+
+type Dato struct{
+	Tienda string `json:"Tienda"`
+	Depa string `json:"Departamento"`
+	Cal int `json:"Calificacion"`
+	Prod string `json:"NombreProducto"`
+	CodProd int `json:"CodigoProducto"`
+	Cant int `json:"Cantidad"`
+}
+
+func (M *Matriz) Imprimir(dia string) GeneralInfo{
+	var cabDepa []string
+	var cabDia []string
+	var nodosDatos []Dato
+
+	var aux1 interface{} = M.CabeceraV
+	for aux1!=nil{
+	    cabDepa = append(cabDepa, aux1.(*NodoCabeceraVertical).Departamento)
+		aux1 = aux1.(*NodoCabeceraVertical).Sur
+	}
+	var temp2 interface{} = M.CabeceraH
+	for temp2 != nil{
+		cabDia = append(cabDia, strconv.Itoa(temp2.(*NodoCabeceraHorizontal).Dia))
+		temp2 = temp2.(*NodoCabeceraHorizontal).Este
+	}
+
 	var aux interface{} = M.CabeceraV
 	for aux != nil{
-		fmt.Print(aux.(*NodoCabeceraVertical).Departamento, "---------------->")
-		temp := aux.(*NodoCabeceraVertical).Este
-		for temp != nil{
-			fmt.Printf("%v, %v,%v, %v, %v----->", temp.(*NodoPedido).Departamento, temp.(*NodoPedido).NombreTienda, temp.(*NodoPedido).Fecha, temp.(*NodoPedido).NombreProducto, temp.(*NodoPedido).CodigoProducto)
-			temp = temp.(*NodoPedido).Este
-		}
-		fmt.Println("\n")
+			temp := aux.(*NodoCabeceraVertical).Este
+			for temp != nil{
+				temporal2 := strings.Split(temp.(*NodoPedido).Fecha, "-")
+				if temporal2[0] == dia{
+					a := Dato{Tienda: temp.(*NodoPedido).NombreTienda, Depa: temp.(*NodoPedido).Departamento, Prod: temp.(*NodoPedido).NombreProducto, Cal: temp.(*NodoPedido).Calificacion, CodProd: temp.(*NodoPedido).CodigoProducto, Cant: temp.(*NodoPedido).Cantidad}
+					nodosDatos = append(nodosDatos, a)
+					}
+				temp = temp.(*NodoPedido).Este
+			}
 		aux = aux.(*NodoCabeceraVertical).Sur
 	}
+	linkReg := GeneralInfo{CabeceraDepa: cabDepa, CabeceraDia: cabDia, Datos: nodosDatos}
+	return linkReg
 }
 
 func (M *Matriz) Imprimir2(){
@@ -244,7 +282,6 @@ func (M *Matriz) Imprimir2(){
 			fmt.Printf("%v, %v, %v, %v, %v----->", temp.(*NodoPedido).Departamento, temp.(*NodoPedido).NombreTienda, temp.(*NodoPedido).Fecha, temp.(*NodoPedido).NombreProducto, temp.(*NodoPedido).CodigoProducto)
 			temp = temp.(*NodoPedido).Sur
 		}
-		fmt.Println("")
 		aux = aux.(*NodoCabeceraHorizontal).Este
 	}
 }
@@ -253,8 +290,8 @@ func (this *Matriz) NuevaMatriz(mes int, anio int) *Matriz{
 	return &Matriz{mes, anio, nil, nil}
 }
 
-func (this *Matriz) NuevoNodoPedido (fecha string, tienda string, departamento string, calificacion int, nombreProducto string, codigoProducto int) *NodoPedido{
-	return &NodoPedido{Norte: nil, Oeste: nil, Sur: nil, Este: nil, Fecha: fecha, NombreTienda: tienda, Departamento: departamento, Calificacion: calificacion, NombreProducto: nombreProducto, CodigoProducto: codigoProducto}
+func (this *Matriz) NuevoNodoPedido (fecha string, tienda string, departamento string, calificacion int, nombreProducto string, codigoProducto int, cantidad int, dia string) *NodoPedido{
+	return &NodoPedido{Norte: nil, Oeste: nil, Sur: nil, Este: nil, Fecha: fecha, NombreTienda: tienda, Departamento: departamento, Calificacion: calificacion, NombreProducto: nombreProducto, CodigoProducto: codigoProducto, Cantidad: cantidad, Dia: dia}
 }
 
 func (M *Matriz) DibujarMatriz(){
@@ -265,6 +302,8 @@ func (M *Matriz) DibujarMatriz(){
 	fmt.Fprintf(&cadena, "MT[label=\"Matriz\", style = filled, color="+colores[rand.Intn(9)]+", group = 1];\n")
 	fmt.Fprintf(&cadena, "e0[shape = point, width = 0];\n")
 	fmt.Fprintf(&cadena, "e0[shape = point, width = 0];\n")
+	//RECORRIENDO SOLO LA CABECERA VERTICAL
+
 	var auxVertical interface{} = M.CabeceraV
 	for auxVertical != nil{
 		fmt.Fprintf(&cadena, "node%v[color="+colores[rand.Intn(9)]+", label=\"%v\", group = 1];\n", &(auxVertical.(*NodoCabeceraVertical).Departamento), auxVertical.(*NodoCabeceraVertical).Departamento )
@@ -281,6 +320,8 @@ func (M *Matriz) DibujarMatriz(){
 		}
 		auxVertical = auxVertical.(*NodoCabeceraVertical).Sur
 	}
+
+	//RECORRIENDO SOLO LA CABECERA HORIZONTAL
 	var auxHorizontal interface{} = M.CabeceraH
 	var contador = 2
 	var s strings.Builder
@@ -305,48 +346,53 @@ func (M *Matriz) DibujarMatriz(){
 	fmt.Fprintf(&s, "}")
 	fmt.Fprintf(&cadena, s.String()+"\n")
 
-	var auxV interface{} = M.CabeceraV
-	for auxV != nil{
-		var d strings.Builder
-		temp := auxV.(*NodoCabeceraVertical).Este
-		fmt.Fprintf(&d, "{rank = same;node%v;", &(auxV.(*NodoCabeceraVertical).Departamento))
-		for temp != nil{
-			if temp.(*NodoPedido).Oeste == auxV.(*NodoCabeceraVertical) {
-				fmt.Fprintf(&cadena, "node%p->node%p;\n", &(auxV.(*NodoCabeceraVertical).Departamento), &(temp.(*NodoPedido).CodigoProducto))
-				//if temp.(*NodoPedido).Este != nil {
-				//	fmt.Fprintf(&cadena, "node%p->node%p;\n", &(temp.(*NodoPedido).CodigoProducto), &(temp.(*NodoPedido).Este.(*NodoPedido).CodigoProducto))
-				//}
-			}
-			/*else if temp.(*NodoPedido).Este != nil{
-				fmt.Fprintf(&cadena, "node%p->node%p;\n", &(temp.(*NodoPedido).CodigoProducto), &(temp.(*NodoPedido).Oeste.(*NodoPedido).CodigoProducto))
-				fmt.Fprintf(&cadena, "node%p->node%p;\n", &(temp.(*NodoPedido).CodigoProducto), &(temp.(*NodoPedido).Este.(*NodoPedido).CodigoProducto))
-			}else if temp.(*NodoPedido).Este == nil{
-				fmt.Fprintf(&cadena, "node%p->node%p;\n", &(temp.(*NodoPedido).CodigoProducto), &(temp.(*NodoPedido).Oeste.(*NodoPedido).CodigoProducto))
-			}
-			 */
-			fmt.Fprintf(&d, "node%v;",&(temp.(*NodoPedido).CodigoProducto))
-			temp = temp.(*NodoPedido).Este
-		}
-		fmt.Fprintf(&d, "}")
-		fmt.Fprintf(&cadena, d.String()+"\n")
-		auxV = auxV.(*NodoCabeceraVertical).Sur
-	}
 
+	//RECORRIENDO CABECERA HORIZONTAL CON PEDIDOS
 	var aux interface{} = M.CabeceraH
+	var nodos []int
 	contador = 2
 	for aux != nil{
 		temp := aux.(*NodoCabeceraHorizontal).Sur
+		fmt.Fprintf(&cadena, "node%v[color="+colores[rand.Intn(9)]+", label=\"%v\", group = "+strconv.Itoa(contador)+"];\n", &(temp.(*NodoPedido).CodigoProducto), "PEDIDOS" )
+		fmt.Fprintf(&cadena, "node%p->node%p;\n", &(aux.(*NodoCabeceraHorizontal).Dia), &(temp.(*NodoPedido).CodigoProducto))
+		var a = &(temp.(*NodoPedido).CodigoProducto)
+		var casi = false
 		for temp != nil{
-			fmt.Fprintf(&cadena, "node%v[color="+colores[rand.Intn(9)]+", label=\"%v\", group ="+strconv.Itoa(contador)+"];\n", &(temp.(*NodoPedido).CodigoProducto), temp.(*NodoPedido).NombreProducto )
+			if casi == false {
+				a = &(temp.(*NodoPedido).CodigoProducto)
+				nodos = append(nodos, *a)
+				casi = true
+			}
+			if temp.(*NodoPedido).Sur != nil {
+				if temp.(*NodoPedido).Sur.(*NodoPedido).Departamento != temp.(*NodoPedido).Departamento{
+					fmt.Fprintf(&cadena, "node%v[color="+colores[rand.Intn(9)]+", label=\"%v\", group = "+strconv.Itoa(contador)+"];\n", &(temp.(*NodoPedido).Sur.(*NodoPedido).CodigoProducto), "PEDIDOS" )
+					b := &(temp.(*NodoPedido).Sur.(*NodoPedido).CodigoProducto)
+					nodos = append(nodos, *b)
+					fmt.Fprintf(&cadena, "node%p->node%p;\n", a, &(temp.(*NodoPedido).Sur.(*NodoPedido).CodigoProducto))
+					fmt.Fprintf(&cadena, "node%p->node%p;\n", &(temp.(*NodoPedido).Sur.(*NodoPedido).CodigoProducto), a)
+				}
+			}
+			temp = temp.(*NodoPedido).Sur
+		}
+		contador++
+		aux = aux.(*NodoCabeceraHorizontal).Este
+	}
+/*
+	contador = 2
+	for aux != nil {
+		temp := aux.(*NodoCabeceraHorizontal).Sur
+		for temp != nil {
+			fmt.Fprintf(&cadena, "node%v[color="+colores[rand.Intn(9)]+", label=\"%v\", group ="+strconv.Itoa(contador)+"];\n", &(temp.(*NodoPedido).CodigoProducto), temp.(*NodoPedido).CodigoProducto)
 			if temp.(*NodoPedido).Norte == aux.(*NodoCabeceraHorizontal) {
 				fmt.Fprintf(&cadena, "node%p->node%p;\n", &(aux.(*NodoCabeceraHorizontal).Dia), &(temp.(*NodoPedido).CodigoProducto))
 				if temp.(*NodoPedido).Sur != nil {
+					fmt.Fprintf(&cadena, "node%v[color="+colores[rand.Intn(9)]+", label=\"%v\", group ="+strconv.Itoa(contador)+"];\n", &(temp.(*NodoPedido).Sur.(*NodoPedido).CodigoProducto), &(temp.(*NodoPedido).Sur.(*NodoPedido).CodigoProducto))
 					fmt.Fprintf(&cadena, "node%p->node%p;\n", &(temp.(*NodoPedido).CodigoProducto), &(temp.(*NodoPedido).Sur.(*NodoPedido).CodigoProducto))
 				}
-			}else if temp.(*NodoPedido).Sur != nil{
+			}else if temp.(*NodoPedido).Sur != nil {
 				fmt.Fprintf(&cadena, "node%p->node%p;\n", &(temp.(*NodoPedido).CodigoProducto), &(temp.(*NodoPedido).Norte.(*NodoPedido).CodigoProducto))
 				fmt.Fprintf(&cadena, "node%p->node%p;\n", &(temp.(*NodoPedido).CodigoProducto), &(temp.(*NodoPedido).Sur.(*NodoPedido).CodigoProducto))
-			}else if temp.(*NodoPedido).Sur == nil{
+			} else if temp.(*NodoPedido).Sur == nil {
 				fmt.Fprintf(&cadena, "node%p->node%p;\n", &(temp.(*NodoPedido).CodigoProducto), &(temp.(*NodoPedido).Norte.(*NodoPedido).CodigoProducto))
 			}
 			temp = temp.(*NodoPedido).Sur
@@ -355,8 +401,67 @@ func (M *Matriz) DibujarMatriz(){
 		aux = aux.(*NodoCabeceraHorizontal).Este
 	}
 
+ */
 
+	//RECORRIENDO CABECERA VERTICAL CON NODOS PEDIDOS
+	var auxV interface{} = M.CabeceraV
+	var GeneralNodos []int
+	for auxV != nil{
+		var d strings.Builder
+		fmt.Fprintf(&d, "{rank = same;node%v;", &(auxV.(*NodoCabeceraVertical).Departamento))
+		temp := auxV.(*NodoCabeceraVertical).Este
+			for temp != nil{
+				busqueda := Posicion(nodos, temp.(*NodoPedido).CodigoProducto)
+				if busqueda == true{
+					busquedaGeneral := Posicion(GeneralNodos, temp.(*NodoPedido).CodigoProducto)
+					if busquedaGeneral == false{
+						fmt.Fprintf(&d, "node%v;",&(temp.(*NodoPedido).CodigoProducto))
+						GeneralNodos = append(GeneralNodos, temp.(*NodoPedido).CodigoProducto)
+						if temp.(*NodoPedido).Oeste == auxV.(*NodoCabeceraVertical) {
+							fmt.Fprintf(&cadena, "node%p->node%p;\n", &(auxV.(*NodoCabeceraVertical).Departamento), &(temp.(*NodoPedido).CodigoProducto))
+						}
+					}
+				}
+				temp = temp.(*NodoPedido).Este
+		}
+		fmt.Fprintf(&d, "}")
+		fmt.Fprintf(&cadena, d.String()+"\n")
+		auxV = auxV.(*NodoCabeceraVertical).Sur
+	}
 
 	fmt.Fprintf(&cadena, "}\n")
-	fmt.Println(cadena.String())
+	guardarArchivo(cadena.String(), "Matriz")
+}
+
+func guardarArchivo(cadena string, nombreArchivo string) {
+	f, err := os.Create("C:\\Users\\Daniel Chicas\\Desktop\\Tareas EDD\\src\\github.com\\EDD_VirtualMall_201807079\\cliente\\src\\ImagenMatriz\\"+nombreArchivo+".dot")
+	if err != nil {
+		fmt.Println(err)
+		return
+	}
+	l, err := f.WriteString(cadena)
+	if err != nil {
+		fmt.Println(err)
+		f.Close()
+		return
+	}
+	fmt.Println(l)
+	err = f.Close()
+	if err != nil {
+		fmt.Println(err)
+		return
+	}
+	path, _ := exec.LookPath("dot")
+	cmd, _ := exec.Command(path, "-Tpng", "C:\\Users\\Daniel Chicas\\Desktop\\Tareas EDD\\src\\github.com\\EDD_VirtualMall_201807079\\cliente\\src\\ImagenMatriz\\"+nombreArchivo+".dot").Output()
+	mode := int(0777)
+	ioutil.WriteFile("C:\\Users\\Daniel Chicas\\Desktop\\Tareas EDD\\src\\github.com\\EDD_VirtualMall_201807079\\cliente\\src\\ImagenMatriz\\"+nombreArchivo+".png", cmd, os.FileMode(mode))
+}
+
+func Posicion(arreglo []int, busqueda int) bool {
+	for i := 0; i < len(arreglo); i++ {
+		if arreglo[i] == busqueda {
+			return true
+		}
+	}
+	return false
 }

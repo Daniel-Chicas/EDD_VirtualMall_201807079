@@ -1,28 +1,20 @@
 .General {
-    background: #238363;
-    /* fallback for old browsers */
-    background: -webkit-linear-gradient(to right, #240b36, #238363);
-    /* Chrome 10-25, Safari 5.1-6 */
-    background: linear-gradient(to right, #240b36, #238363);
-    /* W3C, IE 10+/ Edge, Firefox 16+, Chrome 26+, Opera 12+, Safari 7+ */
+    background: #22e06bc7;
+    background: -webkit-linear-gradient(to right, #240b36, #22e06bc7);
+    background: linear-gradient(to right, #240b36, #22e06bc7);
     height: 100vh;
 }
 
 #SubirArchivo{
-    background: #238363;
-    /* fallback for old browsers */
-    background: -webkit-linear-gradient(to right, #240b36, #238363);
-    /* Chrome 10-25, Safari 5.1-6 */
-    background: linear-gradient(to right, #240b36, #238363);
-    /* W3C, IE 10+/ Edge, Firefox 16+, Chrome 26+, Opera 12+, Safari 7+ */
     height: 60vh;
+    border: none !important;
+    background-color:  transparent!important;
     font-size: 18px !important;
 }
 
 #Archivo{
-
     align-items: center !important;
-    width: 350px !important;
+    width: 100px !important;
 }
 
 .Seleccion{

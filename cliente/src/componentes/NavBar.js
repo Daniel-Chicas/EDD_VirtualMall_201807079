@@ -3,12 +3,12 @@ import {Menu} from 'semantic-ui-react'
 import { Link } from 'react-router-dom'
 import '../css/Nav.css'
 
-const colores=['orange','yellow','green','purple','red','brown']
-const opciones =['Cargar Archivos', 'Listado de Tiendas','Busqueda Tiendas Específica','Busqueda por Posición' , 'Eliminar Tienda', 'Carrito de Compras']
-const url =['/CargaArchivos', '/VerTiendas', '/TiendaEspecifica', 'id/{numero}', '/EliminarTienda', '/CarritoCompras', '/']
+const colores=['orange','yellow','green','purple']
+const opciones =['Cargar Archivos', 'Listado de Tiendas', 'Carrito de Compras', 'Ver pedidos']
+const url =['/CargaArchivos', '/VerTiendas', '/CarritoCompras', '/VerPedidos', '/']
 
 function NavBar() {
-    const [activo, setactivo] = useState(colores[0])
+    const [activo, setactivo] = useState(colores[10])
     return (
        <Menu inverted className="Nav">
            {colores.map((c,iterador)=>(
