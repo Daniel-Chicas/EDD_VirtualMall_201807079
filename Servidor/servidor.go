@@ -150,6 +150,9 @@ func cargar(w http.ResponseWriter, r *http.Request){
 			Productos := matriz.Pedidos[i].Productos
 			Tercero := posicionTercero(NombreTienda, Departamento,Calificacion, Indi, Departa)
 			for j := 0; j < len(Productos); j++ {
+				if Tercero<0{
+					break
+				}
 				imp := Vector[Tercero].ListGA.Cabeza
 				for imp != nil {
 					if imp.NombreTienda == NombreTienda && imp.Calificacion == Calificacion {

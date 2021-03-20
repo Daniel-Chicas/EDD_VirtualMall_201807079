@@ -1,15 +1,20 @@
-digraph Daniel20213{
+digraph Daniel20208{
 node[shape=box];
-MT[label="Matriz", style = filled, color=orange, group = 1];
+MT[label="Matriz", style = filled, color=brown, group = 1];
 e0[shape = point, width = 0];
 e0[shape = point, width = 0];
-node0xc000300550[color=yellow, label="Seguridad y vigilancia", group = 1];
-MT->node0xc000300550;
-node0xc0003005a0[color=violet, label="19", group = 2];
-MT->node0xc0003005a0;
-{rank = same;MT;node0xc0003005a0;}
-node0xc00037a668[color=brown, label="PEDIDOS", group = 2];
-node0xc0003005a0->node0xc00037a668;
-node0xc000300550->node0xc00037a668;
-{rank = same;node0xc000300550;node0xc00037a668;}
+node0xc000089130[color=orange, label="Television y video", group = 1];
+MT->node0xc000089130;
+node0xc000089180[color=pink, label="13", group = 2];
+MT->node0xc000089180;
+node0xc000089180->node0xc0000891d0;
+node0xc0000891d0[color=yellow, label="31", group = 3];
+node0xc0000891d0->node0xc000089180;
+{rank = same;MT;node0xc000089180;node0xc0000891d0;}
+node0xc0000b9218[color=blue, label="PEDIDOS", group = 2];
+node0xc000089180->node0xc0000b9218;
+node0xc0000b94d8[color=green, label="PEDIDOS", group = 3];
+node0xc0000891d0->node0xc0000b94d8;
+node0xc000089130->node0xc0000b9218;
+{rank = same;node0xc000089130;node0xc0000b9218;node0xc0000b94d8;}
 }
