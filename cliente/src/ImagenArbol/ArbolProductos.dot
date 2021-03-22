@@ -1,13 +1,15 @@
 digraph Arbol{node[shape="record"];
-node0xc000041860[label="{Nombre: Inteligente Hormigón Ratón|Código: 441}|{Cantidad Disponible: 416|Precio: 298}" color="orange"];
-node0xc000041800[label="{Nombre: Genérica Cotton Ensalada|Código: 439}|{Cantidad Disponible: 103|Precio: 909}" color="gray"];
-node0xc000041860:f0->node0xc000041800:f1
-node0xc000041740[label="{Nombre: Gorgeous Acero Pelota|Código: 438}|{Cantidad Disponible: 440|Precio: 585}" color="yellow"];
-node0xc000041800:f0->node0xc000041740:f1
-node0xc000041920[label="{Nombre: Hecho a mano Acero Computadora|Código: 440}|{Cantidad Disponible: 169|Precio: 325}" color="red"];
-node0xc000041800:f2->node0xc000041920:f1
-node0xc0000417a0[label="{Nombre: Sin marca Caucho Toallas|Código: 442}|{Cantidad Disponible: 437|Precio: 596}" color="orange"];
-node0xc000041860:f2->node0xc0000417a0:f1
-node0xc0000418c0[label="{Nombre: Increíble Frozen Toallas|Código: 443}|{Cantidad Disponible: 72|Precio: 825}" color="violet"];
-node0xc0000417a0:f2->node0xc0000418c0:f1
+node0xc0000e8360[label="{Nombre: Práctica Acero Queso|Código: 783}|{Cantidad Disponible: 328|Precio: 394}" color="violet"];
+node0xc0000e8240[label="{Nombre: Sabrosa Cotton Pantalones|Código: 781}|{Cantidad Disponible: 236|Precio: 758}" color="red"];
+node0xc0000e8360:f0->node0xc0000e8240:f1
+node0xc0000e83c0[label="{Nombre: Licencia Caucho Pelota|Código: 782}|{Cantidad Disponible: 247|Precio: 235}" color="red"];
+node0xc0000e8240:f2->node0xc0000e83c0:f1
+node0xc0000e81e0[label="{Nombre: Elegante Metal Camisa|Código: 786}|{Cantidad Disponible: 333|Precio: 139}" color="orange"];
+node0xc0000e8360:f2->node0xc0000e81e0:f1
+node0xc0000e8300[label="{Nombre: Increíble Fresco Tocino|Código: 784}|{Cantidad Disponible: 384|Precio: 323}" color="green"];
+node0xc0000e81e0:f0->node0xc0000e8300:f1
+node0xc0000e8420[label="{Nombre: Refinado Hormigón Embutidos|Código: 785}|{Cantidad Disponible: 232|Precio: 308}" color="red"];
+node0xc0000e8300:f2->node0xc0000e8420:f1
+node0xc0000e82a0[label="{Nombre: Rústico Acero Embutidos|Código: 787}|{Cantidad Disponible: 348|Precio: 412}" color="yellow"];
+node0xc0000e81e0:f2->node0xc0000e82a0:f1
 }

@@ -6,7 +6,9 @@ import { Label } from 'semantic-ui-react'
 function Item(props) {
     return (
         <List.Item>
-            <Label.Detail>Año: {props.anio}</Label.Detail>
+                <Label.Group color='orange'>
+                    <Label as='a'>Año: {props.anio}</Label>
+                </Label.Group>
             <List.List>
                 {props.mes.map((c) => (
                     <Mes

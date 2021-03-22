@@ -204,17 +204,6 @@ func cargar(w http.ResponseWriter, r *http.Request){
 			impa := listaAnioa.Cabeza
 			for impa != nil{
 				impa.ListaMatricesMes = metodosMatriz.BurbujaMes(*impa.ListaMatricesMes)
-				impm := impa.ListaMatricesMes.Cabeza
-				for impm != nil{
-					//fmt.Println()
-					//fmt.Println("---------------------------------------------------------------------------------------------------------")
-					//fmt.Println("---------------------------------------------------------------------------------------------------------")
-					//fmt.Println()
-					//impm.MatrizMes.DibujarMatriz()
-					/*
-					 */
-					impm = impm.Siguiente
-				}
 				impa = impa.Siguiente
 			}
 		}

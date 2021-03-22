@@ -1,6 +1,6 @@
 .Pedidos{
-    background: #22e06bc7;
-    background: -webkit-linear-gradient(to right, #387c77, #22e06bc7);
-    background: linear-gradient(to right, #387c77, #22e06bc7);
+    background: #f8f1f1;
+    background: -webkit-linear-gradient(to right, #11698e, #f8f1f1);
+    background: linear-gradient(to right, #11698e, #f8f1f1);
     height: 100vh !important;
 }

@@ -13,7 +13,7 @@ function ItemsMeses(props) {
     return (
         <>
         <div>
-            <Button inverted color='yellow' onClick={matriz}>Mes: {props.mes}</Button>
+            <Button inverted color='olive' onClick={matriz}>Mes: {props.mes}</Button>
         </div>
         </>
     )

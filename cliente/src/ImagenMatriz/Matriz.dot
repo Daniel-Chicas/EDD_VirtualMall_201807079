@@ -1,20 +1,28 @@
 digraph Daniel20208{
 node[shape=box];
-MT[label="Matriz", style = filled, color=brown, group = 1];
+MT[label="Agosto", style = filled, color=orange, group = 1];
 e0[shape = point, width = 0];
 e0[shape = point, width = 0];
-node0xc000089130[color=orange, label="Television y video", group = 1];
-MT->node0xc000089130;
-node0xc000089180[color=pink, label="13", group = 2];
-MT->node0xc000089180;
-node0xc000089180->node0xc0000891d0;
-node0xc0000891d0[color=yellow, label="31", group = 3];
-node0xc0000891d0->node0xc000089180;
-{rank = same;MT;node0xc000089180;node0xc0000891d0;}
-node0xc0000b9218[color=blue, label="PEDIDOS", group = 2];
-node0xc000089180->node0xc0000b9218;
-node0xc0000b94d8[color=green, label="PEDIDOS", group = 3];
-node0xc0000891d0->node0xc0000b94d8;
-node0xc000089130->node0xc0000b9218;
-{rank = same;node0xc000089130;node0xc0000b9218;node0xc0000b94d8;}
+node0xc000043ea0[color=brown, label="Depa: Seguridad y vigilancia", group = 1];
+MT->node0xc000043ea0;
+node0xc000043ea0->node0xc0001be0a0;
+node0xc0001be0a0[color=blue, label="Depa: Television y video", group = 1];
+node0xc0001be0a0->node0xc000043ea0;
+node0xc000043ef0[color=blue, label="Día: 13", group = 2];
+MT->node0xc000043ef0;
+node0xc000043ef0->node0xc0001be0f0;
+node0xc0001be0f0[color=green, label="Día: 31", group = 3];
+node0xc0001be0f0->node0xc000043ef0;
+{rank = same;MT;node0xc000043ef0;node0xc0001be0f0;}
+node0xc0000670b8[color=brown, label="PEDIDOS", group = 2];
+node0xc000043ef0->node0xc0000670b8;
+node0xc000067798[color=pink, label="PEDIDOS", group = 2];
+node0xc0000670b8->node0xc000067798;
+node0xc000067798->node0xc0000670b8;
+node0xc000067a58[color=violet, label="PEDIDOS", group = 3];
+node0xc0001be0f0->node0xc000067a58;
+node0xc000043ea0->node0xc0000670b8;
+{rank = same;node0xc000043ea0;node0xc0000670b8;}
+node0xc0001be0a0->node0xc000067798;
+{rank = same;node0xc0001be0a0;node0xc000067798;node0xc000067a58;}
 }

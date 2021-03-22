@@ -261,7 +261,7 @@ func (M *Matriz) Imprimir(dia string) GeneralInfo{
 			temp := aux.(*NodoCabeceraVertical).Este
 			for temp != nil{
 				temporal2 := strings.Split(temp.(*NodoPedido).Fecha, "-")
-				if temporal2[0] == dia{
+				if temporal2[0] == dia || temporal2[0] == "0"+dia{
 					a := Dato{Tienda: temp.(*NodoPedido).NombreTienda, Depa: temp.(*NodoPedido).Departamento, Prod: temp.(*NodoPedido).NombreProducto, Cal: temp.(*NodoPedido).Calificacion, CodProd: temp.(*NodoPedido).CodigoProducto, Cant: temp.(*NodoPedido).Cantidad}
 					nodosDatos = append(nodosDatos, a)
 					}
@@ -299,14 +299,16 @@ func (M *Matriz) DibujarMatriz(){
 	var cadena strings.Builder
 	fmt.Fprintf(&cadena, "digraph Daniel"+strconv.Itoa(M.Anio)+""+strconv.Itoa(M.Mes)+"{\n")
 	fmt.Fprintf(&cadena, "node[shape=box];\n")
-	fmt.Fprintf(&cadena, "MT[label=\"Matriz\", style = filled, color="+colores[rand.Intn(9)]+", group = 1];\n")
+	var mes string
+	var meses = []string{"Enero", "Febrero", "Marzo", "Abril", "Mayo", "Junio", "Julio", "Agosto", "Septiembre", "Octubre", "Noviembre", "Diciembre"}
+	mes = meses[M.Mes-1]
+	fmt.Fprintf(&cadena, "MT[label=\"%v\", style = filled, color="+colores[rand.Intn(9)]+", group = 1];\n", mes)
 	fmt.Fprintf(&cadena, "e0[shape = point, width = 0];\n")
 	fmt.Fprintf(&cadena, "e0[shape = point, width = 0];\n")
 	//RECORRIENDO SOLO LA CABECERA VERTICAL
-
 	var auxVertical interface{} = M.CabeceraV
 	for auxVertical != nil{
-		fmt.Fprintf(&cadena, "node%v[color="+colores[rand.Intn(9)]+", label=\"%v\", group = 1];\n", &(auxVertical.(*NodoCabeceraVertical).Departamento), auxVertical.(*NodoCabeceraVertical).Departamento )
+		fmt.Fprintf(&cadena, "node%v[color="+colores[rand.Intn(9)]+", label=\"Depa: %v\", group = 1];\n", &(auxVertical.(*NodoCabeceraVertical).Departamento), auxVertical.(*NodoCabeceraVertical).Departamento )
 		if auxVertical.(*NodoCabeceraVertical).Norte == nil {
 			fmt.Fprintf(&cadena, "MT->node%p;\n", &(auxVertical.(*NodoCabeceraVertical).Departamento))
 			if auxVertical.(*NodoCabeceraVertical).Sur != nil{
@@ -327,7 +329,7 @@ func (M *Matriz) DibujarMatriz(){
 	var s strings.Builder
 	fmt.Fprintf(&s, "{rank = same;MT;")
 	for auxHorizontal != nil{
-		fmt.Fprintf(&cadena, "node%v[color="+colores[rand.Intn(9)]+", label=\"%v\", group = "+strconv.Itoa(contador)+"];\n", &(auxHorizontal.(*NodoCabeceraHorizontal).Dia), auxHorizontal.(*NodoCabeceraHorizontal).Dia )
+		fmt.Fprintf(&cadena, "node%v[color="+colores[rand.Intn(9)]+", label=\"Día: %v\", group = "+strconv.Itoa(contador)+"];\n", &(auxHorizontal.(*NodoCabeceraHorizontal).Dia), auxHorizontal.(*NodoCabeceraHorizontal).Dia )
 		if auxHorizontal.(*NodoCabeceraHorizontal).Oeste == nil {
 			fmt.Fprintf(&cadena, "MT->node%p;\n", &(auxHorizontal.(*NodoCabeceraHorizontal).Dia))
 			if auxHorizontal.(*NodoCabeceraHorizontal).Este != nil{
@@ -434,7 +436,7 @@ func (M *Matriz) DibujarMatriz(){
 }
 
 func guardarArchivo(cadena string, nombreArchivo string) {
-	f, err := os.Create("C:\\Users\\Daniel Chicas\\Desktop\\Tareas EDD\\src\\github.com\\EDD_VirtualMall_201807079\\cliente\\src\\ImagenMatriz\\"+nombreArchivo+".dot")
+	f, err := os.Create("..\\cliente\\src\\ImagenMatriz\\"+nombreArchivo+".dot")
 	if err != nil {
 		fmt.Println(err)
 		return
@@ -452,9 +454,9 @@ func guardarArchivo(cadena string, nombreArchivo string) {
 		return
 	}
 	path, _ := exec.LookPath("dot")
-	cmd, _ := exec.Command(path, "-Tpng", "C:\\Users\\Daniel Chicas\\Desktop\\Tareas EDD\\src\\github.com\\EDD_VirtualMall_201807079\\cliente\\src\\ImagenMatriz\\"+nombreArchivo+".dot").Output()
+	cmd, _ := exec.Command(path, "-Tpng", "..\\cliente\\src\\ImagenMatriz\\"+nombreArchivo+".dot").Output()
 	mode := int(0777)
-	ioutil.WriteFile("C:\\Users\\Daniel Chicas\\Desktop\\Tareas EDD\\src\\github.com\\EDD_VirtualMall_201807079\\cliente\\src\\ImagenMatriz\\"+nombreArchivo+".png", cmd, os.FileMode(mode))
+	ioutil.WriteFile("..\\cliente\\src\\ImagenMatriz\\"+nombreArchivo+".png", cmd, os.FileMode(mode))
 }
 
 func Posicion(arreglo []int, busqueda int) bool {

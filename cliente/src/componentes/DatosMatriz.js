@@ -36,7 +36,7 @@ function DatosMatriz() {
                         onChange={onChange}
                         value={value}
                     />
-                <Button inverted color='olive' onClick={ver}>Ver Pedidos del {value.getDate().toString()}</Button>
+                <Button inverted color='olive' onClick={ver}>Ver Pedidos del {value.getDate().toString()} del {value.getMonth()+1}</Button>
             </Segment>
             <br/>
             <Tabla  data = {tiendas}
