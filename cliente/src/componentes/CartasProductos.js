@@ -10,6 +10,7 @@ function Cartas(props) {
     const producto = props.id
     const CantidadMax = props.CantidadMax
     const cantidad = props.cantidad
+    const precio = props.precio
 
     const enviar = ()=>{
         var json={
@@ -19,7 +20,8 @@ function Cartas(props) {
             nombreP,
             cantidad,
             CantidadMax,
-            producto
+            producto,
+            precio
         }
         var datos = localStorage.getItem('prueba1')
         if (datos == null || datos == undefined) {

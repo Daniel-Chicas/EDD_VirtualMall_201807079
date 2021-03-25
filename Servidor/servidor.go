@@ -737,7 +737,7 @@ type NodoProductoReg struct {
 	NombreProducto string `json:"Nombre"`
 	Codigo int `json:"Codigo"`
 	Descripcion string `json:"Descripcion"`
-	PrecioP int `json:"Precio"`
+	PrecioP float64 `json:"Precio"`
 	Cantidad int `json:"Cantidad"`
 	Imagen string `json:"Imagen"`
 }

@@ -31,11 +31,23 @@ function Tabla(props) {
                                 calificacion = {dato.calificacion}
                                 nombreProducto ={dato.nombreP}
                                 codigoProducto = {dato.producto}
+                                precio = {dato.precio}
                                 CantidadMax = {dato.CantidadMax}
                                 cantidad = {dato.cantidad}
                                 todo = {props.data}
                             />
                         ))}
+                        <Fila
+                                index={props.data.length}
+                                tienda={""}
+                                departamento={""}
+                                calificacion = {""}
+                                nombreProducto ={""}
+                                codigoProducto = {"Sumatoria"}
+                                cantidad = {""}
+                                CantidadMax = {""}
+                                todo = {props.data}
+                        />
                         <Fila
                                 index={props.data.length}
                                 tienda={""}

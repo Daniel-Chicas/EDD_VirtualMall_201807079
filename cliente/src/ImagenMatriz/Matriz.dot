@@ -1,28 +1,23 @@
-digraph Daniel20208{
+digraph Daniel20213{
 node[shape=box];
-MT[label="Agosto", style = filled, color=orange, group = 1];
+MT[label="Marzo", style = filled, color=green, group = 1];
 e0[shape = point, width = 0];
 e0[shape = point, width = 0];
-node0xc000043ea0[color=brown, label="Depa: Seguridad y vigilancia", group = 1];
-MT->node0xc000043ea0;
-node0xc000043ea0->node0xc0001be0a0;
-node0xc0001be0a0[color=blue, label="Depa: Television y video", group = 1];
-node0xc0001be0a0->node0xc000043ea0;
-node0xc000043ef0[color=blue, label="Día: 13", group = 2];
-MT->node0xc000043ef0;
-node0xc000043ef0->node0xc0001be0f0;
-node0xc0001be0f0[color=green, label="Día: 31", group = 3];
-node0xc0001be0f0->node0xc000043ef0;
-{rank = same;MT;node0xc000043ef0;node0xc0001be0f0;}
-node0xc0000670b8[color=brown, label="PEDIDOS", group = 2];
-node0xc000043ef0->node0xc0000670b8;
-node0xc000067798[color=pink, label="PEDIDOS", group = 2];
-node0xc0000670b8->node0xc000067798;
-node0xc000067798->node0xc0000670b8;
-node0xc000067a58[color=violet, label="PEDIDOS", group = 3];
-node0xc0001be0f0->node0xc000067a58;
-node0xc000043ea0->node0xc0000670b8;
-{rank = same;node0xc000043ea0;node0xc0000670b8;}
-node0xc0001be0a0->node0xc000067798;
-{rank = same;node0xc0001be0a0;node0xc000067798;node0xc000067a58;}
+node0xc0001591d0[color=brown, label="Depa: Seguridad y vigilancia", group = 1];
+MT->node0xc0001591d0;
+node0xc0001591d0->node0xc000042050;
+node0xc000042050[color=orange, label="Depa: Television y video", group = 1];
+node0xc000042050->node0xc0001591d0;
+node0xc000159220[color=orange, label="Día: 25", group = 2];
+MT->node0xc000159220;
+{rank = same;MT;node0xc000159220;}
+node0xc000144a88[color=yellow, label="PEDIDOS", group = 2];
+node0xc000159220->node0xc000144a88;
+node0xc000094458[color=violet, label="PEDIDOS", group = 2];
+node0xc000144a88->node0xc000094458;
+node0xc000094458->node0xc000144a88;
+node0xc0001591d0->node0xc000144a88;
+{rank = same;node0xc0001591d0;node0xc000144a88;}
+node0xc000042050->node0xc000094458;
+{rank = same;node0xc000042050;node0xc000094458;}
 }

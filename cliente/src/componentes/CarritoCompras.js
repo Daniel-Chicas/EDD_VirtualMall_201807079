@@ -3,7 +3,7 @@ import Tabla from './Tabla'
 import '../css/CarritoCompras.css'
 
 function CarritoCompras() {
-    const encabezado=['id', 'Tienda', 'Departamento', 'Calificación', 'Nombre Producto', 'Código Producto', 'Disponibilidad en stock', 'Cantidad', 'Confirmar', "Eliminar"]
+    const encabezado=['id', 'Tienda', 'Departamento', 'Calificación', 'Nombre Producto', 'Código Producto', 'Precio', 'Disponibilidad en stock', 'Cantidad', 'Total por Producto']
     const [listado, setlistado] = useState([
         ["-----", "-----", "-----", "-----", "-----", "-----", 0]
     ])

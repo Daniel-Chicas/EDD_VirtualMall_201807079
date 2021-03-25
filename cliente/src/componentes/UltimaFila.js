@@ -1,5 +1,6 @@
 import React from 'react'
 import { Button, Icon } from 'semantic-ui-react'
+import { useHistory } from "react-router-dom";
 const axios=require('axios').default
 
 function UltimaFila(props) {
@@ -36,6 +37,7 @@ function UltimaFila(props) {
                             var compras ={
                                 Compras
                             }
+                            console.log(Compras)
                             if(index === props.todo.length-1){
                                 axios.post("http://localhost:3000/carritoCompras", JSON.stringify(compras) , {headers:{ 'Content-Type':'multipart/form-data'}})
                                 .then(response=>{
@@ -52,7 +54,9 @@ function UltimaFila(props) {
             localStorage.clear()
         })
     }
+    const history = useHistory();
     const eliminarTodo = () =>{
+        history.push(`/VerTiendas`)
         localStorage.clear()
         props.todo.map((c, index)=>{
             document.getElementById("Producto"+index).disabled = true
@@ -71,6 +75,7 @@ function UltimaFila(props) {
                 <div>
                 </div>
                 </td>
+                <td></td>
                 <td>
                 <div>
                 <Button  color='green' animated onClick={todo}>
