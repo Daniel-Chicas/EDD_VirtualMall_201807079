@@ -9,7 +9,7 @@
         background: #9fb8ad;
         background: -webkit-linear-gradient(to right, #240b36, #9fb8ad);
         background: linear-gradient(to right, #240b36, #9fb8ad);
-        height: 100vh !important;
+        height: auto !important;
 }
 
 .FondoImagen{
@@ -23,7 +23,7 @@
     border: none !important;
     align-items: center !important;
     font-size: 100px;
-    height: 100vh;
+    height: auto;
 }
 
 

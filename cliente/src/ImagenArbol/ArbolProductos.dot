@@ -1,13 +1,5 @@
 digraph Arbol{node[shape="record"];
-node0xc000110900[label="{Nombre: Inteligente Hormigón Ratón|Código: 441}|{Cantidad Disponible: 416|Precio: 298}" color="violet"];
-node0xc0001108a0[label="{Nombre: Genérica Cotton Ensalada|Código: 439}|{Cantidad Disponible: 103|Precio: 909}" color="yellow"];
-node0xc000110900:f0->node0xc0001108a0:f1
-node0xc0001107e0[label="{Nombre: Gorgeous Acero Pelota|Código: 438}|{Cantidad Disponible: 437|Precio: 585.5}" color="violet"];
-node0xc0001108a0:f0->node0xc0001107e0:f1
-node0xc0001109c0[label="{Nombre: Hecho a mano Acero Computadora|Código: 440}|{Cantidad Disponible: 169|Precio: 325}" color="orange"];
-node0xc0001108a0:f2->node0xc0001109c0:f1
-node0xc000110840[label="{Nombre: Sin marca Caucho Toallas|Código: 442}|{Cantidad Disponible: 437|Precio: 596.3}" color="violet"];
-node0xc000110900:f2->node0xc000110840:f1
-node0xc000110960[label="{Nombre: Increíble Frozen Toallas|Código: 443}|{Cantidad Disponible: 72|Precio: 825}" color="blue"];
-node0xc000110840:f2->node0xc000110960:f1
+node0xc000040300[label="{Nombre: Genérica Madera Presidente|Código: 85}|{Cantidad Disponible: 430|Precio: 961}" color="blue"];
+node0xc000040360[label="{Nombre: Fantástico Madera Embutidos|Código: 86}|{Cantidad Disponible: 125|Precio: 574}" color="orange"];
+node0xc000040300:f2->node0xc000040360:f1
 }
