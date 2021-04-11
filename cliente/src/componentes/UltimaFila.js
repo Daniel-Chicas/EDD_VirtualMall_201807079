@@ -1,55 +1,64 @@
-import React from 'react'
+import {React, useState} from 'react'
 import { Button, Icon } from 'semantic-ui-react'
 import { useHistory } from "react-router-dom";
 const axios=require('axios').default
 
 function UltimaFila(props) {
-    const todo = () =>{
+        var cliente
+
+        const todo = async() =>{
+        const data = await axios.get('http://localhost:3000/DatosLinea')
+        cliente = data.data
         const Compras = []
         props.todo.map((c, index)=>{
             var a = document.getElementById("Producto"+index).value
             var habilitado = document.getElementById("Producto"+index).disabled
-            if(c.producto!== undefined){
-                if(habilitado !== true){
-                    const Tienda = c.tienda
-                    const Productos = []
-                    const Departamento = c.departamento
-                    const Calificacion = c.calificacion
-                    const Codigo = c.producto
-                    const Cantidad = parseInt(a)
-                    if(a !== ""){
-                        if(a !== "0"){
-                            var Producto={
-                                Codigo,
-                                Cantidad
+            var valido = document.getElementById("SumaParcial"+index).innerHTML
+            if (valido !== "Cantidad no válida") {
+                if(c.producto!== undefined){
+                    if(habilitado !== true){
+                        const Tienda = c.tienda
+                        const Productos = []
+                        const Departamento = c.departamento
+                        const Calificacion = c.calificacion
+                        const Cliente = cliente
+                        const Codigo = c.producto
+                        const Cantidad = parseInt(a)
+                        if(a !== ""){
+                            if(a !== "0"){
+                                var Producto={
+                                    Codigo,
+                                    Cantidad
+                                }
+                                const fecha = new Date()
+                                const Fecha = fecha.getDate()+"-"+(fecha.getMonth()+1)+"-"+fecha.getFullYear()
+                                Productos.push(Producto)
+                                var viene={
+                                    Fecha,
+                                    Tienda,
+                                    Departamento,
+                                    Calificacion,
+                                    Cliente,
+                                    Productos
+                                }
+                                Compras.push(viene)
+                                var compras ={
+                                    Compras
+                                }
+                                if(index === props.todo.length-1){
+                                    axios.post("http://localhost:3000/carritoCompras", JSON.stringify(compras) , {headers:{ 'Content-Type':'multipart/form-data'}})
+                                    .then(response=>{
+                                        console.log(response.data);
+                                    }).catch(error=>{
+                                        console.log(error);
+                                    })
+                                }  
                             }
-                            const fecha = new Date()
-                            const Fecha = fecha.getDate()+"-"+(fecha.getMonth()+1)+"-"+fecha.getFullYear()
-                            Productos.push(Producto)
-                            var viene={
-                                Fecha,
-                                Tienda,
-                                Departamento,
-                                Calificacion,
-                                Productos
-                            }
-                            Compras.push(viene)
-                            var compras ={
-                                Compras
-                            }
-                            console.log(Compras)
-                            if(index === props.todo.length-1){
-                                axios.post("http://localhost:3000/carritoCompras", JSON.stringify(compras) , {headers:{ 'Content-Type':'multipart/form-data'}})
-                                .then(response=>{
-                                    console.log(response.data);
-                                }).catch(error=>{
-                                    console.log(error);
-                                })
-                            }  
                         }
                     }
                 }
             }
+            document.getElementById("comprado").style.visibility = "visible"
             document.getElementById("Producto"+index).disabled = true
             localStorage.clear()
         })

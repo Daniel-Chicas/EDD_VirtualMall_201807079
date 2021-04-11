@@ -2,14 +2,193 @@
 <project version="4">
   <component name="ChangeListManager">
     <list default="true" id="0815fef2-8b0d-4182-8273-da12bc9b34af" name="Default Changelist" comment="">
-      <change afterPath="$PROJECT_DIR$/Matriz" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/Matriz.pdf" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/Servidor/Inventario/DibujoArbol.go" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/Servidor/Usuarios/Arbol-B.go" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/Servidor/Usuarios/Eliminar.go" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/Servidor/Usuarios/GraficoArbolB.go" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/Servidor/Usuarios/llave.go" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/Servidor/Usuarios/pagina.go" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/cliente/src/ArbolesUsuarios/arbol.pdf" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/cliente/src/ArbolesUsuarios/arbolMedio.pdf" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/cliente/src/ArbolesUsuarios/arbolTodoCifrado.pdf" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/cliente/src/ArbolesUsuarios/diagrama.dot" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/cliente/src/Inicio.css" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/cliente/src/VectorTiendas/Archivo_0.pdf" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/cliente/src/VectorTiendas/Archivo_1.pdf" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/cliente/src/VectorTiendas/Archivo_10.pdf" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/cliente/src/VectorTiendas/Archivo_100.pdf" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/cliente/src/VectorTiendas/Archivo_101.pdf" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/cliente/src/VectorTiendas/Archivo_102.pdf" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/cliente/src/VectorTiendas/Archivo_103.pdf" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/cliente/src/VectorTiendas/Archivo_104.pdf" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/cliente/src/VectorTiendas/Archivo_105.pdf" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/cliente/src/VectorTiendas/Archivo_106.pdf" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/cliente/src/VectorTiendas/Archivo_107.pdf" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/cliente/src/VectorTiendas/Archivo_108.pdf" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/cliente/src/VectorTiendas/Archivo_109.pdf" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/cliente/src/VectorTiendas/Archivo_11.pdf" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/cliente/src/VectorTiendas/Archivo_110.pdf" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/cliente/src/VectorTiendas/Archivo_111.pdf" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/cliente/src/VectorTiendas/Archivo_112.pdf" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/cliente/src/VectorTiendas/Archivo_113.pdf" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/cliente/src/VectorTiendas/Archivo_114.pdf" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/cliente/src/VectorTiendas/Archivo_115.pdf" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/cliente/src/VectorTiendas/Archivo_116.pdf" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/cliente/src/VectorTiendas/Archivo_117.pdf" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/cliente/src/VectorTiendas/Archivo_118.pdf" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/cliente/src/VectorTiendas/Archivo_119.pdf" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/cliente/src/VectorTiendas/Archivo_12.pdf" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/cliente/src/VectorTiendas/Archivo_120.pdf" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/cliente/src/VectorTiendas/Archivo_121.pdf" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/cliente/src/VectorTiendas/Archivo_122.pdf" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/cliente/src/VectorTiendas/Archivo_123.pdf" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/cliente/src/VectorTiendas/Archivo_124.pdf" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/cliente/src/VectorTiendas/Archivo_125.pdf" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/cliente/src/VectorTiendas/Archivo_126.pdf" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/cliente/src/VectorTiendas/Archivo_127.pdf" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/cliente/src/VectorTiendas/Archivo_128.pdf" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/cliente/src/VectorTiendas/Archivo_129.pdf" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/cliente/src/VectorTiendas/Archivo_13.pdf" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/cliente/src/VectorTiendas/Archivo_14.pdf" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/cliente/src/VectorTiendas/Archivo_15.pdf" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/cliente/src/VectorTiendas/Archivo_16.pdf" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/cliente/src/VectorTiendas/Archivo_17.pdf" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/cliente/src/VectorTiendas/Archivo_18.pdf" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/cliente/src/VectorTiendas/Archivo_19.pdf" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/cliente/src/VectorTiendas/Archivo_2.pdf" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/cliente/src/VectorTiendas/Archivo_20.pdf" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/cliente/src/VectorTiendas/Archivo_21.pdf" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/cliente/src/VectorTiendas/Archivo_22.pdf" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/cliente/src/VectorTiendas/Archivo_23.pdf" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/cliente/src/VectorTiendas/Archivo_24.pdf" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/cliente/src/VectorTiendas/Archivo_25.pdf" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/cliente/src/VectorTiendas/Archivo_26.pdf" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/cliente/src/VectorTiendas/Archivo_27.pdf" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/cliente/src/VectorTiendas/Archivo_28.pdf" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/cliente/src/VectorTiendas/Archivo_29.pdf" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/cliente/src/VectorTiendas/Archivo_3.pdf" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/cliente/src/VectorTiendas/Archivo_30.pdf" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/cliente/src/VectorTiendas/Archivo_31.pdf" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/cliente/src/VectorTiendas/Archivo_32.pdf" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/cliente/src/VectorTiendas/Archivo_33.pdf" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/cliente/src/VectorTiendas/Archivo_34.pdf" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/cliente/src/VectorTiendas/Archivo_35.pdf" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/cliente/src/VectorTiendas/Archivo_36.pdf" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/cliente/src/VectorTiendas/Archivo_37.pdf" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/cliente/src/VectorTiendas/Archivo_38.pdf" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/cliente/src/VectorTiendas/Archivo_39.pdf" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/cliente/src/VectorTiendas/Archivo_4.pdf" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/cliente/src/VectorTiendas/Archivo_40.pdf" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/cliente/src/VectorTiendas/Archivo_41.pdf" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/cliente/src/VectorTiendas/Archivo_42.pdf" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/cliente/src/VectorTiendas/Archivo_43.pdf" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/cliente/src/VectorTiendas/Archivo_44.pdf" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/cliente/src/VectorTiendas/Archivo_45.pdf" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/cliente/src/VectorTiendas/Archivo_46.pdf" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/cliente/src/VectorTiendas/Archivo_47.pdf" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/cliente/src/VectorTiendas/Archivo_48.pdf" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/cliente/src/VectorTiendas/Archivo_49.pdf" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/cliente/src/VectorTiendas/Archivo_5.pdf" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/cliente/src/VectorTiendas/Archivo_50.pdf" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/cliente/src/VectorTiendas/Archivo_51.pdf" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/cliente/src/VectorTiendas/Archivo_52.pdf" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/cliente/src/VectorTiendas/Archivo_53.pdf" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/cliente/src/VectorTiendas/Archivo_54.pdf" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/cliente/src/VectorTiendas/Archivo_55.pdf" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/cliente/src/VectorTiendas/Archivo_56.pdf" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/cliente/src/VectorTiendas/Archivo_57.pdf" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/cliente/src/VectorTiendas/Archivo_58.pdf" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/cliente/src/VectorTiendas/Archivo_59.pdf" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/cliente/src/VectorTiendas/Archivo_6.pdf" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/cliente/src/VectorTiendas/Archivo_60.pdf" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/cliente/src/VectorTiendas/Archivo_61.pdf" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/cliente/src/VectorTiendas/Archivo_62.pdf" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/cliente/src/VectorTiendas/Archivo_63.pdf" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/cliente/src/VectorTiendas/Archivo_64.pdf" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/cliente/src/VectorTiendas/Archivo_65.pdf" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/cliente/src/VectorTiendas/Archivo_66.pdf" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/cliente/src/VectorTiendas/Archivo_67.pdf" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/cliente/src/VectorTiendas/Archivo_68.pdf" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/cliente/src/VectorTiendas/Archivo_69.pdf" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/cliente/src/VectorTiendas/Archivo_7.pdf" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/cliente/src/VectorTiendas/Archivo_70.pdf" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/cliente/src/VectorTiendas/Archivo_71.pdf" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/cliente/src/VectorTiendas/Archivo_72.pdf" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/cliente/src/VectorTiendas/Archivo_73.pdf" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/cliente/src/VectorTiendas/Archivo_74.pdf" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/cliente/src/VectorTiendas/Archivo_75.pdf" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/cliente/src/VectorTiendas/Archivo_76.pdf" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/cliente/src/VectorTiendas/Archivo_77.pdf" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/cliente/src/VectorTiendas/Archivo_78.pdf" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/cliente/src/VectorTiendas/Archivo_79.pdf" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/cliente/src/VectorTiendas/Archivo_8.pdf" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/cliente/src/VectorTiendas/Archivo_80.pdf" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/cliente/src/VectorTiendas/Archivo_81.pdf" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/cliente/src/VectorTiendas/Archivo_82.pdf" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/cliente/src/VectorTiendas/Archivo_83.pdf" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/cliente/src/VectorTiendas/Archivo_84.pdf" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/cliente/src/VectorTiendas/Archivo_85.pdf" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/cliente/src/VectorTiendas/Archivo_86.pdf" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/cliente/src/VectorTiendas/Archivo_87.pdf" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/cliente/src/VectorTiendas/Archivo_88.pdf" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/cliente/src/VectorTiendas/Archivo_89.pdf" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/cliente/src/VectorTiendas/Archivo_9.pdf" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/cliente/src/VectorTiendas/Archivo_90.pdf" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/cliente/src/VectorTiendas/Archivo_91.pdf" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/cliente/src/VectorTiendas/Archivo_92.pdf" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/cliente/src/VectorTiendas/Archivo_93.pdf" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/cliente/src/VectorTiendas/Archivo_94.pdf" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/cliente/src/VectorTiendas/Archivo_95.pdf" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/cliente/src/VectorTiendas/Archivo_96.pdf" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/cliente/src/VectorTiendas/Archivo_97.pdf" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/cliente/src/VectorTiendas/Archivo_98.pdf" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/cliente/src/VectorTiendas/Archivo_99.pdf" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/cliente/src/VectorTiendas/Vector.dot" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/cliente/src/componentes/ArbolUsuarioTodo.js" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/cliente/src/componentes/ArbolesMedio.js" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/cliente/src/componentes/ArbolesUsuario.js" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/cliente/src/componentes/EliminarUsuario.js" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/cliente/src/componentes/Inicio.js" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/cliente/src/componentes/UsuariosPDF.js" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/cliente/src/componentes/VectorLinealizado.js" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/cliente/src/componentes/indexInicio.js" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/cliente/src/componentesLogin/CrearUsuario.js" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/cliente/src/componentesLogin/Login.js" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/cliente/src/componentesLogin/NavBarIncio.js" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/cliente/src/css/Estilos.css" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/vcs.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/vcs.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/Servidor/Compras/Carrito.go" beforeDir="false" afterPath="$PROJECT_DIR$/Servidor/Compras/Carrito.go" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Servidor/Inventario/Arbol.go" beforeDir="false" afterPath="$PROJECT_DIR$/Servidor/Inventario/Arbol.go" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Servidor/Inventario/DibujoArbol.go" beforeDir="false" afterPath="$PROJECT_DIR$/Servidor/Inventario/DibujoArbol.go" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/Servidor/MatrizDispersa/Matriz.go" beforeDir="false" afterPath="$PROJECT_DIR$/Servidor/MatrizDispersa/Matriz.go" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/Servidor/MatrizDispersa/Nodo.go" beforeDir="false" afterPath="$PROJECT_DIR$/Servidor/MatrizDispersa/Nodo.go" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Servidor/Reportes/reportes.go" beforeDir="false" afterPath="$PROJECT_DIR$/Servidor/Reportes/reportes.go" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/Servidor/servidor.go" beforeDir="false" afterPath="$PROJECT_DIR$/Servidor/servidor.go" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/cliente/package-lock.json" beforeDir="false" afterPath="$PROJECT_DIR$/cliente/package-lock.json" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/cliente/package.json" beforeDir="false" afterPath="$PROJECT_DIR$/cliente/package.json" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/cliente/src/App.js" beforeDir="false" afterPath="$PROJECT_DIR$/cliente/src/App.js" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/cliente/src/ImagenArbol/ArbolProductos.dot" beforeDir="false" afterPath="$PROJECT_DIR$/cliente/src/ImagenArbol/ArbolProductos.dot" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/cliente/src/ImagenArbol/ArbolProductos.png" beforeDir="false" afterPath="$PROJECT_DIR$/cliente/src/ImagenArbol/ArbolProductos.png" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/cliente/src/ImagenMatriz/Matriz.dot" beforeDir="false" afterPath="$PROJECT_DIR$/cliente/src/ImagenMatriz/Matriz.dot" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/cliente/src/ImagenMatriz/Matriz.png" beforeDir="false" afterPath="$PROJECT_DIR$/cliente/src/ImagenMatriz/Matriz.png" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/cliente/src/componentes/CargaArchivosjson.js" beforeDir="false" afterPath="$PROJECT_DIR$/cliente/src/componentes/CargaArchivosjson.js" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/cliente/src/componentes/CarritoCompras.js" beforeDir="false" afterPath="$PROJECT_DIR$/cliente/src/componentes/CarritoCompras.js" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/cliente/src/componentes/CartasProductos.js" beforeDir="false" afterPath="$PROJECT_DIR$/cliente/src/componentes/CartasProductos.js" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/cliente/src/componentes/DatosMatriz.js" beforeDir="false" afterPath="$PROJECT_DIR$/cliente/src/componentes/DatosMatriz.js" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/cliente/src/componentes/Fila.js" beforeDir="false" afterPath="$PROJECT_DIR$/cliente/src/componentes/Fila.js" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/cliente/src/componentes/FilaMatriz.js" beforeDir="false" afterPath="$PROJECT_DIR$/cliente/src/componentes/FilaMatriz.js" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/cliente/src/componentes/ImagenMatriz.js" beforeDir="false" afterPath="$PROJECT_DIR$/cliente/src/componentes/ImagenMatriz.js" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/cliente/src/componentes/ListadoTiendas.js" beforeDir="false" afterPath="$PROJECT_DIR$/cliente/src/componentes/ListadoTiendas.js" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/cliente/src/componentes/MosaicoProductos.js" beforeDir="false" afterPath="$PROJECT_DIR$/cliente/src/componentes/MosaicoProductos.js" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/cliente/src/componentes/NavBar.js" beforeDir="false" afterPath="$PROJECT_DIR$/cliente/src/componentes/NavBar.js" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/cliente/src/componentes/Pedidos.js" beforeDir="false" afterPath="$PROJECT_DIR$/cliente/src/componentes/Pedidos.js" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/cliente/src/componentes/ProductosTienda.js" beforeDir="false" afterPath="$PROJECT_DIR$/cliente/src/componentes/ProductosTienda.js" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/cliente/src/componentes/TablaMatriz.js" beforeDir="false" afterPath="$PROJECT_DIR$/cliente/src/componentes/TablaMatriz.js" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/cliente/src/componentes/UltimaFila.js" beforeDir="false" afterPath="$PROJECT_DIR$/cliente/src/componentes/UltimaFila.js" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/cliente/src/componentes/VerArbol.js" beforeDir="false" afterPath="$PROJECT_DIR$/cliente/src/componentes/VerArbol.js" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/cliente/src/css/Mosaico.css" beforeDir="false" afterPath="$PROJECT_DIR$/cliente/src/css/Mosaico.css" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/cliente/src/css/Pedidos.css" beforeDir="false" afterPath="$PROJECT_DIR$/cliente/src/css/Pedidos.css" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/cliente/src/index.js" beforeDir="false" afterPath="$PROJECT_DIR$/cliente/src/index.js" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -23,7 +202,7 @@
       </list>
     </option>
   </component>
-  <component name="GOROOT" url="file://$PROJECT_DIR$/../../../../../../../Go" />
+  <component name="GOROOT" url="file://$PROJECT_DIR$/../../../../../../../../Go" />
   <component name="Git.Settings">
     <option name="RECENT_GIT_ROOT_PATH" value="$PROJECT_DIR$" />
   </component>
@@ -54,12 +233,15 @@
     <property name="WebServerToolWindowFactoryState" value="false" />
     <property name="go.import.settings.migrated" value="true" />
     <property name="go.sdk.automatically.set" value="true" />
-    <property name="last_opened_file_path" value="$PROJECT_DIR$" />
+    <property name="last_opened_file_path" value="$PROJECT_DIR$/Servidor/Usuarios" />
     <property name="nodejs_package_manager_path" value="npm" />
     <property name="restartRequiresConfirmation" value="false" />
-    <property name="settings.editor.selected.configurable" value="project.propVCSSupport.CommitDialog" />
+    <property name="settings.editor.selected.configurable" value="preferences.pluginManager" />
   </component>
   <component name="RecentsManager">
+    <key name="CopyFile.RECENT_KEYS">
+      <recent name="C:\Users\Daniel Chicas\Desktop\Copia Proyecto Estructuras\Tareas EDD\src\github.com\EDD_VirtualMall_201807079\Servidor\Usuarios" />
+    </key>
     <key name="MoveFile.RECENT_KEYS">
       <recent name="C:\Users\Daniel Chicas\Desktop\Tareas EDD\src\github.com\EDD_VirtualMall_201807079\Reportes" />
     </key>
@@ -69,24 +251,24 @@
       <module name="EDD_VirtualMall_201807079" />
       <working_directory value="$PROJECT_DIR$" />
       <kind value="FILE" />
-      <filePath value="$PROJECT_DIR$/Listas/listaDoble.go" />
       <directory value="$PROJECT_DIR$" />
+      <filePath value="$PROJECT_DIR$/Listas/listaDoble.go" />
       <method v="2" />
     </configuration>
     <configuration name="go build servidor.go (1)" type="GoApplicationRunConfiguration" factoryName="Go Application" temporary="true" nameIsGenerated="true">
       <module name="EDD_VirtualMall_201807079" />
       <working_directory value="$PROJECT_DIR$" />
       <kind value="FILE" />
-      <filePath value="$PROJECT_DIR$/Servidor/servidor.go" />
       <directory value="$PROJECT_DIR$" />
+      <filePath value="$PROJECT_DIR$/Servidor/servidor.go" />
       <method v="2" />
     </configuration>
     <configuration name="go build servidor.go" type="GoApplicationRunConfiguration" factoryName="Go Application" temporary="true" nameIsGenerated="true">
       <module name="EDD_VirtualMall_201807079" />
       <working_directory value="$PROJECT_DIR$" />
       <kind value="FILE" />
-      <filePath value="$PROJECT_DIR$/servidor.go" />
       <directory value="$PROJECT_DIR$" />
+      <filePath value="$PROJECT_DIR$/servidor.go" />
       <method v="2" />
     </configuration>
     <recent_temporary>
@@ -115,6 +297,9 @@
   </component>
   <component name="VcsManagerConfiguration">
     <option name="ADD_EXTERNAL_FILES_SILENTLY" value="true" />
+    <ignored-roots>
+      <path value="$PROJECT_DIR$/Cliente" />
+    </ignored-roots>
   </component>
   <component name="XDebuggerManager">
     <breakpoint-manager>

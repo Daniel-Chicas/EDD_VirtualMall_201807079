@@ -1,15 +1,15 @@
-digraph Daniel200811{
+digraph Daniel200612{
 node[shape=box];
-MT[label="Noviembre", style = filled, color=green, group = 1];
+MT[label="Diciembre", style = filled, color=green, group = 1];
 e0[shape = point, width = 0];
 e0[shape = point, width = 0];
-node0xc000162730[color=yellow, label="Depa: Tablets", group = 1];
-MT->node0xc000162730;
-node0xc000162780[color=yellow, label="Día: 3", group = 2];
-MT->node0xc000162780;
-{rank = same;MT;node0xc000162780;}
-node0xc00016d218[color=pink, label="PEDIDOS", group = 2];
-node0xc000162780->node0xc00016d218;
-node0xc000162730->node0xc00016d218;
-{rank = same;node0xc000162730;node0xc00016d218;}
+node0xc00030e1e0[color=brown, label="Depa: Accesorios", group = 1];
+MT->node0xc00030e1e0;
+node0xc00030e230[color=pink, label="Día: 22", group = 2];
+MT->node0xc00030e230;
+{rank = same;MT;node0xc00030e230;}
+node0xc00016f010[color=violet, label="PEDIDOS", group = 2];
+node0xc00030e230->node0xc00016f010;
+node0xc00030e1e0->node0xc00016f010;
+{rank = same;node0xc00030e1e0;node0xc00016f010;}
 }

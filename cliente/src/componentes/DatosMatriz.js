@@ -1,4 +1,4 @@
-import {React, useEffect, useState} from 'react'
+import {React,  useState} from 'react'
 import Calendar from 'react-calendar';
 import Tabla from './TablaMatriz'
 import { Button, Segment } from 'semantic-ui-react'
@@ -14,7 +14,7 @@ function DatosMatriz() {
     var fechaG = new Date(fecha)
     const [value, onChange] = useState(fechaG);
     const [tiendas, settiendas] = useState([])
-    const encabezado=['id', 'Tienda', 'Departamento', 'Calificación', 'Nombre Producto', 'Código Producto', 'Cantidad']
+    const encabezado=['id', 'Tienda', 'Departamento', 'Calificación', 'DPI', 'Nombre Cliente', 'Correo', 'Nombre Producto', 'Código Producto', 'Cantidad']
     
     const ver = ()=>{
         async function obtener(){
@@ -22,7 +22,6 @@ function DatosMatriz() {
             const mes = value.getMonth()+1
             const anio = value.getFullYear()
             const data = await axios.get('http://localhost:3000/Pedido/'+anio+"&"+mes+"&"+dia)
-            console.log(data.data.Datos)
             if(data.data.Datos!=null){
                 settiendas(data.data.Datos)
             }

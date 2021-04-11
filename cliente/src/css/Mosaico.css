@@ -5,6 +5,10 @@
     height: auto;
 }
 
+.cargando{
+    height: 100vh;
+}
+
 .mosaico {
     margin-left: 50px !important;
     margin-right: 50px !important;

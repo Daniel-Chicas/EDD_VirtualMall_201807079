@@ -1,4 +1,4 @@
-import React, { useState } from 'react'
+import React from 'react'
 import '../css/Carta.css'
 
 function Cartas(props) {
@@ -11,6 +11,7 @@ function Cartas(props) {
     const CantidadMax = props.CantidadMax
     const cantidad = props.cantidad
     const precio = props.precio
+    const almacenamiento = props.almacenamiento
 
     const enviar = ()=>{
         var json={
@@ -21,10 +22,11 @@ function Cartas(props) {
             cantidad,
             CantidadMax,
             producto,
-            precio
+            precio,
+            almacenamiento
         }
         var datos = localStorage.getItem('prueba1')
-        if (datos == null || datos == undefined) {
+        if (datos === null || datos === undefined) {
             console.log(datos)
             localStorage.setItem('prueba1', JSON.stringify([json]))
         }else{
@@ -49,6 +51,8 @@ function Cartas(props) {
                         <a>Código: {props.codigo}</a>
                         <br></br>
                         <a>Cantidad Disponible: {props.CantidadMax}</a>
+                        <br></br>
+                        <a>Lugar almacenado: {props.almacenamiento}</a>
                     </div>
                     <div className="description">{props.descripcion}</div>
                     <div className="ui basic green button center fluid" onClick={enviar}>Añadir al carrito</div>

@@ -1,0 +1,221 @@
+body{
+    margin-top: 0px !important;
+    margin-bottom: 0px !important;
+  }
+
+*{
+    padding: 0;
+    margin: 0;
+    box-sizing: border-box;
+}
+
+.General {
+    background: #9fb8ad;
+    background: -webkit-linear-gradient(to right, #240b36, #9fb8ad);
+    background: linear-gradient(to right, #240b36, #9fb8ad);
+    height: 93.6vh;
+}
+
+.Fondo{
+    background-color: transparent !important;
+}
+
+
+.GeneralLogin {
+    background: linear-gradient(150deg, rgb(95, 177, 41), rgb(156, 202, 82), rgb(44, 152, 202));
+    background-size: 400% 300%;
+    animation: BgGradient 5s ease infinite;
+    height: 100vh;
+}
+
+.Eliminar {
+    background: linear-gradient(150deg, rgb(88, 60, 24), rgb(45, 110, 136), rgb(72, 39, 82));
+    background-size: 400% 300%;
+    animation: BgGradient 5s ease infinite;
+    height: 100vh;
+}
+
+@keyframes BgGradient{
+    0%{ background-position: 0% 50%;}
+    50%{background-position: 100% 50%;}
+    100%{ background-position: 0% 50%;}
+}
+
+#SubirArchivo{
+    height: 60vh;
+    font-size: 100px !important;
+    border: none !important;
+    background-color:  transparent !important;
+    font-size: 18px !important;
+}
+
+#CrearUsuario{
+    height: 93.6vh;
+    font-size: 100px !important;
+    border: none !important;
+    background-color:  transparent!important;
+    font-size: 15px !important;
+}
+
+.Datos{
+    align-items: center !important;
+    font-size: 20px !important;
+}
+
+.DatosCrear{
+    align-items: center !important;
+    font-size: 20px !important;
+}
+
+.Alerta{
+    visibility: hidden;
+    font-size: 15px !important;
+}
+
+.burbuja{
+    border-radius: 50% ;
+    background: #fff ;
+    opacity: .3 ;
+    position: absolute ;
+    bottom: -150 ;
+    animation: burbujas 3s linear infinite;
+}
+
+.burbuja:nth-child(1){
+    width: 80px ;
+    height: 80px ;
+    left: 5% ;
+    animation-duration: 3s;
+    animation-delay: 0s;
+}
+
+.burbuja:nth-child(2){
+    width: 100px ;
+    height: 100px ;
+    left: 35% ;
+    animation-duration: 3.5s;
+    animation-delay: 0s;
+}
+
+.burbuja:nth-child(3){
+    width: 20px ;
+    height: 20px ;
+    left: 15% ;
+    animation-duration: 1.5s;
+    animation-delay: 0s;
+}
+
+.burbuja:nth-child(4){
+    width: 50px ;
+    height: 50px ;
+    left: 80% ;
+    animation-duration: 6.8s;
+    animation-delay: 0s;
+}
+
+.burbuja:nth-child(5){
+    width: 20px ;
+    height: 20px ;
+    left: 60% ;
+    animation-duration: 3.3s;
+    animation-delay: 0s;
+}
+
+.burbuja:nth-child(6){
+    width: 20px ;
+    height: 20px ;
+    left: 70% ;
+    animation-duration: 4.4s;
+    animation-delay: 0s;
+}
+
+.burbuja:nth-child(7){
+    width: 20px ;
+    height: 20px ;
+    left: 250% ;
+    animation-duration: 4s;
+    animation-delay: 0s;
+}
+
+.burbuja:nth-child(8){
+    width: 100px ;
+    height: 100px ;
+    left: 90% ;
+    animation-duration: 3.9s;
+    animation-delay: 0s;
+}
+
+.burbuja:nth-child(9){
+    width: 65px ;
+    height: 65px ;
+    left: 65% ;
+    animation-duration: 8s;
+    animation-delay: 0s;
+}
+
+.burbuja:nth-child(10){
+    width: 40px ;
+    height: 40px ;
+    left: 35% ;
+    animation-duration: 3s;
+    animation-delay: 0s;
+}
+.burbuja:nth-child(11){
+    width: 80px ;
+    height: 80px ;
+    left: 40% ;
+    animation-duration: 10s;
+    animation-delay: 0s;
+}
+.burbuja:nth-child(10){
+    width: 40px ;
+    height: 40px ;
+    left: 0% ;
+    animation-duration: 9.5s;
+    animation-delay: 0s;
+}
+.burbuja:nth-child(10){
+    width: 60px ;
+    height: 60px ;
+    left: 50% ;
+    animation-duration: 1s;
+    animation-delay: 0s;
+}
+.burbuja:nth-child(10){
+    width: 20px ;
+    height: 20px ;
+    left: 75% ;
+    animation-duration: 2.8s;
+    animation-delay: 0s;
+}
+.burbuja:nth-child(10){
+    width: 50px ;
+    height: 50px ;
+    left: 60% ;
+    animation-duration: 8.2s;
+    animation-delay: 0s;
+}
+.burbuja:nth-child(10){
+    width: 50px ;
+    height: 50px ;
+    left: 25% ;
+    animation-duration: 3.5s;
+    animation-delay: 0s;
+}
+
+@keyframes burbujas{
+    0%{
+        bottom: 0;
+        opacity: 0;
+    }   
+    30%{
+        transform: translateX(30px);
+    }
+    50%{
+        opacity: .4;
+    }
+    100%{
+        bottom: 100vh;
+        opacity: 0;
+    }
+}

@@ -1,14 +1,9 @@
 import React from 'react'
 import Fila from '../componentes/FilaMatriz'
 import { Table } from 'semantic-ui-react'
-import { useHistory } from "react-router-dom";
 import '../css/CarritoCompras.css'
 
 function Tabla(props) {
-    const history = useHistory();
-    const mandar = () =>{
-        history.push(`/VerTiendas`)
-    }
     return (
         <>
         <div className="Tabla">
@@ -23,12 +18,14 @@ function Tabla(props) {
                     </thead>
                     <tbody>
                         {props.data.map((dato, index) => (
-                            console.log(dato),
                             <Fila
                                 index={index}
                                 tienda={dato.Tienda}
                                 departamento={dato.Departamento}
                                 calificacion = {dato.Calificacion}
+                                cliente = {dato.Cliente}
+                                nombreCliente = {dato.Nombre}
+                                correo = {dato.Correo}
                                 nombreProducto ={dato.NombreProducto}
                                 codigoProducto = {dato.CodigoProducto}
                                 cantidad = {dato.Cantidad}

@@ -20,14 +20,22 @@ function Fila(props) {
 
     function suma(){
         var cantidad = parseInt(document.getElementById("Producto"+props.index).value)
-        var precio = props.precio
-        document.getElementById("SumaParcial"+props.index).innerHTML = "Q"+(cantidad*precio)
-        var total = 0
-        props.todo.map((x, index)=>{
-            var cantidad = parseInt(document.getElementById("Producto"+index).value)
-                var precio = x.precio
-                total += precio*cantidad
-        })
+        if (cantidad > props.CantidadMax) {
+            document.getElementById("SumaParcial"+props.index).innerHTML = "Cantidad no válida"
+        }else{
+            var precio = props.precio
+            document.getElementById("SumaParcial"+props.index).innerHTML = "Q"+(cantidad*precio)
+            var total = 0
+            props.todo.map((x, index)=>{
+                var cantidad = parseInt(document.getElementById("Producto"+index).value)
+                if (cantidad > x.CantidadMax) {
+                    console.log("no"+cantidad+"->"+x.CantidadMax)
+                }else{
+                    var precio = x.precio
+                    total += precio*cantidad
+                }
+            })
+        }
         document.getElementById("SumaTotal").innerHTML = "Q"+(total)
     }
     return (

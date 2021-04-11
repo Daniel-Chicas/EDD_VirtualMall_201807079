@@ -17,6 +17,7 @@ function MosaicoProductos(props) {
                         codigo ={c.Codigo}
                         CantidadMax = {c.Cantidad}
                         cantidad = {numero}
+                        almacenamiento ={c.Almacenamiento}
                         descripcion={c.Descripcion}
                         precio={c.Precio}
                         id={c.Codigo}

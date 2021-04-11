@@ -13,6 +13,7 @@ type Pedidos struct {
 	NombreTienda string `json:"Tienda"`
 	Departamento string `json:"Departamento"`
 	Calificacion int `json:"Calificacion"`
+	Cliente int `json:"Cliente"`
 	CodigoProductos []NodoProducto `json:"Productos"`
 }
 

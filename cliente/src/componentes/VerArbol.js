@@ -1,23 +1,78 @@
-import React from 'react'
+import {React, useState} from 'react'
 import { Segment, Image } from 'semantic-ui-react'
+import NavBar from '../componentes/NavBar'
+import {BrowserRouter as Router, Route} from 'react-router-dom'
+import { Button, Header, Icon } from 'semantic-ui-react'
 import arbol from '../ImagenArbol/ArbolProductos.png'
 import '../css/Imagen.css'
+import axios from 'axios'
 
 function VerArbol() {
-    return (
-        <div className="Arbol">
-            <br/>
-            <br/>
-            <br/>
-            <br/>
-            <br/>
-            <div>
-            <Segment placeholder className="FondoImagen" centered>
-            <Image src={arbol} size='300px' centered />
+    const [loading, setloading] = useState(false)
+    const [existe, setexiste] = useState(false)
+
+
+    axios.post('http://localhost:3000/UsuarioLinea')
+    .then(response=>{
+        if (response.data === "Usuario") {
+            setloading(true)
+        }else if (response.data === "no"){
+            setexiste(true)
+        }
+    }).catch(error=>{
+        console.log(error);
+    })
+
+    if (existe === true) {return(
+        <div className="General">
+            <Router>
+                <NavBar/>
+            </Router>
+            <Segment placeholder id="SubirArchivo">
+            <Header icon>
+                <Icon name='user secret' />
+                    DEBE INICIAR SESIÓN
+                <br/><br/>
+            </Header>
             </Segment>
-            </div>
         </div>
     )
+    }else{
+        if(loading === false){
+            return (
+                <div className="Arbol">
+                    <Router>
+                        <NavBar/>
+                    </Router>
+                    <br/>
+                    <br/>
+                    <br/>
+                    <br/>
+                    <br/>
+                    <div>
+                    <Segment placeholder className="FondoImagen" centered>
+                    <Image src={arbol} size='300px' centered />
+                    </Segment>
+                    </div>
+                </div>
+            )
+        }else{
+            return(
+                <div className="General">
+                    <Router>
+                        <NavBar/>
+                    </Router>
+                    <Segment placeholder id="SubirArchivo">
+                    <Header icon>
+                        <Icon name='user secret' />
+                            DEBE TENER PERMISOS DE ADMINISTRADOR PARA INGRESAR A ESTA PÁGINA
+                        <br/><br/>
+                    </Header>
+                    </Segment>
+                </div>
+            )
+        }
+    }
 }
 
 export default VerArbol

@@ -18,6 +18,7 @@ type NodoProducto struct {
 	PrecioP float64 `json:"Precio"`
 	Cantidad int `json:"Cantidad"`
 	Imagen string `json:"Imagen"`
+	Almacenamiento string `json:"Almacenamiento"`
 }
 
 type NodoArbol struct{
@@ -28,6 +29,7 @@ type NodoArbol struct{
 	Cantidad int
 	Imagen string
 	Factor int
+	Almacenamiento string
 	Izq *NodoArbol
 	Der *NodoArbol
 }
@@ -41,8 +43,8 @@ func (this *Arbol) NuevoArbol() *Arbol{
 	return &Arbol{nil}
 }
 
-func NuevoNodo (nombre string, codigo int, descripcion string, precio float64, cantidad int, imagen string) *NodoArbol{
-	return &NodoArbol{nombre, codigo, descripcion, precio, cantidad, imagen, 0, nil, nil}
+func NuevoNodo (nombre string, codigo int, descripcion string, precio float64, cantidad int, imagen string, almacenamiento string) *NodoArbol{
+	return &NodoArbol{nombre, codigo, descripcion, precio, cantidad, imagen, 0, almacenamiento,nil, nil}
 }
 
 func RotacionII(n *NodoArbol, n1 *NodoArbol) *NodoArbol{
@@ -111,13 +113,13 @@ func RotacionID(n *NodoArbol, n1 *NodoArbol) *NodoArbol{
 	return n2
 }
 
-func insertar(ra *NodoArbol, nombre string, codigo int, descripcion string, precio float64, cantidad int, imagen string, ya *bool) *NodoArbol{
+func insertar(ra *NodoArbol, nombre string, codigo int, descripcion string, precio float64, cantidad int, imagen string, almacenamiento string, ya *bool) *NodoArbol{
 	var n1 *NodoArbol
 	if ra == nil {
-		ra = NuevoNodo(nombre, codigo, descripcion, precio, cantidad, imagen)
+		ra = NuevoNodo(nombre, codigo, descripcion, precio, cantidad, imagen, almacenamiento)
 		*ya = true
 	}else if codigo<ra.Codigo{
-		izq := insertar(ra.Izq, nombre, codigo, descripcion, precio, cantidad, imagen, ya)
+		izq := insertar(ra.Izq, nombre, codigo, descripcion, precio, cantidad, imagen, almacenamiento, ya)
 		ra.Izq = izq
 		if *ya == true {
 			switch ra.Factor {
@@ -139,12 +141,11 @@ func insertar(ra *NodoArbol, nombre string, codigo int, descripcion string, prec
 			}
 		}
 	}else if codigo > ra.Codigo{
-		der := insertar(ra.Der, nombre, codigo, descripcion, precio, cantidad, imagen, ya)
+		der := insertar(ra.Der, nombre, codigo, descripcion, precio, cantidad, imagen, almacenamiento, ya)
 		ra.Der = der
 		if *ya{
 			switch ra.Factor {
 			case 1:
-
 				n1 = ra.Der
 				if n1.Factor == 1 {
 					ra = RotacionDD(ra, n1)
@@ -168,8 +169,8 @@ func insertar(ra *NodoArbol, nombre string, codigo int, descripcion string, prec
 	return ra
 }
 
-func (L *Arbol) Insertar(nombre string, codigo int, descripcion string, precio float64, cantidad int, imagen string){
+func (L *Arbol) Insertar(nombre string, codigo int, descripcion string, precio float64, cantidad int, imagen string, almacenamiento string){
 	b := false
 	a := &b
-	L.Raiz = insertar(L.Raiz, nombre, codigo, descripcion, precio, cantidad, imagen, a)
+	L.Raiz = insertar(L.Raiz, nombre, codigo, descripcion, precio, cantidad, imagen, almacenamiento, a)
 }

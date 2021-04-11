@@ -7,6 +7,7 @@ import (
 	"./MatrizDispersa"
 	"./Reportes"
 	"./TiendaEspecifica"
+	"./Usuarios"
 	"encoding/json"
 	"fmt"
 	"github.com/gorilla/mux"
@@ -34,9 +35,18 @@ var metodosMatriz MatrizDispersa.Matriz
 var listaAnioa MatrizDispersa.ListaAnio
 var carritojson Compras.General
 var arregloProductos []Inventario.NodoArbol
+var arbolUsuarios Usuarios.ArbolB
+var Usuario = arbolUsuarios.NuevoArbol(5)
+var UsuariosEntrada Usuarios.General
+var Inicio Usuarios.Inicio
+var usuarioLinea int
+var arbolCifrado Usuarios.ArbolB
+var arbolMedioCifrado Usuarios.ArbolB
+
 
 
 func main(){
+	Usuario.Insertar(Usuarios.NuevaLlave(1234567890101, "EDD2021", " auxiliar@edd.com", "1234", "Administrador"))
 	router := mux.NewRouter()
 	router.HandleFunc("/", inicio).Methods("Get")
 	router.HandleFunc("/cargarArchivos", cargar).Methods("Post")
@@ -51,6 +61,12 @@ func main(){
 	router.HandleFunc("/DatosMatriz", datosMatriz).Methods("Get")
 	router.HandleFunc("/ImagenMatriz/{datos}", imagenMatriz).Methods("Get")
 	router.HandleFunc("/Arbol/{datos}", arbolTienda).Methods("Get")
+	router.HandleFunc("/Usuarios", usuarios).Methods("Post")
+	router.HandleFunc("/EliminarUsuario", eliminarUsuario).Methods("Post")
+	router.HandleFunc("/IniciarSesion", IniciarSesion).Methods("Post")
+	router.HandleFunc("/UsuarioLinea", UsuarioLinea).Methods("Post")
+	router.HandleFunc("/DatosLinea", DatosLinea).Methods("Get")
+	router.HandleFunc("/ArbolesB", GraficosArboles).Methods("Get")
 	log.Fatal(http.ListenAndServe(":3000", router))
 }
 
@@ -83,8 +99,6 @@ func cargar(w http.ResponseWriter, r *http.Request){
 	for reqBody[len(reqBody)-1] != 125{
 		reqBody = remove(reqBody, len(reqBody)-1)
 	}
-
-
 	json.Unmarshal(reqBody, &ms)
 	for i := 0; i < len(ms.Inicio); i++ {
 		a := ms.Inicio[i]
@@ -110,6 +124,22 @@ func cargar(w http.ResponseWriter, r *http.Request){
 	Vector = list.CrearMatriz()
 	Indi := list.Indi()
 	Departa := list.Departa()
+
+	var generalReg []Usuarios.General
+	var usuariosEx []Usuarios.Usuario
+	json.Unmarshal(reqBody, &UsuariosEntrada)
+	for i := 0; i < len(UsuariosEntrada.Usuarios); i++ {
+		a := UsuariosEntrada.Usuarios[i]
+		existe := existeB(Usuario.Raiz, a.DPI)
+		if existe == false {
+			Usuario.Insertar(Usuarios.NuevaLlave(a.DPI, a.Nombre, a.Correo, a.Contra, a.Cuenta))
+		}else{
+			usuariosEx = append(usuariosEx, a)
+		}
+	}
+	usuarioGen := Usuarios.General{Usuarios: usuariosEx}
+	generalReg = append(generalReg, usuarioGen)
+
 	if len(Vector) != 0 {
 		json.Unmarshal(reqBody, &arbol)
 		for i := 0; i < len(arbol.Inventarios); i++ {
@@ -130,88 +160,93 @@ func cargar(w http.ResponseWriter, r *http.Request){
 						nodoArbol.Precio =  a.PrecioP
 						nodoArbol.Cantidad = a.Cantidad
 						nodoArbol.Imagen = a.Imagen
-						arbolPosicion.Insertar(nodoArbol.NombreProducto, nodoArbol.Codigo, nodoArbol.Descripcion, nodoArbol.Precio, nodoArbol.Cantidad, nodoArbol.Imagen)
+						nodoArbol.Almacenamiento = a.Almacenamiento
+						arbolPosicion.Insertar(nodoArbol.NombreProducto, nodoArbol.Codigo, nodoArbol.Descripcion, nodoArbol.Precio, nodoArbol.Cantidad, nodoArbol.Imagen, nodoArbol.Almacenamiento)
 					}
 					imp.Inventario = *arbolPosicion
 				}
 				imp = imp.Siguiente
 			}
 		}
+			json.Unmarshal(reqBody, &matriz)
+			for i := 0; i < len(matriz.Pedidos); i++ {
+				fecha := matriz.Pedidos[i].Fecha
+				dia,_ := strconv.Atoi(strings.Split(fecha, "-")[0])
+				mes,_ := strconv.Atoi(strings.Split(fecha, "-")[1])
+				anio,_ := strconv.Atoi(strings.Split(fecha, "-")[2])
+				NombreTienda := matriz.Pedidos[i].NombreTienda
+				Departamento := matriz.Pedidos[i].Departamento
+				Calificacion := matriz.Pedidos[i].Calificacion
+				Cliente := matriz.Pedidos[i].Cliente
+				Productos := matriz.Pedidos[i].Productos
+				Tercero := posicionTercero(NombreTienda, Departamento,Calificacion, Indi, Departa)
+				dpi := validarDPI(Usuario.Raiz, Cliente)
+				if dpi == true {
+					for j := 0; j < len(Productos); j++ {
+						if Tercero<0{
+							break
+						}
+						imp := Vector[Tercero].ListGA.Cabeza
+						for imp != nil {
+							if imp.NombreTienda == NombreTienda && imp.Calificacion == Calificacion {
+								a := inOrden(imp.Inventario.Raiz, Productos[j].Codigo)
+								if a == true {
 
-		json.Unmarshal(reqBody, &matriz)
-		for i := 0; i < len(matriz.Pedidos); i++ {
-			fecha := matriz.Pedidos[i].Fecha
-			dia,_ := strconv.Atoi(strings.Split(fecha, "-")[0])
-			mes,_ := strconv.Atoi(strings.Split(fecha, "-")[1])
-			anio,_ := strconv.Atoi(strings.Split(fecha, "-")[2])
-			NombreTienda := matriz.Pedidos[i].NombreTienda
-			Departamento := matriz.Pedidos[i].Departamento
-			Calificacion := matriz.Pedidos[i].Calificacion
-			Productos := matriz.Pedidos[i].Productos
-			Tercero := posicionTercero(NombreTienda, Departamento,Calificacion, Indi, Departa)
-			for j := 0; j < len(Productos); j++ {
-				if Tercero<0{
-					break
-				}
-				imp := Vector[Tercero].ListGA.Cabeza
-				for imp != nil {
-					if imp.NombreTienda == NombreTienda && imp.Calificacion == Calificacion {
-						a := inOrden(imp.Inventario.Raiz, Productos[j].Codigo)
-						if a == true {
+									existeAnio := EncontrarAnio(&listaAnioa, anio)
+									if existeAnio == false {
+										var listaMes MatrizDispersa.ListaMes
+										nodoAnio := MatrizDispersa.NodoAnio{Anio: anio, ListaMatricesMes: &listaMes}
+										listaAnioa.Insertar(&nodoAnio)
 
-							existeAnio := EncontrarAnio(&listaAnioa, anio)
-							if existeAnio == false {
-								var listaMes MatrizDispersa.ListaMes
-								nodoAnio := MatrizDispersa.NodoAnio{Anio: anio, ListaMatricesMes: &listaMes}
-								listaAnioa.Insertar(&nodoAnio)
-
-							}
-							existeMes := EncontrarMes(&listaAnioa, anio, mes)
-							if existeMes == false {
-								impm := listaAnioa.Cabeza
-								for impm != nil {
-									if impm.Anio == anio {
-										nodoMes := MatrizDispersa.NodoMes{Mes: mes, MatrizMes: &MatrizDispersa.Matriz{Mes: mes, Anio: anio}}
-										impm.ListaMatricesMes.Insertar(&nodoMes)
 									}
-									impm = impm.Siguiente
-								}
-							}
-
-							impa := listaAnioa.Cabeza
-							for impa != nil {
-								if impa.Anio == anio {
-									impr := impa.ListaMatricesMes.Cabeza
-									for impr != nil {
-										if impr.Mes == mes {
-											nombreProducto := inOrdenNombre(imp.Inventario.Raiz, Productos[j].Codigo)
-											nodoPedido := metodosMatriz.NuevoNodoPedido(fecha, NombreTienda, Departamento,Calificacion, nombreProducto,Productos[j].Codigo, 0, strconv.Itoa(dia))
-											impr.MatrizMes.Insertar(nodoPedido)
+									existeMes := EncontrarMes(&listaAnioa, anio, mes)
+									if existeMes == false {
+										impm := listaAnioa.Cabeza
+										for impm != nil {
+											if impm.Anio == anio {
+												nodoMes := MatrizDispersa.NodoMes{Mes: mes, MatrizMes: &MatrizDispersa.Matriz{Mes: mes, Anio: anio}}
+												impm.ListaMatricesMes.Insertar(&nodoMes)
+											}
+											impm = impm.Siguiente
 										}
-										impr = impr.Siguiente
+									}
+
+									impa := listaAnioa.Cabeza
+									for impa != nil {
+										if impa.Anio == anio {
+											impr := impa.ListaMatricesMes.Cabeza
+											for impr != nil {
+												if impr.Mes == mes {
+													nombreProducto := inOrdenNombre(imp.Inventario.Raiz, Productos[j].Codigo)
+													nodoPedido := metodosMatriz.NuevoNodoPedido(fecha, NombreTienda, Departamento,Calificacion, Cliente, nombreProducto,Productos[j].Codigo, 0, strconv.Itoa(dia))
+													impr.MatrizMes.Insertar(nodoPedido)
+												}
+												impr = impr.Siguiente
+											}
+										}
+										impa = impa.Siguiente
 									}
 								}
-								impa = impa.Siguiente
 							}
+							imp = imp.Siguiente
 						}
 					}
-					imp = imp.Siguiente
 				}
 			}
-		}
-		if listaAnioa.Cabeza != nil {
-			listaAnioa = *metodosMatriz.BurbujaAnio(listaAnioa)
-			impa := listaAnioa.Cabeza
-			for impa != nil{
-				impa.ListaMatricesMes = metodosMatriz.BurbujaMes(*impa.ListaMatricesMes)
-				impa = impa.Siguiente
+			if listaAnioa.Cabeza != nil {
+				listaAnioa = *metodosMatriz.BurbujaAnio(listaAnioa)
+				impa := listaAnioa.Cabeza
+				for impa != nil{
+					impa.ListaMatricesMes = metodosMatriz.BurbujaMes(*impa.ListaMatricesMes)
+					impa = impa.Siguiente
+				}
 			}
-		}
 	}
+
 	w.Header().Set("Content-type", "application/json")
 	if list.Cabeza == nil{
 		mensaje := Mensaje{"NO SE HA PODIDO CARGAR EL ARCHIVO"}
-		w.WriteHeader(http.StatusFailedDependency)
+		w.WriteHeader(http.StatusCreated)
 		json.Unmarshal(reqBody, &ms)
 		json.NewEncoder(w).Encode(mensaje)
 	}else{
@@ -321,14 +356,13 @@ func busquedaProductosTienda (w http.ResponseWriter, r *http.Request){
 				inOrdenNombreRegresa(a.Raiz)
 				for i := 0; i < len(arregloProductos); i++ {
 					n := arregloProductos[i]
-					nodosReg = append(nodosReg, NodoProductoReg{NombreProducto: n.NombreProducto, Codigo: n.Codigo, Descripcion: n.Descripcion, PrecioP: n.Precio, Cantidad: n.Cantidad, Imagen: n.Imagen})
+					nodosReg = append(nodosReg, NodoProductoReg{NombreProducto: n.NombreProducto, Codigo: n.Codigo, Descripcion: n.Descripcion, PrecioP: n.Precio, Cantidad: n.Cantidad, Imagen: n.Imagen, Almacenamiento: n.Almacenamiento})
 				}
 				nodoTienda := InventarioReg{NombreTienda: imp.NombreTienda, Departamento: Vector[Tercero].Departamento, Calificacion: imp.Calificacion, Productos: nodosReg}
 				InventarioTienda = append(InventarioTienda, nodoTienda)
 			}
 			imp = imp.Siguiente
 		}
-		//generalRE := GeneralReg{InventarioTienda}
 	w.WriteHeader(http.StatusOK)
 	json.NewEncoder(w).Encode(InventarioTienda)
 }
@@ -410,6 +444,7 @@ func carrito (w http.ResponseWriter, r *http.Request){
 		Tienda := a.NombreTienda
 		Departamento := a.Departamento
 		Calificacion := a.Calificacion
+		Cliente := a.Cliente
 		Productos := a.CodigoProductos
 		Tercero := posicionTercero(Tienda, Departamento, Calificacion, Indi, Departa)
 		for j := 0; j < len(Productos); j++ {
@@ -449,7 +484,7 @@ func carrito (w http.ResponseWriter, r *http.Request){
 									for impr != nil {
 										if impr.Mes == mes {
 											nombreProducto := inOrdenNombre(imp.Inventario.Raiz, Productos[j].Codigo)
-											nodoPedido := metodosMatriz.NuevoNodoPedido(fecha, Tienda, Departamento,Calificacion, nombreProducto,Productos[j].Codigo, Cantidad, strconv.Itoa(dia))
+											nodoPedido := metodosMatriz.NuevoNodoPedido(fecha, Tienda, Departamento,Calificacion, Cliente, nombreProducto,Productos[j].Codigo, Cantidad, strconv.Itoa(dia))
 											impr.MatrizMes.Insertar(nodoPedido)
 										}
 										impr = impr.Siguiente
@@ -499,7 +534,7 @@ func pedidoMes(w http.ResponseWriter, r *http.Request){
 			impm := imp.ListaMatricesMes.Cabeza
 			for impm != nil{
 				if impm.Mes == mes {
-					regresa = impm.MatrizMes.Imprimir(dia)
+					regresa = impm.MatrizMes.Imprimir(dia, Usuario)
 				}
 				impm = impm.Siguiente
 			}
@@ -583,7 +618,166 @@ func arbolTienda(w http.ResponseWriter, r *http.Request){
 	json.NewEncoder(w).Encode("")
 }
 
-//----------------------------------------------------------------------------------------------------------------------
+func usuarios(w http.ResponseWriter, r *http.Request){
+	indexHandler(w, r)
+	reqBody, err := ioutil.ReadAll(r.Body)
+	if err!=nil{
+		fmt.Fprint(w, "Error al insertar")
+	}
+	for reqBody[0] != 123{
+		reqBody = remove(reqBody, 0)
+	}
+	for reqBody[len(reqBody)-1] != 125{
+		reqBody = remove(reqBody, len(reqBody)-1)
+	}
+	var generalReg []Usuarios.General
+	var usuariosEx []Usuarios.Usuario
+	json.Unmarshal(reqBody, &UsuariosEntrada)
+	for i := 0; i < len(UsuariosEntrada.Usuarios); i++ {
+		a := UsuariosEntrada.Usuarios[i]
+		existe := existeB(Usuario.Raiz, a.DPI)
+		if existe == false {
+			Usuario.Insertar(Usuarios.NuevaLlave(a.DPI, a.Nombre, a.Correo, a.Contra, a.Cuenta))
+		}else{
+			usuariosEx = append(usuariosEx, a)
+		}
+	}
+	usuarioGen := Usuarios.General{Usuarios: usuariosEx}
+	generalReg = append(generalReg, usuarioGen)
+	if generalReg[0].Usuarios == nil {
+		mensaje := Mensaje{"EL ARCHIVO HA SIDO GUARDADO EXISTOSAMENTE"}
+		w.WriteHeader(http.StatusCreated)
+		json.Unmarshal(reqBody, &ms)
+		json.NewEncoder(w).Encode(mensaje)
+	}else{
+		w.WriteHeader(http.StatusCreated)
+		json.Unmarshal(reqBody, &ms)
+		json.NewEncoder(w).Encode(generalReg)
+	}
+}
+
+func eliminarUsuario(w http.ResponseWriter, r *http.Request){
+	var regresa []string
+	indexHandler(w, r)
+	reqBody, err := ioutil.ReadAll(r.Body)
+	if err!=nil{
+		fmt.Fprint(w, "Error al insertar")
+	}
+	for reqBody[0] != 123{
+		reqBody = remove(reqBody, 0)
+	}
+	for reqBody[len(reqBody)-1] != 125{
+		reqBody = remove(reqBody, len(reqBody)-1)
+	}
+
+	json.Unmarshal(reqBody, &Inicio)
+	dpi := validarDPI(Usuario.Raiz, Inicio.Nombre)
+	contra := validarContra(Usuario.Raiz, Inicio.Nombre, Inicio.Contra)
+
+	if dpi == true {
+		regresa = append(regresa, "si" )
+	}else{
+		regresa = append(regresa, "no" )
+	}
+	if contra == true {
+		regresa = append(regresa, "si" )
+	}else{
+		regresa = append(regresa, "no" )
+	}
+	if regresa[0] == "si" && regresa[1] == "si" {
+		existe := Usuario.ExisteBEliminar(Usuario.Raiz, Inicio.Nombre, Inicio.Contra)
+		if existe == true {
+			regresa = append(regresa, "EL USUARIO HA SIDO ELIMINADO")
+		}else{
+			regresa = append(regresa, "REVISE LOS DATOS DE LA CUENTA, ESTOS SON INCORRECTOS O EL USUARIO NO EXISTE")
+		}
+	}
+	w.WriteHeader(http.StatusCreated)
+	json.Unmarshal(reqBody, &ms)
+	json.NewEncoder(w).Encode(regresa)
+}
+
+func IniciarSesion (w http.ResponseWriter, r *http.Request){
+	var regresa []string
+	indexHandler(w, r)
+	reqBody, err := ioutil.ReadAll(r.Body)
+	if err!=nil{
+		fmt.Fprint(w, "Error al insertar")
+	}
+	for reqBody[0] != 123{
+		reqBody = remove(reqBody, 0)
+	}
+	for reqBody[len(reqBody)-1] != 125{
+		reqBody = remove(reqBody, len(reqBody)-1)
+	}
+	json.Unmarshal(reqBody, &Inicio)
+	dpi := validarDPI(Usuario.Raiz, Inicio.Nombre)
+	contra := validarContra(Usuario.Raiz, Inicio.Nombre, Inicio.Contra)
+
+	if dpi == true {
+		regresa = append(regresa, "si" )
+	}else{
+		regresa = append(regresa, "no" )
+	}
+	if contra == true {
+		regresa = append(regresa, "si" )
+	}else{
+		regresa = append(regresa, "no" )
+	}
+	if regresa[0] == "si" && regresa[1] == "si" {
+		tipo := tipoUsuario(Usuario.Raiz, Inicio.Nombre, Inicio.Contra)
+		regresa = append(regresa, tipo)
+		usuarioLinea = Inicio.Nombre
+	}
+
+	var salir = CerrarSesion{}
+	json.Unmarshal(reqBody, &salir)
+	if salir.Cerrar == "si"{
+		usuarioLinea = 0
+	}
+
+
+	w.WriteHeader(http.StatusCreated)
+	json.Unmarshal(reqBody, &ms)
+	json.NewEncoder(w).Encode(regresa)
+}
+
+func UsuarioLinea (w http.ResponseWriter, r *http.Request){
+	indexHandler(w, r)
+	reqBody, err := ioutil.ReadAll(r.Body)
+	if err!=nil{
+		fmt.Fprint(w, "Error al insertar")
+	}
+	if usuarioLinea != 0 {
+		tipo := regresaUsuario(Usuario.Raiz, usuarioLinea)
+		w.WriteHeader(http.StatusCreated)
+		json.Unmarshal(reqBody, &ms)
+		json.NewEncoder(w).Encode(tipo)
+	}else{
+		tipo := "no"
+		w.WriteHeader(http.StatusCreated)
+		json.Unmarshal(reqBody, &ms)
+		json.NewEncoder(w).Encode(tipo)
+	}
+}
+
+func DatosLinea(w http.ResponseWriter, r *http.Request){
+	indexHandler(w, r)
+	w.WriteHeader(http.StatusCreated)
+	json.NewEncoder(w).Encode(usuarioLinea)
+}
+
+func GraficosArboles(w http.ResponseWriter, r *http.Request){
+	indexHandler(w, r)
+	Usuario.Grafico("No")
+	Usuario.Grafico("Si")
+	Usuario.Grafico("Medio")
+	m := Mensaje{Retorna: "Los archivos han sido creados"}
+	w.WriteHeader(http.StatusCreated)
+	json.NewEncoder(w).Encode(m)
+}
+
+//-------------------------------------------------MÉTODOS--------------------------------------------------------------
 
 func remove(slice []byte, s int) []byte {
 	return append(slice[:s], slice[s+1:]...)
@@ -673,11 +867,213 @@ func inOrdenNombre(raiz *Inventario.NodoArbol, codigo int) string{
 func inOrdenNombreRegresa(raiz *Inventario.NodoArbol){
 	if raiz!=nil {
 		inOrdenNombreRegresa(raiz.Izq)
-		nodoIng := Inventario.NodoArbol{NombreProducto: raiz.NombreProducto, Codigo: raiz.Codigo, Factor: raiz.Factor, Cantidad: raiz.Cantidad, Descripcion: raiz.Descripcion, Imagen: raiz.Imagen, Precio: raiz.Precio}
+		nodoIng := Inventario.NodoArbol{NombreProducto: raiz.NombreProducto, Codigo: raiz.Codigo, Factor: raiz.Factor, Cantidad: raiz.Cantidad, Descripcion: raiz.Descripcion, Imagen: raiz.Imagen, Precio: raiz.Precio, Almacenamiento: raiz.Almacenamiento}
 		arregloProductos = append(arregloProductos, nodoIng)
 		inOrdenNombreRegresa(raiz.Der)
 	}
 }
+
+func existeB (pagina *Usuarios.Pagina, dpi int) bool{
+	existe := false
+	if pagina != nil {
+		for i := 0; i < len(pagina.Llaves); i++ {
+			if pagina.Llaves[i] != nil {
+				if pagina.Llaves[i].Usuario.DPI == strconv.Itoa(dpi) {
+					existe = true
+					return true
+				}
+			}
+		}
+		if existe == false {
+			for i := 0; i < len(pagina.Llaves); i++ {
+				if pagina.Llaves[i] != nil {
+					if pagina.Llaves[i].Usuario.DPI > strconv.Itoa(dpi) && i == 0 {
+						a := existeB(pagina.Llaves[i].Izq, dpi)
+						if a == true {
+							return true
+						}
+					}else if pagina.Llaves[i].Usuario.DPI < strconv.Itoa(dpi){
+						a := existeB(pagina.Llaves[i].Der, dpi)
+						if a == true {
+							return true
+						}
+					}else if pagina.Llaves[i].Usuario.DPI < strconv.Itoa(dpi) && i == len(pagina.Llaves) {
+						a := existeB(pagina.Llaves[i].Der, dpi)
+						if a == true {
+							return true
+						}
+					}
+				}
+			}
+		}else{
+			return false
+		}
+	}
+	return false
+}
+
+func validarDPI (pagina *Usuarios.Pagina, dpi int) bool{
+	existe := false
+	if pagina != nil {
+		for i := 0; i < len(pagina.Llaves); i++ {
+			if pagina.Llaves[i] != nil {
+				if pagina.Llaves[i].Usuario.DPI == strconv.Itoa(dpi) {
+
+					existe = true
+					return true
+				}
+			}
+		}
+		if existe == false {
+			for i := 0; i < len(pagina.Llaves); i++ {
+				if pagina.Llaves[i] != nil {
+					if pagina.Llaves[i].Usuario.DPI > strconv.Itoa(dpi) && i == 0 {
+						a := validarDPI(pagina.Llaves[i].Izq, dpi)
+						if a == true {
+							return true
+						}
+					}else if pagina.Llaves[i].Usuario.DPI < strconv.Itoa(dpi){
+						a := validarDPI(pagina.Llaves[i].Der, dpi)
+						if a == true {
+							return true
+						}
+					}else if pagina.Llaves[i].Usuario.DPI < strconv.Itoa(dpi) && i == len(pagina.Llaves) {
+						a := validarDPI(pagina.Llaves[i].Der, dpi)
+						if a == true {
+							return true
+						}
+					}
+				}
+			}
+		}else{
+			return false
+		}
+	}
+	return false
+}
+
+func validarContra (pagina *Usuarios.Pagina, dpi int, contra string) bool{
+	existe := false
+	if pagina != nil {
+		for i := 0; i < len(pagina.Llaves); i++ {
+			if pagina.Llaves[i] != nil {
+				if pagina.Llaves[i].Usuario.DPI == strconv.Itoa(dpi) {
+					if pagina.Llaves[i].Usuario.Contra == contra {
+						existe = true
+						return true
+					}
+				}
+			}
+		}
+		if existe == false {
+			for i := 0; i < len(pagina.Llaves); i++ {
+				if pagina.Llaves[i] != nil {
+					if pagina.Llaves[i].Usuario.DPI > strconv.Itoa(dpi) && i == 0 {
+						a := validarContra(pagina.Llaves[i].Izq, dpi, contra)
+						if a == true {
+							return true
+						}
+					}else if pagina.Llaves[i].Usuario.DPI < strconv.Itoa(dpi){
+						a := validarContra(pagina.Llaves[i].Der, dpi, contra)
+						if a == true {
+							return true
+						}
+					}else if pagina.Llaves[i].Usuario.DPI < strconv.Itoa(dpi) && i == len(pagina.Llaves) {
+						a := validarContra(pagina.Llaves[i].Der, dpi, contra)
+						if a == true {
+							return true
+						}
+					}
+				}
+			}
+		}else{
+			return false
+		}
+	}
+	return false
+}
+
+func tipoUsuario (pagina *Usuarios.Pagina, dpi int, contra string) string{
+	existe := false
+	if pagina != nil {
+		for i := 0; i < len(pagina.Llaves); i++ {
+			if pagina.Llaves[i] != nil {
+				if pagina.Llaves[i].Usuario.DPI == strconv.Itoa(dpi) {
+					if pagina.Llaves[i].Usuario.Contra == contra {
+						existe = true
+						return pagina.Llaves[i].Usuario.Cuenta
+					}
+				}
+			}
+		}
+		if existe == false {
+			for i := 0; i < len(pagina.Llaves); i++ {
+				if pagina.Llaves[i] != nil {
+					if pagina.Llaves[i].Usuario.DPI > strconv.Itoa(dpi) && i == 0 {
+						a := tipoUsuario(pagina.Llaves[i].Izq, dpi, contra)
+						if a != "" {
+							return a
+						}
+					}else if pagina.Llaves[i].Usuario.DPI < strconv.Itoa(dpi){
+						a := tipoUsuario(pagina.Llaves[i].Der, dpi, contra)
+						if a != "" {
+							return a
+						}
+					}else if pagina.Llaves[i].Usuario.DPI < strconv.Itoa(dpi) && i == len(pagina.Llaves) {
+						a := tipoUsuario(pagina.Llaves[i].Der, dpi, contra)
+						if a != "" {
+							return a
+						}
+					}
+				}
+			}
+		}else{
+			return ""
+		}
+	}
+	return ""
+}
+
+func regresaUsuario (pagina *Usuarios.Pagina, dpi int) string{
+	existe := false
+	if pagina != nil {
+		for i := 0; i < len(pagina.Llaves); i++ {
+			if pagina.Llaves[i] != nil {
+				if pagina.Llaves[i].Usuario.DPI == strconv.Itoa(dpi) {
+					existe = true
+					return pagina.Llaves[i].Usuario.Cuenta
+				}
+			}
+		}
+		if existe == false {
+			for i := 0; i < len(pagina.Llaves); i++ {
+				if pagina.Llaves[i] != nil {
+					if pagina.Llaves[i].Usuario.DPI > strconv.Itoa(dpi) && i == 0 {
+						a := regresaUsuario(pagina.Llaves[i].Izq, dpi)
+						if a != "" {
+							return a
+						}
+					}else if pagina.Llaves[i].Usuario.DPI < strconv.Itoa(dpi){
+						a := regresaUsuario(pagina.Llaves[i].Der, dpi)
+						if a != "" {
+							return a
+						}
+					}else if pagina.Llaves[i].Usuario.DPI < strconv.Itoa(dpi) && i == len(pagina.Llaves) {
+						a := regresaUsuario(pagina.Llaves[i].Der, dpi)
+						if a != "" {
+							return a
+						}
+					}
+				}
+			}
+		}else{
+			return ""
+		}
+	}
+	return ""
+}
+
+//--------------------------------------------------ESTRUCTURAS REGRESO-------------------------------------------------
 
 type GeneralR struct{
 	Inicio []DatosR `json:"Datos"`
@@ -740,6 +1136,7 @@ type NodoProductoReg struct {
 	PrecioP float64 `json:"Precio"`
 	Cantidad int `json:"Cantidad"`
 	Imagen string `json:"Imagen"`
+	Almacenamiento string `json:"Almacenamiento"`
 }
 
 type GeneralReg struct{
@@ -753,4 +1150,8 @@ type AnioReg struct{
 
 type Mes struct{
 	MesA int `json:"MesA"`
+}
+
+type CerrarSesion struct{
+	Cerrar string `json:"Cerrar"`
 }

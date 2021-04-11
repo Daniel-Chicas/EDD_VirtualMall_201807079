@@ -1,5 +1,5 @@
 digraph Arbol{node[shape="record"];
-node0xc000040300[label="{Nombre: Genérica Madera Presidente|Código: 85}|{Cantidad Disponible: 430|Precio: 961}" color="blue"];
-node0xc000040360[label="{Nombre: Fantástico Madera Embutidos|Código: 86}|{Cantidad Disponible: 125|Precio: 574}" color="orange"];
-node0xc000040300:f2->node0xc000040360:f1
+node0xc0001fe620[label="{Nombre: Genérica Madera Presidente|Código: 85}|{Cantidad Disponible: 430|Precio: 961}" color="orange"];
+node0xc0001fe690[label="{Nombre: Fantástico Madera Embutidos|Código: 86}|{Cantidad Disponible: 125|Precio: 574}" color="gray"];
+node0xc0001fe620:f2->node0xc0001fe690:f1
 }

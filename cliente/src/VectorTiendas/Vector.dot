@@ -1,0 +1,8 @@
+digraph Daniel129{
+node[shape=record];
+node645[color=green, fillcolor=yellow, label="{Indice: Z|Electronicos de oficina}|{Pos: 645|Calificación: 1}"];
+node646[color=violet, fillcolor=green, label="{Indice: Z|Electronicos de oficina}|{Pos: 646|Calificación: 2}"];
+node647[color=brown, fillcolor=orange, label="{Indice: Z|Electronicos de oficina}|{Pos: 647|Calificación: 3}"];
+node648[color=green, fillcolor=red, label="{Indice: Z|Electronicos de oficina}|{Pos: 648|Calificación: 4}"];
+node649[color=red, fillcolor=gray, label="{Indice: Z|Electronicos de oficina}|{Pos: 649|Calificación: 5}"];
+}

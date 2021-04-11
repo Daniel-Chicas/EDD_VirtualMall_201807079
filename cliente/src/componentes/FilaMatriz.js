@@ -1,5 +1,4 @@
 import React from 'react'
-import { Input } from 'semantic-ui-react'
 import UltimaFila from './UltimaFila'
 
 function Fila(props) {
@@ -17,6 +16,9 @@ function Fila(props) {
                 <td>{props.tienda}</td>
                 <td>{props.departamento}</td>
                 <td>{props.calificacion}</td>
+                <td>{props.cliente}</td>
+                <td>{props.nombreCliente}</td>
+                <td>{props.correo}</td>
                 <td>{props.nombreProducto}</td>
                 <td>{props.codigoProducto}</td>
                 <td>{props.cantidad}</td>

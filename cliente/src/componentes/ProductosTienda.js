@@ -1,5 +1,8 @@
 import {React, useEffect, useState} from 'react'
+import {BrowserRouter as Router} from 'react-router-dom'
+import NavBar from '../componentes/NavBar'
 import MosaicoProductos from './MosaicoProductos'
+
 const axios=require('axios').default
 
 function ProductosTienda() {
@@ -44,6 +47,9 @@ function ProductosTienda() {
     }else{
         return (
             <div className="ImportList">
+                <Router>
+                    <NavBar/>   
+                </Router>   
                 <MosaicoProductos productos={tiendas}/>
             </div>
         )

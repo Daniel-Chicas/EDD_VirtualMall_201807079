@@ -9,6 +9,7 @@ type Pedidos struct {
 	NombreTienda string `json:"Tienda"`
 	Departamento string `json:"Departamento"`
 	Calificacion int `json:"Calificacion"`
+	Cliente int `json:"Cliente"`
 	Productos []NodoProductoViene `json:"Productos"`
 }
 
@@ -36,6 +37,7 @@ type NodoPedido struct{
 	NombreTienda string
 	Departamento string
 	Calificacion int
+	Cliente int
 	NombreProducto string
 	CodigoProducto int
 	Cantidad int
@@ -98,6 +100,7 @@ type NodoEntrada struct {
 	Tienda string
 	Departamento string
 	Calificacion int
+	Cliente int
 	ProductoCodigo int
 }
 

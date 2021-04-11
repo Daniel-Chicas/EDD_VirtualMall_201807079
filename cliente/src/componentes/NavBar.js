@@ -1,18 +1,30 @@
-import {React, useState} from 'react'
+import {React, useState, useEffect} from 'react'
 import {Menu} from 'semantic-ui-react'
-import { Link } from 'react-router-dom'
 import '../css/Nav.css'
-
-const colores=['orange','yellow','green','purple']
-const opciones =['Cargar Archivos', 'Listado de Tiendas', 'Carrito de Compras', 'Ver pedidos']
-const url =['/CargaArchivos', '/VerTiendas', '/CarritoCompras', '/VerPedidos', '/']
+var colores = ['orange', 'yellow','green', "brown", 'purple', 'red', 'blue']
+var opciones = ['Ver Tiendas', 'Carrito de Compras', 'Ver pedidos','Cargar Archivos', 'Eliminar Usuario', 'Arboles Usuario','Cerrar Sesión', '/']
 
 function NavBar() {
     const [activo, setactivo] = useState(colores[10])
+    if (activo === "blue") {
+        window.location.href = "http://localhost:8001/Login"
+    }else if(activo === "brown"){
+        window.location.href = "http://localhost:8001/CargaArchivos"
+    }else if(activo === "green"){
+        window.location.href = "http://localhost:8001/VerPedidos"
+    }else if(activo === "yellow"){
+        window.location.href = "http://localhost:8001/CarritoCompras"
+    }else if(activo === "orange"){
+        window.location.href = "http://localhost:8001/VerTiendas"
+    }else if(activo === "purple"){
+        window.location.href = "http://localhost:8001/EliminarUsuario"
+    }else if(activo === "red"){
+        window.location.href = "http://localhost:8001/ArbolesUsuario"
+    }
     return (
        <Menu inverted className="Nav">
            {colores.map((c,iterador)=>(
-               <Menu.Item as={Link} to={url[iterador]}
+               <Menu.Item 
                     key={c}
                     name={opciones[iterador]}
                     active={activo===c}
