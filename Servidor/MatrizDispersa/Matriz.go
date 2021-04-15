@@ -1,6 +1,7 @@
 package MatrizDispersa
 
 import (
+	"../Grafo"
 	"../Usuarios"
 	"fmt"
 	"io/ioutil"
@@ -232,7 +233,7 @@ type GeneralInfo struct{
 	Datos []Dato `json:"Datos"`
 }
 
-type Dato struct{
+type  Dato struct{
 	Tienda string `json:"Tienda"`
 	Depa string `json:"Departamento"`
 	Cal int `json:"Calificacion"`
@@ -283,6 +284,43 @@ func (M *Matriz) Imprimir(dia string, Arbol *Usuarios.ArbolB) GeneralInfo{
 	return linkReg
 }
 
+func (M *Matriz) Recorrido(dia string) *GrafoRecorrido.ListaRecorrido{
+	RecorridoRegresa := &GrafoRecorrido.ListaRecorrido{}
+	var aux interface{} = M.CabeceraH
+	for aux != nil{
+		temp := aux.(*NodoCabeceraHorizontal).Sur
+		for temp != nil{
+			temporal2 := strings.Split(temp.(*NodoPedido).Fecha, "-")
+			if temporal2[0] == dia || temporal2[0] == "0"+dia{
+				recorrido := temp.(*NodoPedido).Recorrido
+				imp := recorrido.Cabeza
+				if RecorridoRegresa.Cabeza == nil{
+					RecorridoRegresa.InsertarRecCabeza(imp)
+				}else{
+					Voltear := &GrafoRecorrido.ListaRecorrido{}
+					for imp != nil{
+						nuevo := &GrafoRecorrido.NodoRecorrido{Viene: imp.Viene, Va: imp.Va, Costo: imp.Costo, Siguiente: nil, Anterior: nil}
+						Voltear.InsertarRecCabeza(nuevo)
+						imp = imp.Siguiente
+					}
+					impv := Voltear.Cabeza
+					for impv != nil{
+						nuevoVolteado := &GrafoRecorrido.NodoRecorrido{Viene: impv.Viene, Va: impv.Va, Costo: impv.Costo, Siguiente: nil, Anterior: nil}
+						RecorridoRegresa.InsertarRecCabeza(nuevoVolteado)
+						impv = impv.Siguiente
+					}
+				}
+			}
+			temp = temp.(*NodoPedido).Sur
+		}
+		aux = aux.(*NodoCabeceraHorizontal).Este
+	}
+	return RecorridoRegresa
+}
+
+
+
+
 func (M *Matriz) Imprimir2(){
 	var aux interface{} = M.CabeceraH
 	for aux != nil{
@@ -300,8 +338,8 @@ func (this *Matriz) NuevaMatriz(mes int, anio int) *Matriz{
 	return &Matriz{mes, anio, nil, nil}
 }
 
-func (this *Matriz) NuevoNodoPedido (fecha string, tienda string, departamento string, calificacion int, cliente int, nombreProducto string, codigoProducto int, cantidad int, dia string) *NodoPedido{
-	return &NodoPedido{Norte: nil, Oeste: nil, Sur: nil, Este: nil, Fecha: fecha, NombreTienda: tienda, Departamento: departamento, Calificacion: calificacion, Cliente: cliente, NombreProducto: nombreProducto, CodigoProducto: codigoProducto, Cantidad: cantidad, Dia: dia}
+func (this *Matriz) NuevoNodoPedido (fecha string, tienda string, departamento string, calificacion int, cliente int, nombreProducto string, codigoProducto int, cantidad int, dia string, recorrido *GrafoRecorrido.ListaRecorrido) *NodoPedido{
+	return &NodoPedido{Norte: nil, Oeste: nil, Sur: nil, Este: nil, Fecha: fecha, NombreTienda: tienda, Departamento: departamento, Calificacion: calificacion, Cliente: cliente, NombreProducto: nombreProducto, CodigoProducto: codigoProducto, Cantidad: cantidad, Dia: dia, Recorrido: recorrido}
 }
 
 func (M *Matriz) DibujarMatriz(){
@@ -421,7 +459,7 @@ func (M *Matriz) DibujarMatriz(){
 }
 
 func guardarArchivo(cadena string, nombreArchivo string) {
-	f, err := os.Create(".\\cliente\\src\\ImagenMatriz\\"+nombreArchivo+".dot")
+	f, err := os.Create("..\\cliente\\src\\ImagenMatriz\\"+nombreArchivo+".dot")
 	if err != nil {
 		fmt.Println(err)
 		return
@@ -439,9 +477,9 @@ func guardarArchivo(cadena string, nombreArchivo string) {
 		return
 	}
 	path, _ := exec.LookPath("dot")
-	cmd, _ := exec.Command(path, "-Tpng", ".\\cliente\\src\\ImagenMatriz\\"+nombreArchivo+".dot").Output()
+	cmd, _ := exec.Command(path, "-Tpng", "..\\cliente\\src\\ImagenMatriz\\"+nombreArchivo+".dot").Output()
 	mode := int(0777)
-	ioutil.WriteFile(".\\cliente\\src\\ImagenMatriz\\"+nombreArchivo+".png", cmd, os.FileMode(mode))
+	ioutil.WriteFile("..\\cliente\\src\\ImagenMatriz\\"+nombreArchivo+".png", cmd, os.FileMode(mode))
 }
 
 func Posicion(arreglo []int, busqueda int) bool {

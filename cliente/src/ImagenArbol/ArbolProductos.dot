@@ -1,5 +1,9 @@
 digraph Arbol{node[shape="record"];
-node0xc0001fe620[label="{Nombre: Genérica Madera Presidente|Código: 85}|{Cantidad Disponible: 430|Precio: 961}" color="orange"];
-node0xc0001fe690[label="{Nombre: Fantástico Madera Embutidos|Código: 86}|{Cantidad Disponible: 125|Precio: 574}" color="gray"];
-node0xc0001fe620:f2->node0xc0001fe690:f1
+node0xc0002107e0[label="{Nombre: Elegante Cotton Bike|Código: 854}|{Cantidad Disponible: 76|Precio: 205}" color="red"];
+node0xc000210850[label="{Nombre: Genérica Frozen Embutidos|Código: 853}|{Cantidad Disponible: 287|Precio: 928}" color="green"];
+node0xc0002107e0:f0->node0xc000210850:f1
+node0xc0002108c0[label="{Nombre: Elegante Acero Ratón|Código: 852}|{Cantidad Disponible: 270|Precio: 423}" color="violet"];
+node0xc000210850:f0->node0xc0002108c0:f1
+node0xc000210770[label="{Nombre: Gorgeous Metal Embutidos|Código: 855}|{Cantidad Disponible: 188|Precio: 155}" color="orange"];
+node0xc0002107e0:f2->node0xc000210770:f1
 }

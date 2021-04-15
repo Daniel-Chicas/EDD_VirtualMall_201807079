@@ -1,5 +1,9 @@
 package MatrizDispersa
 
+import(
+	"../Grafo"
+)
+
 type General struct {
 	Pedidos []Pedidos `json:"Pedidos"`
 }
@@ -42,6 +46,7 @@ type NodoPedido struct{
 	CodigoProducto int
 	Cantidad int
 	Dia string
+	Recorrido *GrafoRecorrido.ListaRecorrido
 	Norte interface{}
 	Sur interface{}
 	Este interface{}

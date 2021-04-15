@@ -33,7 +33,10 @@ func (L *Lista) Arreglo(vector []Listas.NodoArray) string{
 					grafico(&cadena, &posicion, i, colores)
 				}
 			}
-			if i == contador-1 {
+			if i == len(vector) {
+
+			//}
+			//if i == contador-1 {
 				fmt.Fprintf(&cadena, "}")
 				guardarArchivo(cadena.String(), "Archivo_"+strconv.Itoa(cuenta))
 				cadena.Reset()
@@ -70,7 +73,7 @@ func grafico(s *strings.Builder, lista *Listas.ListaGA, i int, colores [10]strin
 }
 
 func guardarArchivo(cadena string, nombreArchivo string) {
-	f, err := os.Create(".\\cliente\\src\\VectorTiendas\\Vector.dot")
+	f, err := os.Create("..\\cliente\\src\\VectorTiendas\\Vector.dot")
 	if err != nil {
 		fmt.Println(err)
 		return
@@ -88,7 +91,7 @@ func guardarArchivo(cadena string, nombreArchivo string) {
 		return
 	}
 	path, _ := exec.LookPath("dot")
-	cmd, _ := exec.Command(path, "-Tpdf", ".\\cliente\\src\\VectorTiendas\\Vector.dot").Output()
+	cmd, _ := exec.Command(path, "-Tpdf", "..\\cliente\\src\\VectorTiendas\\Vector.dot").Output()
 	mode := int(0777)
-	ioutil.WriteFile(".\\cliente\\src\\VectorTiendas\\"+nombreArchivo+".pdf", cmd, os.FileMode(mode))
+	ioutil.WriteFile("..\\cliente\\src\\VectorTiendas\\"+nombreArchivo+".pdf", cmd, os.FileMode(mode))
 }

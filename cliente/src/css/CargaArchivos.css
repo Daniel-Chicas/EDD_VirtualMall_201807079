@@ -2,11 +2,11 @@
     background: #9fb8ad;
     background: -webkit-linear-gradient(to right, #240b36, #9fb8ad);
     background: linear-gradient(to right, #240b36, #9fb8ad);
-    height: 100vh;
+    height: 100% !important;
 }
 
 #SubirArchivo{
-    height: 60vh;
+    height: 91.4vh !important;
     border: none !important;
     background-color:  transparent!important;
     font-size: 18px !important;

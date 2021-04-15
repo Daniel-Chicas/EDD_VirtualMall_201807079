@@ -1,13 +1,12 @@
-import {React,  useState} from 'react'
+import {React, useState} from 'react'
 import NavBar from '../componentes/NavBar'
-import { Header, Icon, Segment } from 'semantic-ui-react'
-import {BrowserRouter as Router} from 'react-router-dom'
-import '../css/Pedidos.css'
-import Tree from './Tree'
-const axios=require('axios').default
+import {BrowserRouter as Router, Route} from 'react-router-dom'
+import { Button, Header, Icon, Segment } from 'semantic-ui-react'
+import recorrido from '../Recorrido/GrafoRecorrido.pdf'
+import '../Inicio.css'
+import axios from 'axios'
 
-function Pedidos() {
-    
+function Recorrido() {
     const [loading, setloading] = useState(false)
     const [existe, setexiste] = useState(false)
 
@@ -22,19 +21,6 @@ function Pedidos() {
     }).catch(error=>{
         console.log(error);
     })
-
-    const [anios, setanios] = useState([])
-    async function obtener(){
-        if(anios.length===0){
-        const data = await axios.get('http://localhost:3000/DatosMatriz')
-        if (data.data.General !== null) {
-            console.log(data.data.General)
-            setanios(data.data.General)
-            }
-        }
-    }
-    obtener()
-
     if (existe === true) {return(
         <div className="General">
             <Router>
@@ -52,13 +38,8 @@ function Pedidos() {
     }else{
         if (loading === false) {
             return (
-                <div className="Pedidos">
-                    <Router>
-                        <NavBar/>
-                    </Router>
-                    <Tree 
-                        listaAnios={anios}
-                    />
+                <div>
+                    <embed src={recorrido} type='application/pdf' width="100%" height="600"  /> 
                 </div>
             )
         }else{
@@ -78,7 +59,6 @@ function Pedidos() {
             )
         }
     }
-
 }
 
-export default Pedidos
+export default Recorrido

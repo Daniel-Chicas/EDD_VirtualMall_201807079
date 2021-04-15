@@ -39,7 +39,7 @@ function UsuariosPDF() {
         if (loading === false) {
             return (
                 <div className="General">
-                    <embed src={arbolSin} type='application/pdf' width="100%" height="100%" /> 
+                    <embed src={arbolSin} type='application/pdf' width="100%" height="625" /> 
                 </div>
             )
         }else{

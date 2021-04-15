@@ -2,6 +2,7 @@ package main
 
 import (
 	"./Compras"
+	"./Grafo"
 	"./Inventario"
 	"./Listas"
 	"./MatrizDispersa"
@@ -17,6 +18,7 @@ import (
 	"strconv"
 	"strings"
 )
+
 var ms Listas.General
 var nodo Listas.Nodo
 var departamentos Listas.Departamentos
@@ -27,6 +29,7 @@ var Vector []Listas.NodoArray
 var tiendaEsp TiendaEspecifica.General
 var tiendaEl TiendaEspecifica.GeneralEliminar
 var buscar TiendaEspecifica.Buscar
+var GrafoRe GrafoRecorrido.Archivo
 var eliminar TiendaEspecifica.Buscar
 var arbol Inventario.General
 var nodoArbol Inventario.NodoArbol
@@ -40,9 +43,9 @@ var Usuario = arbolUsuarios.NuevoArbol(5)
 var UsuariosEntrada Usuarios.General
 var Inicio Usuarios.Inicio
 var usuarioLinea int
-var arbolCifrado Usuarios.ArbolB
-var arbolMedioCifrado Usuarios.ArbolB
-
+var nueva = GrafoRecorrido.NuevaListaAdyacencia()
+var inicioReco string
+var finReco string
 
 
 func main(){
@@ -123,6 +126,7 @@ func cargar(w http.ResponseWriter, r *http.Request){
 
 	Vector = list.CrearMatriz()
 	Indi := list.Indi()
+	reportes.Arreglo(Vector)
 	Departa := list.Departa()
 
 	var generalReg []Usuarios.General
@@ -199,6 +203,7 @@ func cargar(w http.ResponseWriter, r *http.Request){
 										listaAnioa.Insertar(&nodoAnio)
 
 									}
+
 									existeMes := EncontrarMes(&listaAnioa, anio, mes)
 									if existeMes == false {
 										impm := listaAnioa.Cabeza
@@ -218,8 +223,42 @@ func cargar(w http.ResponseWriter, r *http.Request){
 											for impr != nil {
 												if impr.Mes == mes {
 													nombreProducto := inOrdenNombre(imp.Inventario.Raiz, Productos[j].Codigo)
-													nodoPedido := metodosMatriz.NuevoNodoPedido(fecha, NombreTienda, Departamento,Calificacion, Cliente, nombreProducto,Productos[j].Codigo, 0, strconv.Itoa(dia))
-													impr.MatrizMes.Insertar(nodoPedido)
+													arbolito := Compras.DescontarProducto(imp.Inventario.Raiz, Productos[j].Codigo, 1)
+													imp.Inventario.Raiz = arbolito
+													mas := true
+													if len(Productos) == 1 {
+														mas = false
+														finalRecorrido := inOrdenAlmacenamiento(imp.Inventario.Raiz, Productos[j].Codigo)
+														recorrido := nueva.Dijkstra(inicioReco, finalRecorrido,GrafoRe.General)
+														recorridoFin := nueva.Dijkstra(finalRecorrido, finReco, GrafoRe.General)
+														for e := recorridoFin.Cabeza; e != nil ; e = e.Siguiente {
+															recorrido.InsertarRec(&GrafoRecorrido.NodoRecorrido{Viene: e.Viene, Va: e.Va, Costo: e.Costo, Siguiente: nil, Anterior: nil})
+														}
+														nodoPedido := metodosMatriz.NuevoNodoPedido(fecha, NombreTienda, Departamento,Calificacion, Cliente, nombreProducto,Productos[j].Codigo, 1, strconv.Itoa(dia), recorrido)
+														impr.MatrizMes.Insertar(nodoPedido)
+													}
+													if j == 0 && mas == true{
+														finalRecorrido := inOrdenAlmacenamiento(imp.Inventario.Raiz, Productos[j].Codigo)
+														recorrido := nueva.Dijkstra(inicioReco, finalRecorrido,GrafoRe.General)
+														nodoPedido := metodosMatriz.NuevoNodoPedido(fecha, NombreTienda, Departamento,Calificacion, Cliente, nombreProducto,Productos[j].Codigo, 1, strconv.Itoa(dia), recorrido)
+														impr.MatrizMes.Insertar(nodoPedido)
+													}else if len(Productos) != 1{
+														finalRecorrido := inOrdenAlmacenamiento(imp.Inventario.Raiz, Productos[j].Codigo)
+														inicioRecorrido := inOrdenAlmacenamiento(imp.Inventario.Raiz, Productos[j-1].Codigo)
+														recorrido := nueva.Dijkstra(inicioRecorrido, finalRecorrido,GrafoRe.General)
+														if j+1 == len(Productos) {
+															inicioRecorrido = inOrdenAlmacenamiento(imp.Inventario.Raiz, Productos[j].Codigo)
+															recorridoFin := nueva.Dijkstra(inicioRecorrido, finReco,GrafoRe.General)
+															for e := recorridoFin.Cabeza; e != nil ; e = e.Siguiente {
+																recorrido.InsertarRec(&GrafoRecorrido.NodoRecorrido{Viene: e.Viene, Va: e.Va, Costo: e.Costo, Siguiente: nil, Anterior: nil})
+															}
+															nodoPedido := metodosMatriz.NuevoNodoPedido(fecha, NombreTienda, Departamento,Calificacion, Cliente, nombreProducto,Productos[j].Codigo, 1, strconv.Itoa(dia), recorrido)
+															impr.MatrizMes.Insertar(nodoPedido)
+														}else{
+															nodoPedido := metodosMatriz.NuevoNodoPedido(fecha, NombreTienda, Departamento,Calificacion, Cliente, nombreProducto,Productos[j].Codigo, 1, strconv.Itoa(dia), recorrido)
+															impr.MatrizMes.Insertar(nodoPedido)
+														}
+													}
 												}
 												impr = impr.Siguiente
 											}
@@ -241,6 +280,28 @@ func cargar(w http.ResponseWriter, r *http.Request){
 					impa = impa.Siguiente
 				}
 			}
+	}
+	json.Unmarshal(reqBody, &GrafoRe)
+	if GrafoRe.General != nil {
+		if inicioReco != GrafoRe.PosicionInicialRobot {
+			b := GrafoRe.PosicionInicialRobot
+			c := GrafoRe.Entrega
+			inicioReco = b
+			finReco = c
+			nueva.Insertar(b, 0)
+			nueva.Insertar(c, 0)
+			for i := 0; i < len(GrafoRe.General); i++ {
+				a := GrafoRe.General[i]
+				nueva.Insertar(a.Nombre, 0)
+			}
+			for i := 0; i < len(GrafoRe.General); i++ {
+				a := GrafoRe.General[i]
+				for j := 0; j < len(a.Enlaces); j++ {
+					nueva.Enlazar(a.Nombre,a.Enlaces[j].Nombre)
+				}
+			}
+			nueva.Dibujar(b,c,GrafoRe.General, &GrafoRecorrido.ListaRecorrido{})
+		}
 	}
 
 	w.Header().Set("Content-type", "application/json")
@@ -484,8 +545,16 @@ func carrito (w http.ResponseWriter, r *http.Request){
 									for impr != nil {
 										if impr.Mes == mes {
 											nombreProducto := inOrdenNombre(imp.Inventario.Raiz, Productos[j].Codigo)
-											nodoPedido := metodosMatriz.NuevoNodoPedido(fecha, Tienda, Departamento,Calificacion, Cliente, nombreProducto,Productos[j].Codigo, Cantidad, strconv.Itoa(dia))
-											impr.MatrizMes.Insertar(nodoPedido)
+											if len(Productos) == 1 {
+												finalRecorrido := inOrdenAlmacenamiento(imp.Inventario.Raiz, Productos[j].Codigo)
+												recorrido := nueva.Dijkstra(inicioReco, finalRecorrido,GrafoRe.General)
+												recorridoFin := nueva.Dijkstra(finalRecorrido, finReco, GrafoRe.General)
+												for e := recorridoFin.Cabeza; e != nil ; e = e.Siguiente {
+													recorrido.InsertarRec(&GrafoRecorrido.NodoRecorrido{Viene: e.Viene, Va: e.Va, Costo: e.Costo, Siguiente: nil, Anterior: nil})
+												}
+												nodoPedido := metodosMatriz.NuevoNodoPedido(fecha, Tienda, Departamento,Calificacion, Cliente, nombreProducto,Productos[j].Codigo, 1, strconv.Itoa(dia), recorrido)
+												impr.MatrizMes.Insertar(nodoPedido)
+											}
 										}
 										impr = impr.Siguiente
 									}
@@ -503,15 +572,6 @@ func carrito (w http.ResponseWriter, r *http.Request){
 		impa := listaAnioa.Cabeza
 		for impa != nil{
 			impa.ListaMatricesMes = metodosMatriz.BurbujaMes(*impa.ListaMatricesMes)
-			impm := impa.ListaMatricesMes.Cabeza
-			for impm != nil{
-				//fmt.Println()
-				//fmt.Println("---------------------------------------------------------------------------------------------------------")
-				//fmt.Println("---------------------------------------------------------------------------------------------------------")
-				//fmt.Println()
-				//impm.MatrizMes.DibujarMatriz()
-				impm = impm.Siguiente
-			}
 			impa = impa.Siguiente
 		}
 		mensaje := Mensaje{Retorna: "¡PRODUCTOS VENDIDOS!"}
@@ -535,6 +595,8 @@ func pedidoMes(w http.ResponseWriter, r *http.Request){
 			for impm != nil{
 				if impm.Mes == mes {
 					regresa = impm.MatrizMes.Imprimir(dia, Usuario)
+					recorrido := impm.MatrizMes.Recorrido(dia)
+					nueva.Dibujar(inicioReco, finReco, GrafoRe.General, recorrido)
 				}
 				impm = impm.Siguiente
 			}
@@ -857,6 +919,23 @@ func inOrdenNombre(raiz *Inventario.NodoArbol, codigo int) string{
 			return a
 		}
 		b := inOrdenNombre(raiz.Der, codigo)
+		if b != "" {
+			return b
+		}
+	}
+	return ""
+}
+
+func inOrdenAlmacenamiento(raiz *Inventario.NodoArbol, codigo int) string{
+	if raiz!=nil {
+		if raiz.Codigo == codigo {
+			return raiz.Almacenamiento
+		}
+		a := inOrdenAlmacenamiento(raiz.Izq, codigo)
+		if a != "" {
+			return a
+		}
+		b := inOrdenAlmacenamiento(raiz.Der, codigo)
 		if b != "" {
 			return b
 		}

@@ -1,0 +1,15 @@
+digraph G{
+node0xc000094340[label="Textiles" style="filled" color="yellow"]
+node0xc000094340[label="Textiles"]
+node0xc000094380[label="Despacho"]
+node0xc000094380[label="Despacho" style="filled" color="green"]
+node0xc0000943e0[label="Aranceles"]
+node0xc0000943e0[label="Aranceles"]
+node0xc000094340->node0xc000094420[label="7" dir="both"]
+node0xc000094420[label="Reparaciones"]
+node0xc000094420[label="Reparaciones"]
+node0xc000094380->node0xc0000943e0[label="5" dir="both"]
+node0xc000094380->node0xc000094420[label="6" dir="both"]
+node0xc000094380->node0xc000094340[label="100" dir="both"]
+node0xc0000943e0->node0xc000094340[label="10" dir="both"]
+}

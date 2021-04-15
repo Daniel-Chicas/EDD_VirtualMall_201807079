@@ -1,8 +1,8 @@
 .Matriz{
-    background: #22e06bc7;
-    background: -webkit-linear-gradient(to right, #240b36, #22e06bc7);
-    background: linear-gradient(to right, #240b36, #22e06bc7);
-    height: auto !important;
+    background: linear-gradient(150deg, rgba(69, 126, 31, 0.877), rgb(44, 102, 80), rgb(33, 74, 94));
+    background-size: 400% 300%;
+    animation: BgGradient 5s ease infinite;
+    height: auto;
 }
 
 .Arbol{
@@ -24,6 +24,10 @@
     align-items: center !important;
     font-size: 100px;
     height: auto;
+}
+
+.Botones{
+    align-items: center !important;
 }
 
 

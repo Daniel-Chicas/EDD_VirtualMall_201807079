@@ -29,11 +29,6 @@ function ArbolesUsuario() {
         console.log(data.data)
     }
 
-    const crearVector = async() =>{
-        const data = await axios.get('http://localhost:3000/ArbolesB')
-        console.log(data.data)
-    }
-
     if (existe === true) {return(
         <div className="General">
             <Router>
@@ -73,8 +68,8 @@ function ArbolesUsuario() {
                     <Button inverted color='orange' onClick={crear}>VER ÁRBOL</Button></a>
                 <br/>
                 <br/>
-                <a href="./Vector" target="_blank" onClick={crearVector}>
-                    <Button inverted color='blue' onClick={crearVector}>VER VECTOR</Button>
+                <a href="./Vector" target="_blank">
+                    <Button inverted color='blue'>VER VECTOR</Button>
                     <Label inverted color='blue' pointing='left'>ESTRUCTURA LINEALIZADA</Label>
                 </a>
                 </Segment>

@@ -3,7 +3,7 @@ import { Segment, Image } from 'semantic-ui-react'
 import NavBar from '../componentes/NavBar'
 import {BrowserRouter as Router, Route} from 'react-router-dom'
 import { Button, Header, Icon } from 'semantic-ui-react'
-import arbol from '../ImagenArbol/ArbolProductos.png'
+import arbol from '../ImagenArbol/ArbolProductos.pdf'
 import '../css/Imagen.css'
 import axios from 'axios'
 
@@ -44,16 +44,7 @@ function VerArbol() {
                     <Router>
                         <NavBar/>
                     </Router>
-                    <br/>
-                    <br/>
-                    <br/>
-                    <br/>
-                    <br/>
-                    <div>
-                    <Segment placeholder className="FondoImagen" centered>
-                    <Image src={arbol} size='300px' centered />
-                    </Segment>
-                    </div>
+                    <embed src={arbol} type='application/pdf' width="100%" height="600"/>
                 </div>
             )
         }else{

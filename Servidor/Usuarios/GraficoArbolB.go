@@ -95,19 +95,6 @@ func grafico(actual *Pagina, cadena *strings.Builder, arreglo map[string]*Pagina
 	}
 }
 
-/*
-
-	nuevo.DPI = fmt.Sprintf("%x", sha256.Sum256([]byte(datosUsuario.DPI)))
-	nuevo.Nombre = fmt.Sprintf("%x", )
-	nuevo.Correo = fmt.Sprintf("%x", sha256.Sum256([]byte(datosUsuario.Correo)))
-	nuevo.Contra = fmt.Sprintf("%x", sha256.Sum256([]byte(datosUsuario.Contra)))
-	nuevo.Cuenta = fmt.Sprintf("%x", sha256.Sum256([]byte(datosUsuario.Cuenta)))
-
-
-*/
-
-
-
 func graficoEC(actual *Pagina, cadena *strings.Builder, arreglo map[string]*Pagina, padre *Pagina, posicion int){
 	if actual == nil{
 		return
@@ -231,14 +218,14 @@ func graficoEM(actual *Pagina, cadena *strings.Builder, arreglo map[string]*Pagi
 
 func Imagen ( nombre string){
 	path, _:= exec.LookPath("dot")
-	cmd, _ := exec.Command(path, "-Tpdf", ".\\cliente\\src\\ArbolesUsuarios\\diagrama.dot").Output()
+	cmd, _ := exec.Command(path, "-Tpdf", "..\\cliente\\src\\ArbolesUsuarios\\diagrama.dot").Output()
 	mode := int(0777)
-	ioutil.WriteFile(".\\cliente\\src\\ArbolesUsuarios\\"+nombre, cmd, os.FileMode(mode))
+	ioutil.WriteFile("..\\cliente\\src\\ArbolesUsuarios\\"+nombre, cmd, os.FileMode(mode))
 }
 
 
 func guardarArchivo(cadena string) {
-	f, err := os.Create(".\\cliente\\src\\ArbolesUsuarios\\diagrama.dot")
+	f, err := os.Create("..\\cliente\\src\\ArbolesUsuarios\\diagrama.dot")
 	if err != nil {
 		fmt.Println(err)
 		return

@@ -35,7 +35,14 @@ function DatosMatriz() {
                         onChange={onChange}
                         value={value}
                     />
-                <Button inverted color='olive' onClick={ver}>Ver Pedidos del {value.getDate().toString()} del {value.getMonth()+1}</Button>
+                    <br/>
+                    <br/>
+                    <Button inverted color='red' onClick={ver}>Ver Pedidos del {value.getDate().toString()} del {value.getMonth()+1}</Button>
+                    <br/>
+                    <br/>
+                    <a href="/Recorrido"  target="_blank" >
+                        <Button inverted color='black' onClick={ver}>Ver Recorrido</Button>
+                    </a>
             </Segment>
             <br/>
             <Tabla  data = {tiendas}

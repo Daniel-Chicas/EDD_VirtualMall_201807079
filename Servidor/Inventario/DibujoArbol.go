@@ -37,7 +37,7 @@ func (L *Arbol) generar(cadena *strings.Builder, padre *NodoArbol, actual *NodoA
 }
 
 func guardarArchivo(cadena string, nombreArchivo string) {
-	f, err := os.Create(".\\cliente\\src\\ImagenArbol\\"+nombreArchivo+".dot")
+	f, err := os.Create("..\\cliente\\src\\ImagenArbol\\"+nombreArchivo+".dot")
 	if err != nil {
 		fmt.Println(err)
 		return
@@ -55,7 +55,7 @@ func guardarArchivo(cadena string, nombreArchivo string) {
 		return
 	}
 	path, _ := exec.LookPath("dot")
-	cmd, _ := exec.Command(path, "-Tpng", ".\\cliente\\src\\ImagenArbol\\"+nombreArchivo+".dot").Output()
+	cmd, _ := exec.Command(path, "-Tpdf", "..\\cliente\\src\\ImagenArbol\\"+nombreArchivo+".dot").Output()
 	mode := int(0777)
-	ioutil.WriteFile(".\\cliente\\src\\ImagenArbol\\"+nombreArchivo+".png", cmd, os.FileMode(mode))
+	ioutil.WriteFile("..\\cliente\\src\\ImagenArbol\\"+nombreArchivo+".pdf", cmd, os.FileMode(mode))
 }

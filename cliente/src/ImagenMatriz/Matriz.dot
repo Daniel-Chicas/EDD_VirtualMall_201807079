@@ -1,15 +1,15 @@
-digraph Daniel200612{
+digraph Daniel20214{
 node[shape=box];
-MT[label="Diciembre", style = filled, color=green, group = 1];
+MT[label="Abril", style = filled, color=red, group = 1];
 e0[shape = point, width = 0];
 e0[shape = point, width = 0];
-node0xc00030e1e0[color=brown, label="Depa: Accesorios", group = 1];
-MT->node0xc00030e1e0;
-node0xc00030e230[color=pink, label="Día: 22", group = 2];
-MT->node0xc00030e230;
-{rank = same;MT;node0xc00030e230;}
-node0xc00016f010[color=violet, label="PEDIDOS", group = 2];
-node0xc00030e230->node0xc00016f010;
-node0xc00030e1e0->node0xc00016f010;
-{rank = same;node0xc00030e1e0;node0xc00016f010;}
+node0xc0003976d0[color=gray, label="Depa: Reproductores web", group = 1];
+MT->node0xc0003976d0;
+node0xc000397720[color=violet, label="Día: 14", group = 2];
+MT->node0xc000397720;
+{rank = same;MT;node0xc000397720;}
+node0xc0003fb9c0[color=orange, label="PEDIDOS", group = 2];
+node0xc000397720->node0xc0003fb9c0;
+node0xc0003976d0->node0xc0003fb9c0;
+{rank = same;node0xc0003976d0;node0xc0003fb9c0;}
 }
