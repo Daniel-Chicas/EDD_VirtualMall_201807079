@@ -17,6 +17,7 @@ import UsuariosTodo from '../componentes/ArbolUsuarioTodo'
 import UsuariosMedio from '../componentes/ArbolesMedio'
 import Vector from '../componentes/VectorLinealizado'
 import Recorrido from '../componentes/Recorrido'
+import CambiarClave from '../componentes/CambiarClave'
 
 import '../Inicio.css'
 
@@ -40,6 +41,7 @@ function Inicio() {
         <Route path="/UsuariosM" component={UsuariosMedio} />
         <Route path="/Vector" component={Vector} />
         <Route path="/Recorrido" component={Recorrido} />
+        <Route path="/CambiarClave" component={CambiarClave} />
       </Router>
     </>
   )

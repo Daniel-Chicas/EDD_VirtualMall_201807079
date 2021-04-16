@@ -296,7 +296,9 @@ func (M *Matriz) Recorrido(dia string) *GrafoRecorrido.ListaRecorrido{
 				imp := recorrido.Cabeza
 				if RecorridoRegresa.Cabeza == nil{
 					RecorridoRegresa.InsertarRecCabeza(imp)
-				}else{
+					break
+				}
+				/*else{
 					Voltear := &GrafoRecorrido.ListaRecorrido{}
 					for imp != nil{
 						nuevo := &GrafoRecorrido.NodoRecorrido{Viene: imp.Viene, Va: imp.Va, Costo: imp.Costo, Siguiente: nil, Anterior: nil}
@@ -310,8 +312,13 @@ func (M *Matriz) Recorrido(dia string) *GrafoRecorrido.ListaRecorrido{
 						impv = impv.Siguiente
 					}
 				}
+
+				 */
 			}
 			temp = temp.(*NodoPedido).Sur
+		}
+		if RecorridoRegresa.Cabeza != nil {
+			break
 		}
 		aux = aux.(*NodoCabeceraHorizontal).Este
 	}

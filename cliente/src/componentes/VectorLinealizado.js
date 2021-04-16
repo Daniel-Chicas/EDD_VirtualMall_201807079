@@ -57,6 +57,9 @@ function UsuariosPDF() {
         if (loading === false) {
             return (
                 <div className="GeneralLogin">
+                <Router>
+                    <NavBar/>
+                </Router>
                     <Segment placeholder id="SubirArchivo">
                     <Header icon>
                         <Icon name='pdf file' />

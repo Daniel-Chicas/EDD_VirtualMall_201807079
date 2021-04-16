@@ -1,8 +1,8 @@
 import {React, useState, useEffect} from 'react'
 import {Menu} from 'semantic-ui-react'
 import '../css/Nav.css'
-var colores = ['orange', 'yellow','green', "brown", 'purple', 'red', 'blue']
-var opciones = ['Ver Tiendas', 'Carrito de Compras', 'Ver pedidos','Cargar Archivos', 'Eliminar Usuario', 'Arboles Usuario','Cerrar Sesión', '/']
+var colores = ['orange', 'yellow','green', "brown", 'purple', 'red','black', 'pink', 'blue']
+var opciones = ['Ver Tiendas', 'Carrito de Compras', 'Ver pedidos','Cargar Archivos', 'Eliminar Usuario', 'Arboles Usuario','Cambiar Clave', 'Ver Vector','Cerrar Sesión', '/']
 
 function NavBar() {
     const [activo, setactivo] = useState(colores[10])
@@ -20,6 +20,10 @@ function NavBar() {
         window.location.href = "http://localhost:8001/EliminarUsuario"
     }else if(activo === "red"){
         window.location.href = "http://localhost:8001/ArbolesUsuario"
+    }else if(activo === "black"){
+        window.location.href = "http://localhost:8001/CambiarClave"
+    }else if(activo === "pink"){
+        window.location.href = "http://localhost:8001/Vector"
     }
     return (
        <Menu inverted className="Nav">

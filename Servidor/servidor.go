@@ -46,9 +46,10 @@ var usuarioLinea int
 var nueva = GrafoRecorrido.NuevaListaAdyacencia()
 var inicioReco string
 var finReco string
-
+var LlaveEncriptar = ""
 
 func main(){
+	LlaveEncriptar = "EDD2021"
 	Usuario.Insertar(Usuarios.NuevaLlave(1234567890101, "EDD2021", " auxiliar@edd.com", "1234", "Administrador"))
 	router := mux.NewRouter()
 	router.HandleFunc("/", inicio).Methods("Get")
@@ -69,7 +70,8 @@ func main(){
 	router.HandleFunc("/IniciarSesion", IniciarSesion).Methods("Post")
 	router.HandleFunc("/UsuarioLinea", UsuarioLinea).Methods("Post")
 	router.HandleFunc("/DatosLinea", DatosLinea).Methods("Get")
-	router.HandleFunc("/ArbolesB", GraficosArboles).Methods("Get")
+	router.HandleFunc("/ArbolesB", GraficosArboles).Methods("Post")
+	router.HandleFunc("/CambiarContra", CambiarContra).Methods("Post")
 	log.Fatal(http.ListenAndServe(":3000", router))
 }
 
@@ -185,6 +187,80 @@ func cargar(w http.ResponseWriter, r *http.Request){
 				Productos := matriz.Pedidos[i].Productos
 				Tercero := posicionTercero(NombreTienda, Departamento,Calificacion, Indi, Departa)
 				dpi := validarDPI(Usuario.Raiz, Cliente)
+
+				var recorridoFinal GrafoRecorrido.ListaRecorrido
+				var recorridos []*GrafoRecorrido.ListaRecorrido
+				if dpi == true{
+					if len(Productos) > 1 {
+					//productosOrdenados := Burbuja(Productos)
+					for j := 0; j < len(Productos); j++ {
+						if Tercero<0{
+							break
+						}
+							imp := Vector[Tercero].ListGA.Cabeza
+							for imp != nil {
+								if imp.NombreTienda == NombreTienda && imp.Calificacion == Calificacion {
+									a := inOrden(imp.Inventario.Raiz, Productos[j].Codigo)
+									if a == true {
+										finalRecorrido := inOrdenAlmacenamiento(imp.Inventario.Raiz, Productos[j].Codigo)
+										recorrido := nueva.Dijkstra(inicioReco, finalRecorrido,GrafoRe.General)
+										recorridos = append(recorridos, recorrido )
+									}
+								}
+								imp = imp.Siguiente
+							}
+						}
+						var temp GrafoRecorrido.NodoRecorrido
+						var final GrafoRecorrido.NodoRecorrido
+						inicioR := inicioReco
+						for len(recorridos) != 0{
+
+							for k := 0; k < len(recorridos); k++ {
+								imp := recorridos[k].Cabeza
+								recorridos[k] = nueva.Dijkstra(inicioR, recorridos[k].Cola.Va,GrafoRe.General)
+								var cuenta float64 = 0
+								for imp != nil{
+									cuenta = cuenta+imp.Costo
+									temp = GrafoRecorrido.NodoRecorrido{Viene: inicioR, Va: imp.Va, Costo: cuenta, Siguiente: nil, Anterior: nil}
+									imp = imp.Siguiente
+								}
+								if k == 0 {
+									final = temp
+								}else{
+									if temp.Costo < final.Costo {
+										final = temp
+									}
+								}
+							}
+
+							recorridoFin := nueva.Dijkstra(inicioR, final.Va, GrafoRe.General)
+
+
+							for e := recorridoFin.Cabeza; e != nil ; e = e.Siguiente {
+								recorridoFinal.InsertarRec(&GrafoRecorrido.NodoRecorrido{Viene: e.Viene, Va: e.Va, Costo: e.Costo, Siguiente: nil, Anterior: nil})
+							}
+							for l := 0; l < len(recorridos); l++ {
+								if recorridos[l].Cabeza.Viene == inicioR && recorridos[l].Cola.Va == final.Va {
+									recorridos = removerRecorrido(recorridos, l)
+									l = 0
+								}
+							}
+
+							inicioR = final.Va
+
+							if len(recorridos) == 0 {
+								recorridoFin = nueva.Dijkstra(inicioR, finReco, GrafoRe.General)
+								for e := recorridoFin.Cabeza; e != nil ; e = e.Siguiente {
+									recorridoFinal.InsertarRec(&GrafoRecorrido.NodoRecorrido{Viene: e.Viene, Va: e.Va, Costo: e.Costo, Siguiente: nil, Anterior: nil})
+								}
+							}
+
+						}
+					}
+				}
+
+
+
 				if dpi == true {
 					for j := 0; j < len(Productos); j++ {
 						if Tercero<0{
@@ -225,9 +301,9 @@ func cargar(w http.ResponseWriter, r *http.Request){
 													nombreProducto := inOrdenNombre(imp.Inventario.Raiz, Productos[j].Codigo)
 													arbolito := Compras.DescontarProducto(imp.Inventario.Raiz, Productos[j].Codigo, 1)
 													imp.Inventario.Raiz = arbolito
-													mas := true
+													//mas := true
 													if len(Productos) == 1 {
-														mas = false
+														//mas = false
 														finalRecorrido := inOrdenAlmacenamiento(imp.Inventario.Raiz, Productos[j].Codigo)
 														recorrido := nueva.Dijkstra(inicioReco, finalRecorrido,GrafoRe.General)
 														recorridoFin := nueva.Dijkstra(finalRecorrido, finReco, GrafoRe.General)
@@ -236,7 +312,13 @@ func cargar(w http.ResponseWriter, r *http.Request){
 														}
 														nodoPedido := metodosMatriz.NuevoNodoPedido(fecha, NombreTienda, Departamento,Calificacion, Cliente, nombreProducto,Productos[j].Codigo, 1, strconv.Itoa(dia), recorrido)
 														impr.MatrizMes.Insertar(nodoPedido)
+													}else{
+														nodoPedido := metodosMatriz.NuevoNodoPedido(fecha, NombreTienda, Departamento,Calificacion, Cliente, nombreProducto,Productos[j].Codigo, 1, strconv.Itoa(dia), &recorridoFinal)
+														impr.MatrizMes.Insertar(nodoPedido)
 													}
+
+													/*
+
 													if j == 0 && mas == true{
 														finalRecorrido := inOrdenAlmacenamiento(imp.Inventario.Raiz, Productos[j].Codigo)
 														recorrido := nueva.Dijkstra(inicioReco, finalRecorrido,GrafoRe.General)
@@ -259,6 +341,7 @@ func cargar(w http.ResponseWriter, r *http.Request){
 															impr.MatrizMes.Insertar(nodoPedido)
 														}
 													}
+													*/
 												}
 												impr = impr.Siguiente
 											}
@@ -495,19 +578,106 @@ func carrito (w http.ResponseWriter, r *http.Request){
 	}
 	Indi := list.Indi()
 	Departa := list.Departa()
+	Tercero := 0
+	Tienda := ""
+	Calificacion := 0
 	json.Unmarshal(reqBody, &carritojson)
+	var NProductos []MatrizDispersa.NodoProductoViene
+	var recorridoFinal GrafoRecorrido.ListaRecorrido
+	var recorridos []*GrafoRecorrido.ListaRecorrido
+	if len(carritojson.Pedidos) != 1 {
+		for i := 0; i < len(carritojson.Pedidos); i++ {
+			a := carritojson.Pedidos[i]
+			Tienda = a.NombreTienda
+			Departamento := a.Departamento
+			Calificacion = a.Calificacion
+			Productos := a.CodigoProductos
+			Tercero = posicionTercero(Tienda, Departamento, Calificacion, Indi, Departa)
+			for j := 0; j < len(Productos); j++ {
+				nuevo := MatrizDispersa.NodoProductoViene{Codigo: Productos[j].Codigo}
+				NProductos = append(NProductos, nuevo)
+			}
+		}
+
+		if len(NProductos) != 0 {
+			for j := 0; j < len(NProductos); j++ {
+				if Tercero<0{
+					break
+				}
+				imp := Vector[Tercero].ListGA.Cabeza
+				for imp != nil {
+					if imp.NombreTienda == Tienda && imp.Calificacion == Calificacion {
+						a := inOrden(imp.Inventario.Raiz, NProductos[j].Codigo)
+						if a == true {
+							finalRecorrido := inOrdenAlmacenamiento(imp.Inventario.Raiz, NProductos[j].Codigo)
+							recorrido := nueva.Dijkstra(inicioReco, finalRecorrido,GrafoRe.General)
+							recorridos = append(recorridos, recorrido )
+						}
+					}
+					imp = imp.Siguiente
+				}
+			}
+
+			var temp GrafoRecorrido.NodoRecorrido
+			var final GrafoRecorrido.NodoRecorrido
+			inicioR := inicioReco
+			for len(recorridos) != 0{
+
+				for k := 0; k < len(recorridos); k++ {
+					imp := recorridos[k].Cabeza
+					recorridos[k] = nueva.Dijkstra(inicioR, recorridos[k].Cola.Va,GrafoRe.General)
+					var cuenta float64 = 0
+					for imp != nil{
+						cuenta = cuenta+imp.Costo
+						temp = GrafoRecorrido.NodoRecorrido{Viene: inicioR, Va: imp.Va, Costo: cuenta, Siguiente: nil, Anterior: nil}
+						imp = imp.Siguiente
+					}
+					if k == 0 {
+						final = temp
+					}else{
+						if temp.Costo < final.Costo {
+							final = temp
+						}
+					}
+				}
+
+				recorridoFin := nueva.Dijkstra(inicioR, final.Va, GrafoRe.General)
+
+				for e := recorridoFin.Cabeza; e != nil ; e = e.Siguiente {
+					recorridoFinal.InsertarRec(&GrafoRecorrido.NodoRecorrido{Viene: e.Viene, Va: e.Va, Costo: e.Costo, Siguiente: nil, Anterior: nil})
+				}
+				for l := 0; l < len(recorridos); l++ {
+					if recorridos[l].Cabeza.Viene == inicioR && recorridos[l].Cola.Va == final.Va {
+						recorridos = removerRecorrido(recorridos, l)
+						l = 0
+					}
+				}
+
+				inicioR = final.Va
+
+				if len(recorridos) == 0 {
+					recorridoFin = nueva.Dijkstra(inicioR, finReco, GrafoRe.General)
+					for e := recorridoFin.Cabeza; e != nil ; e = e.Siguiente {
+						recorridoFinal.InsertarRec(&GrafoRecorrido.NodoRecorrido{Viene: e.Viene, Va: e.Va, Costo: e.Costo, Siguiente: nil, Anterior: nil})
+					}
+				}
+
+			}
+		}
+	}
+
 	for i := 0; i < len(carritojson.Pedidos); i++ {
 		a := carritojson.Pedidos[i]
 		fecha := a.Fecha
 		dia,_ := strconv.Atoi(strings.Split(fecha, "-")[0])
 		mes,_ := strconv.Atoi(strings.Split(fecha, "-")[1])
 		anio,_ := strconv.Atoi(strings.Split(fecha, "-")[2])
-		Tienda := a.NombreTienda
+		Tienda = a.NombreTienda
 		Departamento := a.Departamento
-		Calificacion := a.Calificacion
+		Calificacion = a.Calificacion
 		Cliente := a.Cliente
 		Productos := a.CodigoProductos
-		Tercero := posicionTercero(Tienda, Departamento, Calificacion, Indi, Departa)
+		Tercero = posicionTercero(Tienda, Departamento, Calificacion, Indi, Departa)
 		for j := 0; j < len(Productos); j++ {
 			imp := Vector[Tercero].ListGA.Cabeza
 			CodigoProducto := Productos[j].Codigo
@@ -533,8 +703,8 @@ func carrito (w http.ResponseWriter, r *http.Request){
 							}
 						}
 
-						arbolTienda := imp.Inventario.Raiz
-						arbolito := Compras.DescontarProducto(arbolTienda, CodigoProducto, Cantidad)
+						arbolTiend := imp.Inventario.Raiz
+						arbolito := Compras.DescontarProducto(arbolTiend, CodigoProducto, Cantidad)
 						imp.Inventario.Raiz = arbolito
 						existeProducto := inOrden(imp.Inventario.Raiz, Productos[j].Codigo)
 						if existeProducto == true {
@@ -545,7 +715,7 @@ func carrito (w http.ResponseWriter, r *http.Request){
 									for impr != nil {
 										if impr.Mes == mes {
 											nombreProducto := inOrdenNombre(imp.Inventario.Raiz, Productos[j].Codigo)
-											if len(Productos) == 1 {
+											if len(carritojson.Pedidos) == 1 {
 												finalRecorrido := inOrdenAlmacenamiento(imp.Inventario.Raiz, Productos[j].Codigo)
 												recorrido := nueva.Dijkstra(inicioReco, finalRecorrido,GrafoRe.General)
 												recorridoFin := nueva.Dijkstra(finalRecorrido, finReco, GrafoRe.General)
@@ -553,6 +723,9 @@ func carrito (w http.ResponseWriter, r *http.Request){
 													recorrido.InsertarRec(&GrafoRecorrido.NodoRecorrido{Viene: e.Viene, Va: e.Va, Costo: e.Costo, Siguiente: nil, Anterior: nil})
 												}
 												nodoPedido := metodosMatriz.NuevoNodoPedido(fecha, Tienda, Departamento,Calificacion, Cliente, nombreProducto,Productos[j].Codigo, 1, strconv.Itoa(dia), recorrido)
+												impr.MatrizMes.Insertar(nodoPedido)
+											}else{
+												nodoPedido := metodosMatriz.NuevoNodoPedido(fecha, Tienda, Departamento,Calificacion, Cliente, nombreProducto,Productos[j].Codigo, 1, strconv.Itoa(dia), &recorridoFinal)
 												impr.MatrizMes.Insertar(nodoPedido)
 											}
 										}
@@ -831,10 +1004,52 @@ func DatosLinea(w http.ResponseWriter, r *http.Request){
 
 func GraficosArboles(w http.ResponseWriter, r *http.Request){
 	indexHandler(w, r)
-	Usuario.Grafico("No")
-	Usuario.Grafico("Si")
-	Usuario.Grafico("Medio")
-	m := Mensaje{Retorna: "Los archivos han sido creados"}
+	reqBody, err := ioutil.ReadAll(r.Body)
+	if err!=nil{
+		fmt.Fprint(w, "Error al insertar")
+	}
+	for reqBody[0] != 123{
+		reqBody = remove(reqBody, 0)
+	}
+	for reqBody[len(reqBody)-1] != 125{
+		reqBody = remove(reqBody, len(reqBody)-1)
+	}
+	var encriptar Encriptar
+	json.Unmarshal(reqBody, &encriptar)
+	m := Mensaje{}
+	if encriptar.LlaveNueva == LlaveEncriptar {
+		Usuario.Grafico("No")
+		Usuario.Grafico("Si")
+		Usuario.Grafico("Medio")
+		m = Mensaje{Retorna: "Los archivos han sido creados"}
+	}else{
+		m = Mensaje{Retorna: "No"}
+	}
+	w.WriteHeader(http.StatusCreated)
+	json.NewEncoder(w).Encode(m)
+}
+
+func CambiarContra(w http.ResponseWriter, r *http.Request){
+	indexHandler(w, r)
+	reqBody, err := ioutil.ReadAll(r.Body)
+	if err!=nil{
+		fmt.Fprint(w, "Error al insertar")
+	}
+	for reqBody[0] != 123{
+		reqBody = remove(reqBody, 0)
+	}
+	for reqBody[len(reqBody)-1] != 125{
+		reqBody = remove(reqBody, len(reqBody)-1)
+	}
+	var encriptar Encriptar
+	json.Unmarshal(reqBody, &encriptar)
+	m := Mensaje{}
+	if encriptar.LlaveAntigua == LlaveEncriptar {
+		LlaveEncriptar = encriptar.LlaveNueva
+		m = Mensaje{"Si"}
+	}else{
+		m = Mensaje{"No"}
+	}
 	w.WriteHeader(http.StatusCreated)
 	json.NewEncoder(w).Encode(m)
 }
@@ -842,6 +1057,10 @@ func GraficosArboles(w http.ResponseWriter, r *http.Request){
 //-------------------------------------------------MÉTODOS--------------------------------------------------------------
 
 func remove(slice []byte, s int) []byte {
+	return append(slice[:s], slice[s+1:]...)
+}
+
+func removerRecorrido(slice []*GrafoRecorrido.ListaRecorrido, s int) []*GrafoRecorrido.ListaRecorrido {
 	return append(slice[:s], slice[s+1:]...)
 }
 
@@ -1152,6 +1371,7 @@ func regresaUsuario (pagina *Usuarios.Pagina, dpi int) string{
 	return ""
 }
 
+
 //--------------------------------------------------ESTRUCTURAS REGRESO-------------------------------------------------
 
 type GeneralR struct{
@@ -1233,4 +1453,9 @@ type Mes struct{
 
 type CerrarSesion struct{
 	Cerrar string `json:"Cerrar"`
+}
+
+type Encriptar struct {
+	LlaveAntigua string `json:"LlaveA"`
+	LlaveNueva string `json:"LlaveN"`
 }
