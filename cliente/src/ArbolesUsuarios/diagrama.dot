@@ -1,4 +1,4 @@
 digraph G{ 
 node[shape=record] 
-node0xc00006ec00 [style = filled color="brown" label="<f0>|{DPI: aa2f79dfbdfc8965309ba5a3bb40541a64cfec0e115d091fcfccc428b853383c|Nombre: EDD2021|Tipo Usuario: Administrador|Correo: bdd2a03c4f8707e78862b51ee7947715a4916a302508433712f0e095562b28fd|Password: 03ac674216f3e15c761ee1a5e255f067953623c8b388b4459e13f978d7c846f4}|<f2>|{DPI: c5069b83bed0a7303a13f7714b7043d5bce9cddb045d1b4b7911804ffd3c23a2|Nombre: dany|Tipo Usuario: Usuario|Correo: 185a530ca4359d0892bc6a0673a12f76621ae6d6c4d70ed4e4f4e4fb2731e19d|Password: 98c89b012e8a1e031fe42194510e164ef245f63f8a58b19cd69f6b419b10b940}|<f4>"] 
+node0xc00013ac00 [style = filled color="orange" label="<f0>|{DPI: aa2f79dfbdfc8965309ba5a3bb40541a64cfec0e115d091fcfccc428b853383c|Nombre: EDD2021|Tipo Usuario: Administrador|Correo: bdd2a03c4f8707e78862b51ee7947715a4916a302508433712f0e095562b28fd|Password: 756bc47cb5215dc3329ca7e1f7be33a2dad68990bb94b76d90aa07f4e44a233a}|<f2>"] 
 }

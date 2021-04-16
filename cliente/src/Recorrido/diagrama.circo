@@ -1,54 +1,59 @@
 digraph G{
-node0xc000216c20[label="Andromeda" style="filled" color="yellow"]
-node0xc000216c20[label="Andromeda"]
-node0xc000216c20->node0xc000216dc0[label="5" dir="both" color="red"]
-node0xc000216dc0[label="La jirafa"]
-node0xc000216dc0[label="La jirafa"]
-node0xc000216c20->node0xc000216ca0[label="10" dir="both"]
-node0xc000216ca0[label="La maquina neumatica"]
-node0xc000216ca0[label="La maquina neumatica"]
-node0xc000216c20->node0xc000216d00[label="8" dir="both"]
-node0xc000216d00[label="El ave del paraiso"]
-node0xc000216d00[label="El ave del paraiso"]
-node0xc000216c20->node0xc000216e00[label="12" dir="both"]
-node0xc000216e00[label="El cangrejo"]
-node0xc000216e00[label="El cangrejo"]
-node0xc000216c60[label="El cincel"]
-node0xc000216c60[label="El cincel" style="filled" color="green"]
-node0xc000216c60->node0xc000216e40[label="5" dir="both" color="red"]
-node0xc000216e40[label="El altar"]
-node0xc000216e40[label="El altar"]
-node0xc000216c60->node0xc000216e80[label="2" dir="both" color="red"]
-node0xc000216e80[label="El carnero"]
-node0xc000216e80[label="El carnero"]
-node0xc000216ca0->node0xc000216dc0[label="15" dir="both"]
-node0xc000216ca0->node0xc000216d40[label="8.5" dir="both"]
-node0xc000216d40[label="Acuario"]
-node0xc000216d40[label="Acuario"]
-node0xc000216d00->node0xc000216d80[label="5" dir="both"]
-node0xc000216d80[label="El aguila"]
-node0xc000216d80[label="El aguila"]
-node0xc000216d40->node0xc000216e40[label="7" dir="both" color="red"]
-node0xc000216d80->node0xc000216e80[label="9" dir="both"]
-node0xc000216dc0->node0xc000216e00[label="6" dir="both" color="red"]
-node0xc000216dc0->node0xc000216c60[label="13" dir="both"]
-node0xc000216e00->node0xc000216d00[label="13" dir="both"]
-node0xc000216e00->node0xc000216c60[label="10" dir="both"]
-node0xc000216e00->node0xc000216d80[label="15" dir="both"]
-node0xc000216e40->node0xc000216dc0[label="14" dir="both"]
-node0xc000216e80->node0xc000216e00[label="3" dir="both" color="red"]
+node0xc0001885c0[label="Andromeda" style="filled" color="yellow"]
+node0xc0001885c0[label="Andromeda"]
+node0xc0001885c0->node0xc000188740[label="5" dir="both" color="red"]
+node0xc000188740[label="La jirafa"]
+node0xc000188740[label="La jirafa"]
+node0xc0001885c0->node0xc000188640[label="10" dir="both"]
+node0xc000188640[label="La maquina neumatica"]
+node0xc000188640[label="La maquina neumatica"]
+node0xc0001885c0->node0xc000188680[label="8" dir="both" color="red"]
+node0xc000188680[label="El ave del paraiso"]
+node0xc000188680[label="El ave del paraiso"]
+node0xc0001885c0->node0xc000188780[label="12" dir="both" color="red"]
+node0xc000188780[label="El cangrejo"]
+node0xc000188780[label="El cangrejo"]
+node0xc000188600[label="El cincel"]
+node0xc000188600[label="El cincel" style="filled" color="red"]
+node0xc000188600->node0xc0001887c0[label="5" dir="both"]
+node0xc0001887c0[label="El altar"]
+node0xc0001887c0[label="El altar"]
+node0xc000188600->node0xc000188800[label="2" dir="both" color="red"]
+node0xc000188800[label="El carnero"]
+node0xc000188800[label="El carnero"]
+node0xc000188640->node0xc000188740[label="15" dir="both"]
+node0xc000188640->node0xc0001886c0[label="8.5" dir="both"]
+node0xc0001886c0[label="Acuario"]
+node0xc0001886c0[label="Acuario"]
+node0xc000188680->node0xc000188700[label="5" dir="both" color="red"]
+node0xc000188700[label="El aguila"]
+node0xc000188700[label="El aguila"]
+node0xc0001886c0->node0xc0001887c0[label="7" dir="both"]
+node0xc000188700->node0xc000188800[label="9" dir="both" color="red"]
+node0xc000188740->node0xc000188780[label="6" dir="both" color="red"]
+node0xc000188740->node0xc000188600[label="13" dir="both"]
+node0xc000188780->node0xc000188680[label="13" dir="both"]
+node0xc000188780->node0xc000188600[label="10" dir="both"]
+node0xc000188780->node0xc000188700[label="15" dir="both"]
+node0xc0001887c0->node0xc000188740[label="14" dir="both"]
+node0xc000188800->node0xc000188780[label="3" dir="both" color="red"]
 Tabla [shape = none, fontsize=10, label=<
 <TABLE BORDER="1">
 <tr><td>ITERACION</td><td>ACTUAL</td><td>SIGUIENTE</td><td>CUENTA</td></tr>
-<tr><td>1</td><td>Andromeda</td><td>La jirafa</td><td>5</td></tr>
-<tr><td>2</td><td>La jirafa</td><td>El cangrejo</td><td>11</td></tr>
-<tr><td>3</td><td>El cangrejo</td><td>El carnero</td><td>14</td></tr>
-<tr><td>4</td><td>El carnero</td><td>El cincel</td><td>16</td></tr>
-<tr><td>5</td><td>El cincel</td><td>El altar</td><td>21</td></tr>
-<tr><td>6</td><td>El altar</td><td>Acuario</td><td>28</td></tr>
-<tr><td>7</td><td>Acuario</td><td>Acuario</td><td>28</td></tr>
-<tr><td>8</td><td>Acuario</td><td>El altar</td><td>35</td></tr>
-<tr><td>9</td><td>El altar</td><td>El cincel</td><td>40</td></tr>
+<tr><td>1</td><td>Andromeda</td><td>El ave del paraiso</td><td>8</td></tr>
+<tr><td>2</td><td>El ave del paraiso</td><td>El aguila</td><td>13</td></tr>
+<tr><td>3</td><td>El aguila</td><td>El carnero</td><td>22</td></tr>
+<tr><td>4</td><td>El carnero</td><td>El cincel</td><td>24</td></tr>
+<tr><td>5</td><td>El cincel</td><td>El carnero</td><td>26</td></tr>
+<tr><td>6</td><td>El carnero</td><td>El cangrejo</td><td>29</td></tr>
+<tr><td>7</td><td>El cangrejo</td><td>Andromeda</td><td>41</td></tr>
+<tr><td>8</td><td>Andromeda</td><td>La jirafa</td><td>46</td></tr>
+<tr><td>9</td><td>La jirafa</td><td>El cangrejo</td><td>52</td></tr>
+<tr><td>10</td><td>El cangrejo</td><td>El carnero</td><td>55</td></tr>
+<tr><td>11</td><td>El carnero</td><td>El cincel</td><td>57</td></tr>
+<tr><td>12</td><td>El cincel</td><td>El carnero</td><td>59</td></tr>
+<tr><td>13</td><td>El carnero</td><td>El cangrejo</td><td>62</td></tr>
+<tr><td>14</td><td>El cangrejo</td><td>Andromeda</td><td>74</td></tr>
 </TABLE>
 >];
 }

@@ -9,6 +9,7 @@ import (
 	"./Reportes"
 	"./TiendaEspecifica"
 	"./Usuarios"
+	"crypto/sha256"
 	"encoding/json"
 	"fmt"
 	"github.com/gorilla/mux"
@@ -49,8 +50,10 @@ var finReco string
 var LlaveEncriptar = ""
 
 func main(){
-	LlaveEncriptar = "EDD2021"
-	Usuario.Insertar(Usuarios.NuevaLlave(1234567890101, "EDD2021", " auxiliar@edd.com", "1234", "Administrador"))
+	var cadena strings.Builder
+	fmt.Fprintf(&cadena, "%x", sha256.Sum256([]byte("1234")))
+	LlaveEncriptar = cadena.String()
+	Usuario.Insertar(Usuarios.NuevaLlave(1234567890101, "EDD2021", " auxiliar@edd.com", cadena.String(), "Administrador"))
 	router := mux.NewRouter()
 	router.HandleFunc("/", inicio).Methods("Get")
 	router.HandleFunc("/cargarArchivos", cargar).Methods("Post")
@@ -138,7 +141,9 @@ func cargar(w http.ResponseWriter, r *http.Request){
 		a := UsuariosEntrada.Usuarios[i]
 		existe := existeB(Usuario.Raiz, a.DPI)
 		if existe == false {
-			Usuario.Insertar(Usuarios.NuevaLlave(a.DPI, a.Nombre, a.Correo, a.Contra, a.Cuenta))
+			var cadena strings.Builder
+			fmt.Fprintf(&cadena, "%x", sha256.Sum256([]byte(a.Contra)))
+			Usuario.Insertar(Usuarios.NuevaLlave(a.DPI, a.Nombre, a.Correo, cadena.String(), a.Cuenta))
 		}else{
 			usuariosEx = append(usuariosEx, a)
 		}
@@ -253,8 +258,11 @@ func cargar(w http.ResponseWriter, r *http.Request){
 								for e := recorridoFin.Cabeza; e != nil ; e = e.Siguiente {
 									recorridoFinal.InsertarRec(&GrafoRecorrido.NodoRecorrido{Viene: e.Viene, Va: e.Va, Costo: e.Costo, Siguiente: nil, Anterior: nil})
 								}
+								recorridoFin = nueva.Dijkstra(finReco, inicioReco, GrafoRe.General)
+								for e := recorridoFin.Cabeza; e != nil ; e = e.Siguiente {
+									recorridoFinal.InsertarRec(&GrafoRecorrido.NodoRecorrido{Viene: e.Viene, Va: e.Va, Costo: e.Costo, Siguiente: nil, Anterior: nil})
+								}
 							}
-
 						}
 					}
 				}
@@ -316,32 +324,6 @@ func cargar(w http.ResponseWriter, r *http.Request){
 														nodoPedido := metodosMatriz.NuevoNodoPedido(fecha, NombreTienda, Departamento,Calificacion, Cliente, nombreProducto,Productos[j].Codigo, 1, strconv.Itoa(dia), &recorridoFinal)
 														impr.MatrizMes.Insertar(nodoPedido)
 													}
-
-													/*
-
-													if j == 0 && mas == true{
-														finalRecorrido := inOrdenAlmacenamiento(imp.Inventario.Raiz, Productos[j].Codigo)
-														recorrido := nueva.Dijkstra(inicioReco, finalRecorrido,GrafoRe.General)
-														nodoPedido := metodosMatriz.NuevoNodoPedido(fecha, NombreTienda, Departamento,Calificacion, Cliente, nombreProducto,Productos[j].Codigo, 1, strconv.Itoa(dia), recorrido)
-														impr.MatrizMes.Insertar(nodoPedido)
-													}else if len(Productos) != 1{
-														finalRecorrido := inOrdenAlmacenamiento(imp.Inventario.Raiz, Productos[j].Codigo)
-														inicioRecorrido := inOrdenAlmacenamiento(imp.Inventario.Raiz, Productos[j-1].Codigo)
-														recorrido := nueva.Dijkstra(inicioRecorrido, finalRecorrido,GrafoRe.General)
-														if j+1 == len(Productos) {
-															inicioRecorrido = inOrdenAlmacenamiento(imp.Inventario.Raiz, Productos[j].Codigo)
-															recorridoFin := nueva.Dijkstra(inicioRecorrido, finReco,GrafoRe.General)
-															for e := recorridoFin.Cabeza; e != nil ; e = e.Siguiente {
-																recorrido.InsertarRec(&GrafoRecorrido.NodoRecorrido{Viene: e.Viene, Va: e.Va, Costo: e.Costo, Siguiente: nil, Anterior: nil})
-															}
-															nodoPedido := metodosMatriz.NuevoNodoPedido(fecha, NombreTienda, Departamento,Calificacion, Cliente, nombreProducto,Productos[j].Codigo, 1, strconv.Itoa(dia), recorrido)
-															impr.MatrizMes.Insertar(nodoPedido)
-														}else{
-															nodoPedido := metodosMatriz.NuevoNodoPedido(fecha, NombreTienda, Departamento,Calificacion, Cliente, nombreProducto,Productos[j].Codigo, 1, strconv.Itoa(dia), recorrido)
-															impr.MatrizMes.Insertar(nodoPedido)
-														}
-													}
-													*/
 												}
 												impr = impr.Siguiente
 											}
@@ -660,6 +642,10 @@ func carrito (w http.ResponseWriter, r *http.Request){
 					for e := recorridoFin.Cabeza; e != nil ; e = e.Siguiente {
 						recorridoFinal.InsertarRec(&GrafoRecorrido.NodoRecorrido{Viene: e.Viene, Va: e.Va, Costo: e.Costo, Siguiente: nil, Anterior: nil})
 					}
+					recorridoFin = nueva.Dijkstra(finReco, inicioReco, GrafoRe.General)
+					for e := recorridoFin.Cabeza; e != nil ; e = e.Siguiente {
+						recorridoFinal.InsertarRec(&GrafoRecorrido.NodoRecorrido{Viene: e.Viene, Va: e.Va, Costo: e.Costo, Siguiente: nil, Anterior: nil})
+					}
 				}
 
 			}
@@ -722,11 +708,20 @@ func carrito (w http.ResponseWriter, r *http.Request){
 												for e := recorridoFin.Cabeza; e != nil ; e = e.Siguiente {
 													recorrido.InsertarRec(&GrafoRecorrido.NodoRecorrido{Viene: e.Viene, Va: e.Va, Costo: e.Costo, Siguiente: nil, Anterior: nil})
 												}
+												recorridoFin = nueva.Dijkstra(finReco, inicioReco, GrafoRe.General)
+												for e := recorridoFin.Cabeza; e != nil ; e = e.Siguiente {
+													recorrido.InsertarRec(&GrafoRecorrido.NodoRecorrido{Viene: e.Viene, Va: e.Va, Costo: e.Costo, Siguiente: nil, Anterior: nil})
+												}
 												nodoPedido := metodosMatriz.NuevoNodoPedido(fecha, Tienda, Departamento,Calificacion, Cliente, nombreProducto,Productos[j].Codigo, 1, strconv.Itoa(dia), recorrido)
 												impr.MatrizMes.Insertar(nodoPedido)
 											}else{
-												nodoPedido := metodosMatriz.NuevoNodoPedido(fecha, Tienda, Departamento,Calificacion, Cliente, nombreProducto,Productos[j].Codigo, 1, strconv.Itoa(dia), &recorridoFinal)
+												var recorrido GrafoRecorrido.ListaRecorrido
+												nodoPedido := metodosMatriz.NuevoNodoPedido(fecha, Tienda, Departamento,Calificacion, Cliente, nombreProducto,Productos[j].Codigo, 1, strconv.Itoa(dia), &recorrido)
 												impr.MatrizMes.Insertar(nodoPedido)
+												if i == len(carritojson.Pedidos)-1 {
+													nodoPedido = metodosMatriz.NuevoNodoPedido(fecha, Tienda, Departamento,Calificacion, Cliente, nombreProducto,Productos[j].Codigo, 1, strconv.Itoa(dia), &recorridoFinal)
+													impr.MatrizMes.Insertar(nodoPedido)
+												}
 											}
 										}
 										impr = impr.Siguiente
@@ -947,7 +942,11 @@ func IniciarSesion (w http.ResponseWriter, r *http.Request){
 	}
 	json.Unmarshal(reqBody, &Inicio)
 	dpi := validarDPI(Usuario.Raiz, Inicio.Nombre)
-	contra := validarContra(Usuario.Raiz, Inicio.Nombre, Inicio.Contra)
+
+	var cadena strings.Builder
+	fmt.Fprintf(&cadena, "%x", sha256.Sum256([]byte(Inicio.Contra)))
+
+	contra := validarContra(Usuario.Raiz, Inicio.Nombre, cadena.String())
 
 	if dpi == true {
 		regresa = append(regresa, "si" )
@@ -960,7 +959,7 @@ func IniciarSesion (w http.ResponseWriter, r *http.Request){
 		regresa = append(regresa, "no" )
 	}
 	if regresa[0] == "si" && regresa[1] == "si" {
-		tipo := tipoUsuario(Usuario.Raiz, Inicio.Nombre, Inicio.Contra)
+		tipo := tipoUsuario(Usuario.Raiz, Inicio.Nombre, cadena.String())
 		regresa = append(regresa, tipo)
 		usuarioLinea = Inicio.Nombre
 	}
@@ -1017,7 +1016,9 @@ func GraficosArboles(w http.ResponseWriter, r *http.Request){
 	var encriptar Encriptar
 	json.Unmarshal(reqBody, &encriptar)
 	m := Mensaje{}
-	if encriptar.LlaveNueva == LlaveEncriptar {
+	var cadena strings.Builder
+	fmt.Fprintf(&cadena, "%x", sha256.Sum256([]byte(encriptar.LlaveNueva)))
+	if cadena.String() == LlaveEncriptar {
 		Usuario.Grafico("No")
 		Usuario.Grafico("Si")
 		Usuario.Grafico("Medio")
@@ -1044,8 +1045,12 @@ func CambiarContra(w http.ResponseWriter, r *http.Request){
 	var encriptar Encriptar
 	json.Unmarshal(reqBody, &encriptar)
 	m := Mensaje{}
-	if encriptar.LlaveAntigua == LlaveEncriptar {
-		LlaveEncriptar = encriptar.LlaveNueva
+	var cadena strings.Builder
+	fmt.Fprintf(&cadena, "%x", sha256.Sum256([]byte(encriptar.LlaveAntigua)))
+	if cadena.String() == LlaveEncriptar {
+		var cadenaNueva strings.Builder
+		fmt.Fprintf(&cadenaNueva, "%x", sha256.Sum256([]byte(encriptar.LlaveNueva)))
+		LlaveEncriptar = cadenaNueva.String()
 		m = Mensaje{"Si"}
 	}else{
 		m = Mensaje{"No"}
