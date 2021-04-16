@@ -5,12 +5,13 @@ import { Button, Header, Icon, Segment } from 'semantic-ui-react'
 import { Input, Label } from 'semantic-ui-react'
 import '../Inicio.css'
 import axios from 'axios'
+var crypto = require('crypto');
 
 function EliminarUsuario() {
     
     const [loading, setloading] = useState(false)
     const [nombre, setnombre] = useState("")
-    const [Password, setPassword] = useState("")
+    const [Contra, setContra] = useState("")
     const [existe, setexiste] = useState(false)
 
 
@@ -26,7 +27,7 @@ function EliminarUsuario() {
     })
     
     const eliminar = () => {
-        if (Password === '') {
+        if (Contra === '') {
             document.getElementById("ContraValido").style.visibility = 'visible'
             document.getElementById("ContraValido").innerHTML = "Contraseña Incorrecta"
         }else{
@@ -38,6 +39,7 @@ function EliminarUsuario() {
             }else{
                 document.getElementById("UsuarioValido").style.visibility = 'hidden'
                 document.getElementById("Eliminado").style.visibility = 'hidden'
+                const Password = crypto.createHash('sha256').update(Contra.toString()).digest('hex')
                 var Usuario = {
                     Nombre,
                     Password
@@ -96,7 +98,7 @@ function EliminarUsuario() {
                         <br/>
                         <br/>
                         <Label pointing="right" prompt color="red" id="ContraValido" className="Alerta"></Label>
-                        <Input type="password" label='Contraseña del Usuario' placeholder='' onChange={e => setPassword(e.target.value)} className="Datos"/>
+                        <Input type="password" label='Contraseña del Usuario' placeholder='' onChange={e => setContra(e.target.value)} className="Datos"/>
                         <br/>
                         <br/>
                         <Button color='green' className="Datos" onClick={eliminar}>ELIMINAR</Button>

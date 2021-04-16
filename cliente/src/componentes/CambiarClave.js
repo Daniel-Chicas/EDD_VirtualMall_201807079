@@ -5,6 +5,7 @@ import {BrowserRouter as Router, Route} from 'react-router-dom'
 import '../css/CargaArchivos.css'
 import '../Inicio.css'
 import axios from 'axios'
+var crypto = require('crypto');
 
 function CambiarClave() {
 
@@ -37,8 +38,10 @@ function CambiarClave() {
         }else if (nueva !== "" &&  ant !== "") {
             document.getElementById("Nueva").style.visibility = 'hidden'
             document.getElementById("Antigua").style.visibility = 'hidden'
-            const LlaveA = ant.toString()
-            const LlaveN = nueva.toString()
+            const LlaveA = crypto.createHash('sha256').update(ant.toString()).digest('hex')
+            const LlaveN = crypto.createHash('sha256').update(nueva.toString()).digest('hex')
+
+            
             var Usuario = {
                 LlaveA,
                 LlaveN

@@ -6,6 +6,7 @@ import '../css/CargaArchivos.css'
 import { Input, Header, Icon, Segment, Button, Label } from 'semantic-ui-react'
 import { useHistory } from "react-router-dom";
 const axios=require('axios').default
+var crypto = require('crypto');
 
 //Usuario.Insertar(Usuarios.NuevaLlave(1234567890101, "EDD2021", " auxiliar@edd.com", "1234", "Administrador"))
 
@@ -25,11 +26,11 @@ function Login() {
 
 
     const [nombre, setnombre] = useState("")
-    const [Password, setPassword] = useState("")
+    const [Contra, setContra] = useState("")
     const history = useHistory();
 
     const iniciar = () => {
-        if (Password === '') {
+        if (Contra === '') {
             document.getElementById("ContraValido").style.visibility = 'visible'
             document.getElementById("ContraValido").innerHTML = "Contraseña Incorrecta"
         }else{
@@ -40,6 +41,8 @@ function Login() {
                 document.getElementById("UsuarioValido").innerHTML = "DPI Incorrecto"
             }else{
                 document.getElementById("UsuarioValido").style.visibility = 'hidden'
+                var Password = crypto.createHash('sha256').update(Contra).digest('hex')
+
                 var Usuario = {
                     Nombre,
                     Password
@@ -83,7 +86,7 @@ function Login() {
                     <br/>
                     <Label pointing prompt color="red" id="UsuarioValido" className="Alerta"></Label>
                     <br/>
-                    <Input type="password" label='Contraseña' placeholder='' onChange={e => setPassword(e.target.value)} className="Datos"/>
+                    <Input type="password" label='Contraseña' placeholder='' onChange={e => setContra(e.target.value)} className="Datos"/>
                     <br/>
                     <Label pointing prompt color="red" id="ContraValido" className="Alerta"></Label>
                     <br/>

@@ -3,9 +3,9 @@ import NavBar from '../componentes/NavBar'
 import {BrowserRouter as Router} from 'react-router-dom'
 import { Button, Header, Icon, Segment, Label, Input} from 'semantic-ui-react'
 import '../Inicio.css'
-
 import axios from 'axios'
 import UsuariosPDF from './UsuariosPDF'
+var crypto = require('crypto');
 
 function ArbolesUsuario() {
     
@@ -28,7 +28,7 @@ function ArbolesUsuario() {
     const UsuarioT = ()=>{
 
         const LlaveA = ""
-            const LlaveN = clave.toString()
+        const LlaveN = crypto.createHash('sha256').update(clave).digest('hex')
             var Usuario = {
                 LlaveA,
                 LlaveN
@@ -57,7 +57,7 @@ function ArbolesUsuario() {
     const UsuariosPDF = ()=>{
 
         const LlaveA = ""
-            const LlaveN = clave.toString()
+        const LlaveN = crypto.createHash('sha256').update(clave).digest('hex')
             var Usuario = {
                 LlaveA,
                 LlaveN
@@ -86,7 +86,7 @@ function ArbolesUsuario() {
     const UsuariosM = ()=>{
 
         const LlaveA = ""
-            const LlaveN = clave.toString()
+        const LlaveN = crypto.createHash('sha256').update(clave).digest('hex')
             var Usuario = {
                 LlaveA,
                 LlaveN

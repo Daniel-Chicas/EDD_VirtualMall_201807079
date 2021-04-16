@@ -5,11 +5,12 @@ import { Input, Header, Icon, Segment, Button, Label } from 'semantic-ui-react'
 import { useHistory } from "react-router-dom";
 import '../Inicio.css'
 const axios=require('axios').default
+var crypto = require('crypto');
 
 
 function CrearUsuario() {
     const [dpi, setusuario] = useState("")
-    const [Password, setcontra] = useState("")
+    const [Contra, setContra] = useState("")
     const [Correo, setcorreo] = useState("")
     const [Nombre, setnombre] = useState("")
     const history = useHistory();
@@ -31,6 +32,7 @@ function CrearUsuario() {
                 document.getElementById("UsuarioValido").innerHTML = "INGRESE UN DPI VÁLIDO"
             }else{
                 document.getElementById("UsuarioValido").style.visibility = 'hidden'
+                const Password = crypto.createHash('sha256').update(Contra.toString()).digest('hex')
                 var Usuario = {
                     DPI,
                     Nombre,
@@ -74,7 +76,7 @@ function CrearUsuario() {
                     <br/>
                     <Label pointing prompt color="red" id="CorreoValido" className="Alerta"></Label>
                     <br/>
-                    <Input type="password" label='Password' placeholder='contraseña123' onChange={e => setcontra(e.target.value)} className="DatosCrear"/>
+                    <Input type="password" label='Password' placeholder='contraseña123' onChange={e => setContra(e.target.value)} className="DatosCrear"/>
                     <br/>
                     <br/>
                     <Input type="text" label='Nombre' placeholder='Jesse Pinkman' onChange={e => setnombre(e.target.value)} className="DatosCrear"/>

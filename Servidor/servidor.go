@@ -943,10 +943,7 @@ func IniciarSesion (w http.ResponseWriter, r *http.Request){
 	json.Unmarshal(reqBody, &Inicio)
 	dpi := validarDPI(Usuario.Raiz, Inicio.Nombre)
 
-	var cadena strings.Builder
-	fmt.Fprintf(&cadena, "%x", sha256.Sum256([]byte(Inicio.Contra)))
-
-	contra := validarContra(Usuario.Raiz, Inicio.Nombre, cadena.String())
+	contra := validarContra(Usuario.Raiz, Inicio.Nombre, Inicio.Contra)
 
 	if dpi == true {
 		regresa = append(regresa, "si" )
@@ -959,7 +956,7 @@ func IniciarSesion (w http.ResponseWriter, r *http.Request){
 		regresa = append(regresa, "no" )
 	}
 	if regresa[0] == "si" && regresa[1] == "si" {
-		tipo := tipoUsuario(Usuario.Raiz, Inicio.Nombre, cadena.String())
+		tipo := tipoUsuario(Usuario.Raiz, Inicio.Nombre, Inicio.Contra)
 		regresa = append(regresa, tipo)
 		usuarioLinea = Inicio.Nombre
 	}
@@ -969,7 +966,6 @@ func IniciarSesion (w http.ResponseWriter, r *http.Request){
 	if salir.Cerrar == "si"{
 		usuarioLinea = 0
 	}
-
 
 	w.WriteHeader(http.StatusCreated)
 	json.Unmarshal(reqBody, &ms)
@@ -1016,9 +1012,7 @@ func GraficosArboles(w http.ResponseWriter, r *http.Request){
 	var encriptar Encriptar
 	json.Unmarshal(reqBody, &encriptar)
 	m := Mensaje{}
-	var cadena strings.Builder
-	fmt.Fprintf(&cadena, "%x", sha256.Sum256([]byte(encriptar.LlaveNueva)))
-	if cadena.String() == LlaveEncriptar {
+	if encriptar.LlaveNueva == LlaveEncriptar {
 		Usuario.Grafico("No")
 		Usuario.Grafico("Si")
 		Usuario.Grafico("Medio")
@@ -1045,12 +1039,8 @@ func CambiarContra(w http.ResponseWriter, r *http.Request){
 	var encriptar Encriptar
 	json.Unmarshal(reqBody, &encriptar)
 	m := Mensaje{}
-	var cadena strings.Builder
-	fmt.Fprintf(&cadena, "%x", sha256.Sum256([]byte(encriptar.LlaveAntigua)))
-	if cadena.String() == LlaveEncriptar {
-		var cadenaNueva strings.Builder
-		fmt.Fprintf(&cadenaNueva, "%x", sha256.Sum256([]byte(encriptar.LlaveNueva)))
-		LlaveEncriptar = cadenaNueva.String()
+	if encriptar.LlaveAntigua == LlaveEncriptar {
+		LlaveEncriptar = encriptar.LlaveNueva
 		m = Mensaje{"Si"}
 	}else{
 		m = Mensaje{"No"}
