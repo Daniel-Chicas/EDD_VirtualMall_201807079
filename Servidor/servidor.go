@@ -980,9 +980,16 @@ func UsuarioLinea (w http.ResponseWriter, r *http.Request){
 	}
 	if usuarioLinea != 0 {
 		tipo := regresaUsuario(Usuario.Raiz, usuarioLinea)
-		w.WriteHeader(http.StatusCreated)
-		json.Unmarshal(reqBody, &ms)
-		json.NewEncoder(w).Encode(tipo)
+		if tipo == "" {
+			tipo = "no"
+			w.WriteHeader(http.StatusCreated)
+			json.Unmarshal(reqBody, &ms)
+			json.NewEncoder(w).Encode(tipo)
+		}else{
+			w.WriteHeader(http.StatusCreated)
+			json.Unmarshal(reqBody, &ms)
+			json.NewEncoder(w).Encode(tipo)
+		}
 	}else{
 		tipo := "no"
 		w.WriteHeader(http.StatusCreated)

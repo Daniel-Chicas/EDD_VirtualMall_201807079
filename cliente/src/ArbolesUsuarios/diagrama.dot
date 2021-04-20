@@ -1,4 +1,3 @@
 digraph G{ 
 node[shape=record] 
-node0xc0000b8c00 [style = filled color="gray" label="<f0>|{DPI: aa2f79dfbdfc8965309ba5a3bb40541a64cfec0e115d091fcfccc428b853383c|Nombre: EDD2021|Tipo Usuario: Administrador|Correo: bdd2a03c4f8707e78862b51ee7947715a4916a302508433712f0e095562b28fd|Password: 756bc47cb5215dc3329ca7e1f7be33a2dad68990bb94b76d90aa07f4e44a233a}|<f2>"] 
 }

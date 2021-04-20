@@ -36,7 +36,7 @@ func (A *ArbolB) Grafico(tipo string){
 }
 
 func grafico(actual *Pagina, cadena *strings.Builder, arreglo map[string]*Pagina, padre *Pagina, posicion int){
-	if actual == nil{
+	if actual.Llaves[0] == nil{
 		return
 	}
 	t := 0
@@ -96,7 +96,7 @@ func grafico(actual *Pagina, cadena *strings.Builder, arreglo map[string]*Pagina
 }
 
 func graficoEC(actual *Pagina, cadena *strings.Builder, arreglo map[string]*Pagina, padre *Pagina, posicion int){
-	if actual == nil{
+	if actual.Llaves[0] == nil{
 		return
 	}
 	t := 0
@@ -156,7 +156,7 @@ func graficoEC(actual *Pagina, cadena *strings.Builder, arreglo map[string]*Pagi
 }
 
 func graficoEM(actual *Pagina, cadena *strings.Builder, arreglo map[string]*Pagina, padre *Pagina, posicion int){
-	if actual == nil{
+	if actual.Llaves[0] == nil{
 		return
 	}
 	t := 0

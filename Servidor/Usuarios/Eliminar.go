@@ -14,7 +14,10 @@ func (A *ArbolB) ExisteBEliminar (pagina *Pagina, dpi int, contrasenia string) b
 						A.usuarioEliminado(arreglar, 0)
 					}
 					if arreglar == nil && A.Raiz.Llaves[0] == nil {
-						A.Raiz = nil
+						for j := 0; j < len(A.Raiz.Llaves); j++ {
+							A.Raiz.Llaves[j] = nil
+						}
+						A.Raiz.NodoPadre = nil
 					}
 					existe = true
 					return true
@@ -153,6 +156,8 @@ func (A *ArbolB) usuarioEliminado(pagina *Pagina, dpi int) *Pagina{
 					eliminado = true
 					if pagina.Llaves[i].Izq.Llaves[1] == nil {
 						A.usuarioEliminado(pagina.Llaves[i].Izq, 0)
+					}else if pagina.Llaves[i].Der.Llaves[1] == nil {
+						A.usuarioEliminado(pagina.Llaves[i].Der, 0)
 					}
 				}
 			}
@@ -548,7 +553,7 @@ func obtenerMenorMayor (pagina *Pagina) *Llave {
 	}
 	eliminado := false
 	for i := 0; i < len(pagina.Llaves); i++ {
-		if pagina.Llaves[i] != nil {
+		if pagina.Llaves[i] != nil && regresa.Der == nil {
 			if pagina.Llaves[i] == regresa {
 				pagina.Llaves[i] = nil
 				eliminado = true
@@ -574,7 +579,7 @@ func (A *ArbolB) recorrerArbol(pagina *Pagina) *Pagina{
 		for i := 0; i < len(pagina.Llaves); i++ {
 			if pagina.Llaves[i] != nil {
 				if pagina.NodoPadre != nil {
-					if pagina.Llaves[1] == nil {
+					if pagina.Llaves[1] == nil && pagina != A.Raiz{
 						return pagina
 					}
 				}
