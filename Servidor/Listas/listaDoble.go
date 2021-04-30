@@ -1,6 +1,7 @@
 package Listas
 
 import (
+	"../Comentarios"
 	"../Inventario"
 	"fmt"
 	"strings"
@@ -114,6 +115,7 @@ type NodoTienda struct{
 	Calificacion int
 	Logo string
 	Inventario Inventario.Arbol
+	Comentarios Comentarios.TablaHash
 	Siguiente *NodoTienda
 	Anterior *NodoTienda
 }
@@ -372,7 +374,8 @@ func (L *Lista) CrearArray(indices []string, departamentos []string, m ListaM, e
 				if CR.Indice == indices[i] && CR.NombreDepartamento == departamentos[j] {
 					for k := 0; k < len(CR.Tienda); k++ {
 						tienda := CR.Tienda[k]
-						nuevo := NodoTienda{NombreTienda: tienda.NombreTienda, Descripcion: tienda.Descripcion, Contacto: tienda.Contacto, Calificacion: tienda.Calificacion, Logo: tienda.Logo}
+						tabla := Comentarios.NuevaTabla(7, 50, 20)
+						nuevo := NodoTienda{NombreTienda: tienda.NombreTienda, Descripcion: tienda.Descripcion, Contacto: tienda.Contacto, Calificacion: tienda.Calificacion, Logo: tienda.Logo, Comentarios: *tabla}
 						listado = append(listado, nuevo)
 					}
 					listaAgregar = burbuja(listado)
@@ -385,7 +388,8 @@ func (L *Lista) CrearArray(indices []string, departamentos []string, m ListaM, e
 				if CB.Indice == indices[i] && CB.NombreDepartamento == departamentos[j] {
 					for k := 0; k < len(CB.Tienda); k++ {
 						tienda := CB.Tienda[k]
-						nuevo := NodoTienda{NombreTienda: tienda.NombreTienda, Descripcion: tienda.Descripcion, Contacto: tienda.Contacto, Calificacion: tienda.Calificacion, Logo: tienda.Logo}
+						tabla := Comentarios.NuevaTabla(7, 50, 20)
+						nuevo := NodoTienda{NombreTienda: tienda.NombreTienda, Descripcion: tienda.Descripcion, Contacto: tienda.Contacto, Calificacion: tienda.Calificacion, Logo: tienda.Logo, Comentarios: *tabla}
 						listado = append(listado, nuevo)
 					}
 					listaAgregar = burbuja(listado)
@@ -398,7 +402,8 @@ func (L *Lista) CrearArray(indices []string, departamentos []string, m ListaM, e
 				if CMB.Indice == indices[i] && CMB.NombreDepartamento == departamentos[j] {
 					for k := 0; k < len(CMB.Tienda); k++ {
 						tienda := CMB.Tienda[k]
-						nuevo := NodoTienda{NombreTienda: tienda.NombreTienda, Descripcion: tienda.Descripcion, Contacto: tienda.Contacto, Calificacion: tienda.Calificacion, Logo: tienda.Logo}
+						tabla := Comentarios.NuevaTabla(7, 50, 20)
+						nuevo := NodoTienda{NombreTienda: tienda.NombreTienda, Descripcion: tienda.Descripcion, Contacto: tienda.Contacto, Calificacion: tienda.Calificacion, Logo: tienda.Logo, Comentarios: *tabla}
 						listado = append(listado, nuevo)
 					}
 					listaAgregar = burbuja(listado)
@@ -424,7 +429,8 @@ func (L *Lista) CrearArray(indices []string, departamentos []string, m ListaM, e
 				if CM.Indice == indices[i] && CM.NombreDepartamento == departamentos[j] {
 					for k := 0; k < len(CM.Tienda); k++ {
 						tienda := CM.Tienda[k]
-						nuevo := NodoTienda{NombreTienda: tienda.NombreTienda, Descripcion: tienda.Descripcion, Contacto: tienda.Contacto, Calificacion: tienda.Calificacion, Logo: tienda.Logo}
+						tabla := Comentarios.NuevaTabla(7, 50, 20)
+						nuevo := NodoTienda{NombreTienda: tienda.NombreTienda, Descripcion: tienda.Descripcion, Contacto: tienda.Contacto, Calificacion: tienda.Calificacion, Logo: tienda.Logo, Comentarios: *tabla}
 						listado = append(listado, nuevo)
 					}
 					listaAgregar = burbuja(listado)

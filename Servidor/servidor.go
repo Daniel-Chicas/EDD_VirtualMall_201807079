@@ -1,6 +1,7 @@
 package main
 
 import (
+	"./Comentarios"
 	"./Compras"
 	"./Grafo"
 	"./Inventario"
@@ -16,8 +17,10 @@ import (
 	"io/ioutil"
 	"log"
 	"net/http"
+	"os"
 	"strconv"
 	"strings"
+	"time"
 )
 
 var ms Listas.General
@@ -43,6 +46,7 @@ var arbolUsuarios Usuarios.ArbolB
 var Usuario = arbolUsuarios.NuevoArbol(5)
 var UsuariosEntrada Usuarios.General
 var Inicio Usuarios.Inicio
+var Comen Comentarios.NodoCom
 var usuarioLinea int
 var nueva = GrafoRecorrido.NuevaListaAdyacencia()
 var inicioReco string
@@ -75,6 +79,10 @@ func main(){
 	router.HandleFunc("/DatosLinea", DatosLinea).Methods("Get")
 	router.HandleFunc("/ArbolesB", GraficosArboles).Methods("Post")
 	router.HandleFunc("/CambiarContra", CambiarContra).Methods("Post")
+	router.HandleFunc("/Comentarios/{DatosTienda}", AgregarComentarios).Methods("Post")
+	router.HandleFunc("/ComentariosT/{DatosTienda}", ObtenerComentarios).Methods("Get")
+	router.HandleFunc("/ComentariosP/{DatosTienda}", ObtenerComentariosP).Methods("Get")
+	//go bloques()
 	log.Fatal(http.ListenAndServe(":3000", router))
 }
 
@@ -124,15 +132,16 @@ func cargar(w http.ResponseWriter, r *http.Request){
 				tienda := Listas.Tiendas{NombreTienda: c.Nombre, Descripcion: c.Descripcion, Contacto: c.Contacto, Calificacion: c.Calificacion, Logo: c.Logo}
 				depa := Listas.Departamentos{NombreDepartamento: departamentos.NombreDepartamento, Tienda: tienda}
 				nuevo := Listas.Nodo{Indice: a.Indice, Departamento: depa }
-				fmt.Fprint(w, list.Insertar(&nuevo))
+				list.Insertar(&nuevo)
+				//fmt.Fprint(w, list.Insertar(&nuevo))
 			}
 		}
 	}
 
 	Vector = list.CrearMatriz()
 	Indi := list.Indi()
-	reportes.Arreglo(Vector)
 	Departa := list.Departa()
+	reportes.Arreglo(Vector)
 
 	var generalReg []Usuarios.General
 	var usuariosEx []Usuarios.Usuario
@@ -1056,6 +1065,172 @@ func CambiarContra(w http.ResponseWriter, r *http.Request){
 	json.NewEncoder(w).Encode(m)
 }
 
+func AgregarComentarios(w http.ResponseWriter, r *http.Request){
+	indexHandler(w, r)
+	reqBody, err := ioutil.ReadAll(r.Body)
+	if err!=nil{
+		fmt.Fprint(w, "Error al insertar")
+	}
+	for reqBody[0] != 123{
+		reqBody = remove(reqBody, 0)
+	}
+	for reqBody[len(reqBody)-1] != 125{
+		reqBody = remove(reqBody, len(reqBody)-1)
+	}
+	m := Mensaje{"No se ha ingresado"}
+	vars := mux.Vars(r)
+	datos := strings.Split(vars["DatosTienda"], "&")
+	Indi := list.Indi()
+	Departa := list.Departa()
+	json.Unmarshal(reqBody, &Comen)
+	Comen.Departamento = datos[0]
+	Comen.NombreTienda = datos[1]
+	p,_ := strconv.Atoi(datos[2])
+	Comen.Calificacion = p
+	Tercero := posicionTercero(Comen.NombreTienda, Comen.Departamento, Comen.Calificacion, Indi, Departa)
+	Tiendas := Vector[Tercero].ListGA.Cabeza
+	if Comen.Producto == -1 {
+		for Tiendas != nil {
+			if Tiendas.NombreTienda == Comen.NombreTienda && Tiendas.Calificacion == Comen.Calificacion{
+				if len(Comen.Comentarios) == 1 {
+					Tiendas.Comentarios.Insertar(Comen.Comentarios[0].Dpi, Comen.Comentarios[0].Comentario, Comen.Comentarios[0].Fecha)
+					m = Mensaje{"Ingresado"}
+				}else{
+					posicion := 0
+					var tabla *Comentarios.TablaHash
+					for i := 0; i < len(Comen.Comentarios); i++ {
+						if i == 0 {
+							posicion = Tiendas.Comentarios.Buscar(Comen.Comentarios[i].Dpi, Comen.Comentarios[i].Comentario, Comen.Comentarios[i].Fecha)
+							tabla = Tiendas.Comentarios.Arreglo[posicion].Respuestas
+						}else if i < len(Comen.Comentarios)-1{
+							posicion = tabla.Buscar(Comen.Comentarios[i].Dpi, Comen.Comentarios[i].Comentario, Comen.Comentarios[i].Fecha)
+							temp := tabla.Arreglo[posicion].Respuestas
+							tabla = temp
+						}else if i == len(Comen.Comentarios)-1{
+							tabla.Insertar(Comen.Comentarios[i].Dpi, Comen.Comentarios[i].Comentario, Comen.Comentarios[i].Fecha)
+							m = Mensaje{"Ingresado"}
+						}
+					}
+				}
+			}
+			Tiendas = Tiendas.Siguiente
+		}
+	}else{
+		for Tiendas != nil {
+			if Tiendas.NombreTienda == Comen.NombreTienda && Tiendas.Calificacion == Comen.Calificacion{
+				Arbol := AgregarComentarioProducto(Tiendas.Inventario.Raiz, Comen.Producto)
+				if len(Comen.Comentarios) == 1 {
+					Arbol.Comentarios.Insertar(Comen.Comentarios[0].Dpi, Comen.Comentarios[0].Comentario, Comen.Comentarios[0].Fecha)
+					m = Mensaje{"Ingresado"}
+				}else{
+					posicion := 0
+					var tabla *Comentarios.TablaHash
+					for i := 0; i < len(Comen.Comentarios); i++ {
+						if i == 0 {
+							posicion = Arbol.Comentarios.Buscar(Comen.Comentarios[i].Dpi, Comen.Comentarios[i].Comentario, Comen.Comentarios[i].Fecha)
+							tabla = Arbol.Comentarios.Arreglo[posicion].Respuestas
+						}else if i < len(Comen.Comentarios)-1{
+							posicion = tabla.Buscar(Comen.Comentarios[i].Dpi, Comen.Comentarios[i].Comentario, Comen.Comentarios[i].Fecha)
+							temp := tabla.Arreglo[posicion].Respuestas
+							tabla = temp
+						}else if i == len(Comen.Comentarios)-1{
+							tabla.Insertar(Comen.Comentarios[i].Dpi, Comen.Comentarios[i].Comentario, Comen.Comentarios[i].Fecha)
+							m = Mensaje{"Ingresado"}
+						}
+					}
+				}
+			}
+			Tiendas = Tiendas.Siguiente
+		}
+	}
+
+	w.WriteHeader(http.StatusCreated)
+	json.NewEncoder(w).Encode(m)
+}
+
+var comentarios []ComentariosReg
+
+func ObtenerComentarios(w http.ResponseWriter, r *http.Request){
+	indexHandler(w, r)
+	var com ComentariosReg
+	comentarios = nil
+	vars := mux.Vars(r)
+	datos := strings.Split(vars["DatosTienda"], "&")
+	Indi := list.Indi()
+	Departa := list.Departa()
+	Comen.Departamento = datos[0]
+	Comen.NombreTienda = datos[1]
+	p,_ := strconv.Atoi(datos[2])
+	Comen.Calificacion = p
+	Tercero := posicionTercero(Comen.NombreTienda, Comen.Departamento, Comen.Calificacion, Indi, Departa)
+	Tiendas := Vector[Tercero].ListGA.Cabeza
+	for Tiendas != nil {
+		if Tiendas.NombreTienda == Comen.NombreTienda && Tiendas.Calificacion == Comen.Calificacion{
+			for i := 0; i < len(Tiendas.Comentarios.Arreglo); i++ {
+				if Tiendas.Comentarios.Arreglo[i] != nil {
+					resp := Respuestas(Tiendas.Comentarios.Arreglo[i].Respuestas)
+					com = ComentariosReg{DPI: Tiendas.Comentarios.Arreglo[i].DpiPadre, Fecha: Tiendas.Comentarios.Arreglo[i].FechaComentario, Comentario: Tiendas.Comentarios.Arreglo[i].Comentario, Respuestas: *resp}
+					comentarios = append(comentarios, com)
+				}
+			}
+		}
+		Tiendas = Tiendas.Siguiente
+	}
+	regresa := General{comentarios}
+	w.WriteHeader(http.StatusCreated)
+	json.NewEncoder(w).Encode(regresa)
+}
+
+func ObtenerComentariosP(w http.ResponseWriter, r *http.Request){
+	indexHandler(w, r)
+	var com ComentariosReg
+	comentarios = nil
+	vars := mux.Vars(r)
+	datos := strings.Split(vars["DatosTienda"], "&")
+	Indi := list.Indi()
+	Departa := list.Departa()
+	Comen.Departamento = datos[0]
+	Comen.NombreTienda = datos[1]
+	p,_ := strconv.Atoi(datos[2])
+	Comen.Producto,_ = strconv.Atoi(datos[3])
+	Comen.Calificacion = p
+	Tercero := posicionTercero(Comen.NombreTienda, Comen.Departamento, Comen.Calificacion, Indi, Departa)
+	Tiendas := Vector[Tercero].ListGA.Cabeza
+	for Tiendas != nil {
+		if Tiendas.NombreTienda == Comen.NombreTienda && Tiendas.Calificacion == Comen.Calificacion{
+			Arbol := AgregarComentarioProducto(Tiendas.Inventario.Raiz, Comen.Producto)
+			for i := 0; i < len(Arbol.Comentarios.Arreglo); i++ {
+				if Arbol.Comentarios.Arreglo[i] != nil {
+					resp := Respuestas(Arbol.Comentarios.Arreglo[i].Respuestas)
+					com = ComentariosReg{DPI: Arbol.Comentarios.Arreglo[i].DpiPadre, Fecha: Arbol.Comentarios.Arreglo[i].FechaComentario, Comentario: Arbol.Comentarios.Arreglo[i].Comentario, Respuestas: *resp}
+					comentarios = append(comentarios, com)
+				}
+			}
+		}
+		Tiendas = Tiendas.Siguiente
+	}
+	regresa := General{comentarios}
+	w.WriteHeader(http.StatusCreated)
+	json.NewEncoder(w).Encode(regresa)
+}
+
+func bloques () {
+	if _, err := os.Stat(".\\bloques"); os.IsNotExist(err) {
+		err = os.Mkdir(".\\bloques", 0755)
+		if err != nil {
+			panic(err)
+		}
+	}
+	cuenta := 0
+	for{
+		t := time.Now()
+		fecha := fmt.Sprintf("%2d-%02d-%2d::%02d:%02d:%02d", t.Day(), t.Month(), t.Year(), t.Hour(), t.Minute(), t.Second())
+		fmt.Println("hola"+strconv.Itoa(cuenta)+"->"+fecha)
+		time.Sleep(time.Minute * 1)
+		cuenta++
+	}
+}
+
 //-------------------------------------------------MÉTODOS--------------------------------------------------------------
 
 func remove(slice []byte, s int) []byte {
@@ -1100,6 +1275,23 @@ func inOrden(raiz *Inventario.NodoArbol, codigo int) bool{
 		}
 	}
 	return false
+}
+
+func AgregarComentarioProducto(raiz *Inventario.NodoArbol, codigo int) *Inventario.NodoArbol{
+	if raiz!=nil {
+		if raiz.Codigo == codigo {
+			return raiz
+		}
+		a := AgregarComentarioProducto(raiz.Izq, codigo)
+		if a != nil {
+			return a
+		}
+		b := AgregarComentarioProducto(raiz.Der, codigo)
+		if b != nil {
+			return b
+		}
+	}
+	return nil
 }
 
 func EncontrarAnio(lista *MatrizDispersa.ListaAnio, anio int) bool{
@@ -1373,6 +1565,20 @@ func regresaUsuario (pagina *Usuarios.Pagina, dpi int) string{
 	return ""
 }
 
+func Respuestas(resp *Comentarios.TablaHash) *[]ComentariosReg{
+	var res []ComentariosReg
+	for i := 0; i < len(resp.Arreglo); i++ {
+		if resp.Arreglo[i] != nil {
+			if resp.Arreglo[i].Respuestas != nil {
+				a := Respuestas(resp.Arreglo[i].Respuestas)
+				com := ComentariosReg{DPI: resp.Arreglo[i].DpiPadre, Fecha: resp.Arreglo[i].FechaComentario, Comentario: resp.Arreglo[i].Comentario, Respuestas: *a}
+				res = append(res, com)
+			}
+		}
+	}
+	return &res
+}
+
 
 //--------------------------------------------------ESTRUCTURAS REGRESO-------------------------------------------------
 
@@ -1460,4 +1666,15 @@ type CerrarSesion struct{
 type Encriptar struct {
 	LlaveAntigua string `json:"LlaveA"`
 	LlaveNueva string `json:"LlaveN"`
+}
+
+type General struct{
+	Comentarios []ComentariosReg `json:"General"`
+}
+
+type ComentariosReg struct {
+	DPI int `json:"Dpi"`
+	Fecha string `json:"Fecha"`
+	Comentario string `json:"Comentario"`
+	Respuestas []ComentariosReg `json:"Respuestas"`
 }

@@ -35,6 +35,7 @@ function ListadoTiendas() {
         }
         obtener()
     })
+
     if (existe === true) {return(
         <div className="General">
             <Router>

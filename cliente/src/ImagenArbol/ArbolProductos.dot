@@ -1,3 +1,19 @@
 digraph Arbol{node[shape="record"];
-node0xc00033c540[label="{Nombre: Pequeño Caucho Tuna|Código: 77}|{Cantidad Disponible: 116|Precio: 312}" color="red"];
+node0xc0003be5b0[label="{Nombre: Licencia Cotton Camisa|Código: 649}|{Cantidad Disponible: 203|Precio: 470}" color="green"];
+node0xc0003be690[label="{Nombre: Sabrosa Madera Pizza|Código: 647}|{Cantidad Disponible: 477|Precio: 46}" color="red"];
+node0xc0003be5b0:f0->node0xc0003be690:f1
+node0xc0003be620[label="{Nombre: Sin marca Cotton Bike|Código: 646}|{Cantidad Disponible: 463|Precio: 663}" color="yellow"];
+node0xc0003be690:f0->node0xc0003be620:f1
+node0xc0003be850[label="{Nombre: Inteligente Metal Mesa|Código: 645}|{Cantidad Disponible: 272|Precio: 404}" color="red"];
+node0xc0003be620:f0->node0xc0003be850:f1
+node0xc0003be700[label="{Nombre: Increíble Madera Ensalada|Código: 648}|{Cantidad Disponible: 383|Precio: 816}" color="blue"];
+node0xc0003be690:f2->node0xc0003be700:f1
+node0xc0003be770[label="{Nombre: Increíble Caucho Toallas|Código: 652}|{Cantidad Disponible: 332|Precio: 56}" color="green"];
+node0xc0003be5b0:f2->node0xc0003be770:f1
+node0xc0003be8c0[label="{Nombre: Refinado Hormigón Pelota|Código: 651}|{Cantidad Disponible: 141|Precio: 19}" color="blue"];
+node0xc0003be770:f0->node0xc0003be8c0:f1
+node0xc0003be930[label="{Nombre: Genérica Metal Pizza|Código: 650}|{Cantidad Disponible: 19|Precio: 908}" color="violet"];
+node0xc0003be8c0:f0->node0xc0003be930:f1
+node0xc0003be7e0[label="{Nombre: Sabrosa Plástico Computadora|Código: 653}|{Cantidad Disponible: 427|Precio: 217}" color="orange"];
+node0xc0003be770:f2->node0xc0003be7e0:f1
 }

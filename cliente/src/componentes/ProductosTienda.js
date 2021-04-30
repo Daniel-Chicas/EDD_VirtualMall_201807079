@@ -17,6 +17,8 @@ function ProductosTienda() {
             cadena = cadena+" "+direccion2[step]
         }
       }
+      console.log(cadena)
+
       const [tiendas, settiendas] = useState([])
       const [loading, setloading] = useState(false)
       useEffect(()=>{
@@ -24,7 +26,6 @@ function ProductosTienda() {
               if(tiendas.length===0){
                   const data = await axios.get('http://localhost:3000/Tienda/'+cadena)
                   settiendas(data.data[0])
-                  console.log(data.data)
                   if (data.data[0].Productos!=null) {
                     setloading(true)
                   }else{

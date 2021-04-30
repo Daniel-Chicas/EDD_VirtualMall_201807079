@@ -36,6 +36,9 @@ func (A *ArbolB) Grafico(tipo string){
 }
 
 func grafico(actual *Pagina, cadena *strings.Builder, arreglo map[string]*Pagina, padre *Pagina, posicion int){
+	if actual == nil {
+		return
+	}
 	if actual.Llaves[0] == nil{
 		return
 	}
@@ -96,6 +99,9 @@ func grafico(actual *Pagina, cadena *strings.Builder, arreglo map[string]*Pagina
 }
 
 func graficoEC(actual *Pagina, cadena *strings.Builder, arreglo map[string]*Pagina, padre *Pagina, posicion int){
+	if actual == nil {
+		return
+	}
 	if actual.Llaves[0] == nil{
 		return
 	}
@@ -156,6 +162,9 @@ func graficoEC(actual *Pagina, cadena *strings.Builder, arreglo map[string]*Pagi
 }
 
 func graficoEM(actual *Pagina, cadena *strings.Builder, arreglo map[string]*Pagina, padre *Pagina, posicion int){
+	if actual == nil {
+		return
+	}
 	if actual.Llaves[0] == nil{
 		return
 	}
@@ -214,7 +223,6 @@ func graficoEM(actual *Pagina, cadena *strings.Builder, arreglo map[string]*Pagi
 		fmt.Fprintf(cadena, "node%p:f%d->node%p\n", &(*padre), posicion, &(*actual))
 	}
 }
-
 
 func Imagen ( nombre string){
 	path, _:= exec.LookPath("dot")

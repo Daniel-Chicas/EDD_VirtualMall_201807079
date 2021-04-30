@@ -2,7 +2,6 @@ import React from 'react'
 import '../css/Carta.css'
 
 function Cartas(props) {
-    console.log(props)
     const tienda = props.tienda
     const departamento = props.departamento
     const calificacion = props.calificacion
@@ -56,6 +55,7 @@ function Cartas(props) {
                     </div>
                     <div className="description">{props.descripcion}</div>
                     <div className="ui basic green button center fluid" onClick={enviar}>Añadir al carrito</div>
+                    <div className="ui basic red button center fluid" onClick={()=>{window.location="http://localhost:8001/ComentariosP/"+props.departamento+"&"+props.tienda+"&"+props.calificacion+"&"+props.id}}>VER COMENTARIOS</div>
                 </div>
                 <div className="extra content">
                     <span><i className="dollar sign icon" />{props.precio}</span>

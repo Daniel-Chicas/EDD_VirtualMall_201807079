@@ -1,5 +1,9 @@
 package Inventario
 
+import (
+	"../Comentarios"
+)
+
 type General struct {
 	Inventarios []Inventario `json:"Inventarios"`
 }
@@ -30,6 +34,7 @@ type NodoArbol struct{
 	Imagen string
 	Factor int
 	Almacenamiento string
+	Comentarios Comentarios.TablaHash
 	Izq *NodoArbol
 	Der *NodoArbol
 }
@@ -44,7 +49,8 @@ func (this *Arbol) NuevoArbol() *Arbol{
 }
 
 func NuevoNodo (nombre string, codigo int, descripcion string, precio float64, cantidad int, imagen string, almacenamiento string) *NodoArbol{
-	return &NodoArbol{nombre, codigo, descripcion, precio, cantidad, imagen, 0, almacenamiento,nil, nil}
+	tabla := Comentarios.NuevaTabla(7, 50, 20)
+	return &NodoArbol{nombre, codigo, descripcion, precio, cantidad, imagen, 0, almacenamiento, *tabla,nil, nil}
 }
 
 func RotacionII(n *NodoArbol, n1 *NodoArbol) *NodoArbol{

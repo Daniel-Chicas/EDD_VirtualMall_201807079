@@ -1,4 +1,4 @@
-import React from 'react'
+import {React, useState, useEffect} from 'react'
 import {BrowserRouter as Router, Route} from 'react-router-dom'
 import Login from '../componentesLogin/Login'
 import CrearUsuario from '../componentesLogin/CrearUsuario'
@@ -18,10 +18,13 @@ import UsuariosMedio from '../componentes/ArbolesMedio'
 import Vector from '../componentes/VectorLinealizado'
 import Recorrido from '../componentes/Recorrido'
 import CambiarClave from '../componentes/CambiarClave'
+import Comentarios from '../componentes/Comentarios'
+import ComentariosProductos from '../componentes/ComentariosProductos'
 
 import '../Inicio.css'
 
 function Inicio() {
+  
   return (
     <>
       <Router>
@@ -42,6 +45,8 @@ function Inicio() {
         <Route path="/Vector" component={Vector} />
         <Route path="/Recorrido" component={Recorrido} />
         <Route path="/CambiarClave" component={CambiarClave} />
+        <Route path="/Comentarios" component={Comentarios} />
+        <Route path="/ComentariosP" component={ComentariosProductos}/>
       </Router>
     </>
   )

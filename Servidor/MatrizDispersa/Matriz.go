@@ -298,10 +298,10 @@ func (M *Matriz) Recorrido(dia string) *GrafoRecorrido.ListaRecorrido{
 					RecorridoRegresa.InsertarRecCabeza(imp)
 				}else{
 					Voltear := &GrafoRecorrido.ListaRecorrido{}
-					for imp != nil{
+					if imp != nil{
 						nuevo := &GrafoRecorrido.NodoRecorrido{Viene: imp.Viene, Va: imp.Va, Costo: imp.Costo, Siguiente: nil, Anterior: nil}
 						Voltear.InsertarRecCabeza(nuevo)
-						imp = imp.Siguiente
+						break
 					}
 					impv := Voltear.Cabeza
 					for impv != nil{

@@ -1,12 +1,12 @@
 import React from 'react'
 import '../css/Carta.css'
+import Comentarios from './Comentarios'
 const axios=require('axios').default
 
 function Cartas(props) {
     const ver = async()=>{
         var cadena = props.Departamento+"&"+props.nombre+"&"+props.calificacion
         const data = await  axios.get('http://localhost:3000/Arbol/'+cadena)
-        console.log(data.data)
         window.location="http://localhost:8001/VerArbol"
     }
 
@@ -30,6 +30,10 @@ function Cartas(props) {
                     </div>
                     <div className="ui basic blue button center fluid" onClick={ver}>
                         Ver árbol de la tienda
+                    </div>
+                    <div className="ui basic green button center fluid" onClick={()=>{ 
+                        window.location="http://localhost:8001/Comentarios/"+props.Departamento+"&"+props.nombre+"&"+props.calificacion}}>
+                        Ver Comentarios
                     </div>
                 </div>
                 <div className="extra content">
