@@ -82,8 +82,6 @@ func (A *ListaAdyacencia) Insertar(depa string, precio float64){
 		n := NuevoVertice(depa, precio)
 		x := &NodoLista{n, nil, nil}
 		A.Lista.InsertarVertice(x)
-	}else{
-		fmt.Println("Ya agregado")
 	}
 }
 
@@ -183,11 +181,7 @@ func (L *ListaAdyacencia) Dibujar(inicio string, fin string, enlaces []Nodos, re
 		for i := recorrido.Cabeza; i != nil ; i=i.Siguiente {
 			cuenta = cuenta+i.Costo
 			s := fmt.Sprintf("%v", cuenta)
-			if i.Va == fin && i.Siguiente.Viene == inicio {
-				fmt.Fprintf(&cadena, "<tr><td> bgcolor=\"green\""+strconv.Itoa(iteracion)+"</td><td>"+i.Viene+"</td><td>"+i.Va+"</td><td>"+s+"</td></tr>\n")
-			}else{
-				fmt.Fprintf(&cadena, "<tr><td>"+strconv.Itoa(iteracion)+"</td><td>"+i.Viene+"</td><td>"+i.Va+"</td><td>"+s+"</td></tr>\n")
-			}
+			fmt.Fprintf(&cadena, "<tr><td>"+strconv.Itoa(iteracion)+"</td><td>"+i.Viene+"</td><td>"+i.Va+"</td><td>"+s+"</td></tr>\n")
 			iteracion++
 		}
 		fmt.Fprintf(&cadena, "</TABLE>\n")

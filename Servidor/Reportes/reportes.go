@@ -12,6 +12,8 @@ import (
 )
 
 type Lista struct {
+	Cabeza Listas.NodoArray
+	Cola Listas.NodoArray
 }
 
 func (L *Lista) Arreglo(vector []Listas.NodoArray) string{
@@ -33,10 +35,7 @@ func (L *Lista) Arreglo(vector []Listas.NodoArray) string{
 					grafico(&cadena, &posicion, i, colores)
 				}
 			}
-			if i == len(vector) {
-
-			//}
-			//if i == contador-1 {
+			if i == contador-1 {
 				fmt.Fprintf(&cadena, "}")
 				guardarArchivo(cadena.String(), "Archivo_"+strconv.Itoa(cuenta))
 				cadena.Reset()

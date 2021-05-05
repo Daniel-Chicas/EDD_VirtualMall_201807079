@@ -1,6 +1,7 @@
 package main
 
 import (
+	"./ArbolMerkle"
 	"./Comentarios"
 	"./Compras"
 	"./Grafo"
@@ -22,6 +23,7 @@ import (
 	"strings"
 	"time"
 )
+var CopiasGuardadas ListaGuardar
 
 var ms Listas.General
 var nodo Listas.Nodo
@@ -47,6 +49,15 @@ var Usuario = arbolUsuarios.NuevoArbol(5)
 var UsuariosEntrada Usuarios.General
 var Inicio Usuarios.Inicio
 var Comen Comentarios.NodoCom
+
+var CopiaTiendas = ArbolMerkle.NuevoArbol()
+var CopiaProductos = ArbolMerkle.NuevoArbolProducto()
+var CopiaPedidos = ArbolMerkle.NuevoArbolPedidos()
+var CopiaUsuario = ArbolMerkle.NuevoArbolUsuarios()
+var CopiaComentariosTienda = ArbolMerkle.NuevoArbolComentarios()
+var CopiaComentariosProducto = ArbolMerkle.NuevoArbolComentariosProducto()
+
+
 var usuarioLinea int
 var nueva = GrafoRecorrido.NuevaListaAdyacencia()
 var inicioReco string
@@ -82,7 +93,7 @@ func main(){
 	router.HandleFunc("/Comentarios/{DatosTienda}", AgregarComentarios).Methods("Post")
 	router.HandleFunc("/ComentariosT/{DatosTienda}", ObtenerComentarios).Methods("Get")
 	router.HandleFunc("/ComentariosP/{DatosTienda}", ObtenerComentariosP).Methods("Get")
-	//go bloques()
+	go bloques()
 	log.Fatal(http.ListenAndServe(":3000", router))
 }
 
@@ -115,79 +126,97 @@ func cargar(w http.ResponseWriter, r *http.Request){
 	for reqBody[len(reqBody)-1] != 125{
 		reqBody = remove(reqBody, len(reqBody)-1)
 	}
-	json.Unmarshal(reqBody, &ms)
-	for i := 0; i < len(ms.Inicio); i++ {
-		a := ms.Inicio[i]
-		nodo.Indice = a.Indice
-		for j := 0; j < len(a.Departamentos); j++ {
-			b := a.Departamentos[j]
-			departamentos.NombreDepartamento = a.Departamentos[j].Nombre
-			for k := 0; k < len(b.Tiendas); k++ {
-				c := b.Tiendas[k]
-				tiendas.Nombre = c.Nombre
-				tiendas.Descripcion = c.Descripcion
-				tiendas.Contacto = c.Contacto
-				tiendas.Calificacion = c.Calificacion
-				tiendas.Logo = c.Logo
-				tienda := Listas.Tiendas{NombreTienda: c.Nombre, Descripcion: c.Descripcion, Contacto: c.Contacto, Calificacion: c.Calificacion, Logo: c.Logo}
-				depa := Listas.Departamentos{NombreDepartamento: departamentos.NombreDepartamento, Tienda: tienda}
-				nuevo := Listas.Nodo{Indice: a.Indice, Departamento: depa }
-				list.Insertar(&nuevo)
-				//fmt.Fprint(w, list.Insertar(&nuevo))
+
+	if ms.Inicio == nil {
+		json.Unmarshal(reqBody, &ms)
+		for i := 0; i < len(ms.Inicio); i++ {
+			a := ms.Inicio[i]
+			nodo.Indice = a.Indice
+			for j := 0; j < len(a.Departamentos); j++ {
+				b := a.Departamentos[j]
+				departamentos.NombreDepartamento = a.Departamentos[j].Nombre
+				for k := 0; k < len(b.Tiendas); k++ {
+					c := b.Tiendas[k]
+					tiendas.Nombre = c.Nombre
+					tiendas.Descripcion = c.Descripcion
+					tiendas.Contacto = c.Contacto
+					tiendas.Calificacion = c.Calificacion
+					tiendas.Logo = c.Logo
+					tienda := Listas.Tiendas{NombreTienda: c.Nombre, Descripcion: c.Descripcion, Contacto: c.Contacto, Calificacion: c.Calificacion, Logo: c.Logo}
+					depa := Listas.Departamentos{NombreDepartamento: departamentos.NombreDepartamento, Tienda: tienda}
+					nuevo := Listas.Nodo{Indice: a.Indice, Departamento: depa }
+					fmt.Fprint(w, list.Insertar(&nuevo))
+					var Hash strings.Builder
+					fmt.Fprintf(&Hash, "%x", sha256.Sum256([]byte(nuevo.Indice+nuevo.Departamento.NombreDepartamento+nuevo.Departamento.Tienda.NombreTienda+nuevo.Departamento.Tienda.Descripcion+nuevo.Departamento.Tienda.Contacto+strconv.Itoa(nuevo.Departamento.Tienda.Calificacion)+nuevo.Departamento.Tienda.Logo)))
+					CopiaTiendas.Insertar(Hash.String(), "Crear", nuevo.Indice,nuevo.Departamento.NombreDepartamento, c.Nombre, c.Descripcion, c.Contacto,c.Calificacion,c.Logo)
+				}
 			}
 		}
 	}
 
 	Vector = list.CrearMatriz()
+	reportes.Arreglo(Vector)
 	Indi := list.Indi()
 	Departa := list.Departa()
-	reportes.Arreglo(Vector)
 
 	var generalReg []Usuarios.General
 	var usuariosEx []Usuarios.Usuario
-	json.Unmarshal(reqBody, &UsuariosEntrada)
-	for i := 0; i < len(UsuariosEntrada.Usuarios); i++ {
-		a := UsuariosEntrada.Usuarios[i]
-		existe := existeB(Usuario.Raiz, a.DPI)
-		if existe == false {
-			var cadena strings.Builder
-			fmt.Fprintf(&cadena, "%x", sha256.Sum256([]byte(a.Contra)))
-			Usuario.Insertar(Usuarios.NuevaLlave(a.DPI, a.Nombre, a.Correo, cadena.String(), a.Cuenta))
-		}else{
-			usuariosEx = append(usuariosEx, a)
-		}
-	}
-	usuarioGen := Usuarios.General{Usuarios: usuariosEx}
-	generalReg = append(generalReg, usuarioGen)
-
-	if len(Vector) != 0 {
-		json.Unmarshal(reqBody, &arbol)
-		for i := 0; i < len(arbol.Inventarios); i++ {
-			NombreTienda := arbol.Inventarios[i].NombreTienda
-			Departamento := arbol.Inventarios[i].Departamento
-			Calificacion := arbol.Inventarios[i].Calificacion
-			Tercero := posicionTercero(NombreTienda, Departamento,Calificacion, Indi, Departa)
-			imp := Vector[Tercero].ListGA.Cabeza
-			for imp != nil {
-				if imp.NombreTienda == NombreTienda{
-					arbolPosicion := imp.Inventario.NuevoArbol()
-					Productos := arbol.Inventarios[i].Productos
-					for j := 0; j < len(Productos); j++ {
-						a := Productos[j]
-						nodoArbol.NombreProducto = a.NombreProducto
-						nodoArbol.Codigo = a.Codigo
-						nodoArbol.Descripcion = a.Descripcion
-						nodoArbol.Precio =  a.PrecioP
-						nodoArbol.Cantidad = a.Cantidad
-						nodoArbol.Imagen = a.Imagen
-						nodoArbol.Almacenamiento = a.Almacenamiento
-						arbolPosicion.Insertar(nodoArbol.NombreProducto, nodoArbol.Codigo, nodoArbol.Descripcion, nodoArbol.Precio, nodoArbol.Cantidad, nodoArbol.Imagen, nodoArbol.Almacenamiento)
-					}
-					imp.Inventario = *arbolPosicion
-				}
-				imp = imp.Siguiente
+	if UsuariosEntrada.Usuarios == nil{
+		json.Unmarshal(reqBody, &UsuariosEntrada)
+		for i := 0; i < len(UsuariosEntrada.Usuarios); i++ {
+			a := UsuariosEntrada.Usuarios[i]
+			existe := existeB(Usuario.Raiz, a.DPI)
+			if existe == false {
+				var cadena strings.Builder
+				fmt.Fprintf(&cadena, "%x", sha256.Sum256([]byte(a.Contra)))
+				Usuario.Insertar(Usuarios.NuevaLlave(a.DPI, a.Nombre, a.Correo, cadena.String(), a.Cuenta))
+				var Hash strings.Builder
+				fmt.Fprintf(&Hash, "%x", sha256.Sum256([]byte(strconv.Itoa(a.DPI)+a.Nombre+a.Correo+a.Contra)))
+				CopiaUsuario.Insertar(Hash.String(), "Crear", a.DPI, a.Nombre, a.Correo, cadena.String(), a.Cuenta)
+			}else{
+				usuariosEx = append(usuariosEx, a)
 			}
 		}
+		usuarioGen := Usuarios.General{Usuarios: usuariosEx}
+		generalReg = append(generalReg, usuarioGen)
+	}
+
+	if len(Vector) != 0 {
+		if arbol.Inventarios == nil{
+			json.Unmarshal(reqBody, &arbol)
+			for i := 0; i < len(arbol.Inventarios); i++ {
+				NombreTienda := arbol.Inventarios[i].NombreTienda
+				Departamento := arbol.Inventarios[i].Departamento
+				Calificacion := arbol.Inventarios[i].Calificacion
+				Tercero := posicionTercero(NombreTienda, Departamento,Calificacion, Indi, Departa)
+				imp := Vector[Tercero].ListGA.Cabeza
+				for imp != nil {
+					if imp.NombreTienda == NombreTienda{
+						arbolPosicion := imp.Inventario.NuevoArbol()
+						Productos := arbol.Inventarios[i].Productos
+						for j := 0; j < len(Productos); j++ {
+							a := Productos[j]
+							nodoArbol.NombreProducto = a.NombreProducto
+							nodoArbol.Codigo = a.Codigo
+							nodoArbol.Descripcion = a.Descripcion
+							nodoArbol.Precio =  a.PrecioP
+							nodoArbol.Cantidad = a.Cantidad
+							nodoArbol.Imagen = a.Imagen
+							nodoArbol.Almacenamiento = a.Almacenamiento
+							arbolPosicion.Insertar(nodoArbol.NombreProducto, nodoArbol.Codigo, nodoArbol.Descripcion, nodoArbol.Precio, nodoArbol.Cantidad, nodoArbol.Imagen, nodoArbol.Almacenamiento)
+							var Hash strings.Builder
+							var x strings.Builder
+							fmt.Fprintf(&x, "%x", a.PrecioP)
+							fmt.Fprintf(&Hash, "%x", sha256.Sum256([]byte(NombreTienda+Departamento+strconv.Itoa(Calificacion)+a.NombreProducto+strconv.Itoa(a.Codigo)+a.Descripcion+x.String()+strconv.Itoa(a.Cantidad)+a.Imagen+a.Almacenamiento)))
+							CopiaProductos.Insertar(Hash.String(), "Crear", NombreTienda, Departamento, Calificacion, a.NombreProducto, a.Codigo, a.Descripcion, a.PrecioP, a.Cantidad, a.Imagen, a.Almacenamiento)
+						}
+						imp.Inventario = *arbolPosicion
+					}
+					imp = imp.Siguiente
+				}
+			}
+		}
+		if matriz.Pedidos == nil{
 			json.Unmarshal(reqBody, &matriz)
 			for i := 0; i < len(matriz.Pedidos); i++ {
 				fecha := matriz.Pedidos[i].Fecha
@@ -206,11 +235,10 @@ func cargar(w http.ResponseWriter, r *http.Request){
 				var recorridos []*GrafoRecorrido.ListaRecorrido
 				if dpi == true{
 					if len(Productos) > 1 {
-					//productosOrdenados := Burbuja(Productos)
-					for j := 0; j < len(Productos); j++ {
-						if Tercero<0{
-							break
-						}
+						for j := 0; j < len(Productos); j++ {
+							if Tercero<0{
+								break
+							}
 							imp := Vector[Tercero].ListGA.Cabeza
 							for imp != nil {
 								if imp.NombreTienda == NombreTienda && imp.Calificacion == Calificacion {
@@ -318,7 +346,7 @@ func cargar(w http.ResponseWriter, r *http.Request){
 													nombreProducto := inOrdenNombre(imp.Inventario.Raiz, Productos[j].Codigo)
 													arbolito := Compras.DescontarProducto(imp.Inventario.Raiz, Productos[j].Codigo, 1)
 													imp.Inventario.Raiz = arbolito
-													//mas := true
+													producto := inOrdenDatos(imp.Inventario.Raiz, Productos[j].Codigo)
 													if len(Productos) == 1 {
 														//mas = false
 														finalRecorrido := inOrdenAlmacenamiento(imp.Inventario.Raiz, Productos[j].Codigo)
@@ -329,9 +357,29 @@ func cargar(w http.ResponseWriter, r *http.Request){
 														}
 														nodoPedido := metodosMatriz.NuevoNodoPedido(fecha, NombreTienda, Departamento,Calificacion, Cliente, nombreProducto,Productos[j].Codigo, 1, strconv.Itoa(dia), recorrido)
 														impr.MatrizMes.Insertar(nodoPedido)
+														var Hash strings.Builder
+														fmt.Fprintf(&Hash, "%x", sha256.Sum256([]byte(fecha+strconv.Itoa(Cliente)+NombreTienda+Departamento+strconv.Itoa(Calificacion)+producto.NombreProducto+strconv.Itoa(producto.Codigo))))
+														var recorridoPeido []GrafoRecorrido.NodoRecorrido
+														imprp := recorrido.Cabeza
+														for imprp != nil{
+															nuevo := GrafoRecorrido.NodoRecorrido{Viene: imprp.Viene, Va: imprp.Va, Costo: imprp.Costo, Siguiente: nil, Anterior: nil}
+															recorridoPeido = append(recorridoPeido, nuevo)
+															imprp = imprp.Siguiente
+														}
+														CopiaPedidos.Insertar(Hash.String(), "Crear", fecha, NombreTienda, Departamento, Calificacion, Cliente, producto.Codigo, 1, recorridoPeido)
 													}else{
 														nodoPedido := metodosMatriz.NuevoNodoPedido(fecha, NombreTienda, Departamento,Calificacion, Cliente, nombreProducto,Productos[j].Codigo, 1, strconv.Itoa(dia), &recorridoFinal)
 														impr.MatrizMes.Insertar(nodoPedido)
+														var Hash strings.Builder
+														fmt.Fprintf(&Hash, "%x", sha256.Sum256([]byte(fecha+strconv.Itoa(Cliente)+NombreTienda+Departamento+strconv.Itoa(Calificacion)+producto.NombreProducto+strconv.Itoa(producto.Codigo))))
+														var recorridoPeido []GrafoRecorrido.NodoRecorrido
+														imprp := recorridoFinal.Cabeza
+														for imprp != nil{
+															nuevo := GrafoRecorrido.NodoRecorrido{Viene: imprp.Viene, Va: imprp.Va, Costo: imprp.Costo, Siguiente: nil, Anterior: nil}
+															recorridoPeido = append(recorridoPeido, nuevo)
+															imprp = imprp.Siguiente
+														}
+														CopiaPedidos.Insertar(Hash.String(), "Crear", fecha, NombreTienda, Departamento, Calificacion, Cliente, producto.Codigo,1, recorridoPeido)
 													}
 												}
 												impr = impr.Siguiente
@@ -346,6 +394,7 @@ func cargar(w http.ResponseWriter, r *http.Request){
 					}
 				}
 			}
+
 			if listaAnioa.Cabeza != nil {
 				listaAnioa = *metodosMatriz.BurbujaAnio(listaAnioa)
 				impa := listaAnioa.Cabeza
@@ -354,9 +403,11 @@ func cargar(w http.ResponseWriter, r *http.Request){
 					impa = impa.Siguiente
 				}
 			}
+		}
 	}
-	json.Unmarshal(reqBody, &GrafoRe)
-	if GrafoRe.General != nil {
+
+	if GrafoRe.General == nil {
+		json.Unmarshal(reqBody, &GrafoRe)
 		if inicioReco != GrafoRe.PosicionInicialRobot {
 			b := GrafoRe.PosicionInicialRobot
 			c := GrafoRe.Entrega
@@ -710,6 +761,7 @@ func carrito (w http.ResponseWriter, r *http.Request){
 									for impr != nil {
 										if impr.Mes == mes {
 											nombreProducto := inOrdenNombre(imp.Inventario.Raiz, Productos[j].Codigo)
+											producto := inOrdenDatos(imp.Inventario.Raiz, Productos[j].Codigo)
 											if len(carritojson.Pedidos) == 1 {
 												finalRecorrido := inOrdenAlmacenamiento(imp.Inventario.Raiz, Productos[j].Codigo)
 												recorrido := nueva.Dijkstra(inicioReco, finalRecorrido,GrafoRe.General)
@@ -721,14 +773,39 @@ func carrito (w http.ResponseWriter, r *http.Request){
 												for e := recorridoFin.Cabeza; e != nil ; e = e.Siguiente {
 													recorrido.InsertarRec(&GrafoRecorrido.NodoRecorrido{Viene: e.Viene, Va: e.Va, Costo: e.Costo, Siguiente: nil, Anterior: nil})
 												}
-												nodoPedido := metodosMatriz.NuevoNodoPedido(fecha, Tienda, Departamento,Calificacion, Cliente, nombreProducto,Productos[j].Codigo, 1, strconv.Itoa(dia), recorrido)
+												nodoPedido := metodosMatriz.NuevoNodoPedido(fecha, Tienda, Departamento,Calificacion, Cliente, nombreProducto,Productos[j].Codigo, Productos[0].Cantidad, strconv.Itoa(dia), recorrido)
 												impr.MatrizMes.Insertar(nodoPedido)
+
+												//Para Pedidos
+												var Hash strings.Builder
+												fmt.Fprintf(&Hash, "%x", sha256.Sum256([]byte(fecha+strconv.Itoa(Cliente)+Tienda+Departamento+strconv.Itoa(Calificacion)+producto.NombreProducto+strconv.Itoa(producto.Codigo))))
+												var recorridoPeido []GrafoRecorrido.NodoRecorrido
+												imprp := recorrido.Cabeza
+												for imprp != nil{
+													nuevo := GrafoRecorrido.NodoRecorrido{Viene: imprp.Viene, Va: imprp.Va, Costo: imprp.Costo, Siguiente: nil, Anterior: nil}
+													recorridoPeido = append(recorridoPeido, nuevo)
+													imprp = imprp.Siguiente
+												}
+												CopiaPedidos.Insertar(Hash.String(), "Crear", fecha, Tienda, Departamento, Calificacion, Cliente, producto.Codigo, Productos[0].Cantidad, recorridoPeido)
+
 											}else{
 												var recorrido GrafoRecorrido.ListaRecorrido
-												nodoPedido := metodosMatriz.NuevoNodoPedido(fecha, Tienda, Departamento,Calificacion, Cliente, nombreProducto,Productos[j].Codigo, 1, strconv.Itoa(dia), &recorrido)
-												impr.MatrizMes.Insertar(nodoPedido)
+												nodoPedido := metodosMatriz.NuevoNodoPedido(fecha, Tienda, Departamento,Calificacion, Cliente, nombreProducto,Productos[j].Codigo, Productos[0].Cantidad, strconv.Itoa(dia), &recorrido)
+												//Para Pedidos
+												var Hash strings.Builder
+												fmt.Fprintf(&Hash, "%x", sha256.Sum256([]byte(fecha+strconv.Itoa(Cliente)+Tienda+Departamento+strconv.Itoa(Calificacion)+producto.NombreProducto+strconv.Itoa(producto.Codigo))))
+												var recorridoPeido []GrafoRecorrido.NodoRecorrido
+												imprp := recorridoFinal.Cabeza
+												for imprp != nil{
+													nuevo := GrafoRecorrido.NodoRecorrido{Viene: imprp.Viene, Va: imprp.Va, Costo: imprp.Costo, Siguiente: nil, Anterior: nil}
+													recorridoPeido = append(recorridoPeido, nuevo)
+													imprp = imprp.Siguiente
+												}
+												CopiaPedidos.Insertar(Hash.String(), "Crear", fecha, Tienda, Departamento, Calificacion, Cliente, producto.Codigo, Productos[0].Cantidad, recorridoPeido)
 												if i == len(carritojson.Pedidos)-1 {
-													nodoPedido = metodosMatriz.NuevoNodoPedido(fecha, Tienda, Departamento,Calificacion, Cliente, nombreProducto,Productos[j].Codigo, 1, strconv.Itoa(dia), &recorridoFinal)
+													nodoPedido = metodosMatriz.NuevoNodoPedido(fecha, Tienda, Departamento,Calificacion, Cliente, nombreProducto,Productos[j].Codigo, Productos[0].Cantidad, strconv.Itoa(dia), &recorridoFinal)
+													impr.MatrizMes.Insertar(nodoPedido)
+												}else{
 													impr.MatrizMes.Insertar(nodoPedido)
 												}
 											}
@@ -877,6 +954,9 @@ func usuarios(w http.ResponseWriter, r *http.Request){
 		existe := existeB(Usuario.Raiz, a.DPI)
 		if existe == false {
 			Usuario.Insertar(Usuarios.NuevaLlave(a.DPI, a.Nombre, a.Correo, a.Contra, a.Cuenta))
+			var Hash strings.Builder
+			fmt.Fprintf(&Hash, "%x", sha256.Sum256([]byte(strconv.Itoa(a.DPI)+a.Nombre+a.Correo+a.Contra)))
+			CopiaUsuario.Insertar(Hash.String(), "Crear", a.DPI, a.Nombre, a.Correo, a.Contra, a.Cuenta)
 		}else{
 			usuariosEx = append(usuariosEx, a)
 		}
@@ -912,7 +992,7 @@ func eliminarUsuario(w http.ResponseWriter, r *http.Request){
 	json.Unmarshal(reqBody, &Inicio)
 	dpi := validarDPI(Usuario.Raiz, Inicio.Nombre)
 	contra := validarContra(Usuario.Raiz, Inicio.Nombre, Inicio.Contra)
-
+	datosUsuario := DatosUsuario(Usuario.Raiz, Inicio.Nombre)
 	if dpi == true {
 		regresa = append(regresa, "si" )
 	}else{
@@ -925,6 +1005,10 @@ func eliminarUsuario(w http.ResponseWriter, r *http.Request){
 	}
 	if regresa[0] == "si" && regresa[1] == "si" {
 		existe := Usuario.ExisteBEliminar(Usuario.Raiz, Inicio.Nombre, Inicio.Contra)
+		var Hash strings.Builder
+		fmt.Fprintf(&Hash, "%x", sha256.Sum256([]byte(datosUsuario.DPI+datosUsuario.Nombre+datosUsuario.Correo+datosUsuario.Contra)))
+		dpI,_ := strconv.Atoi(datosUsuario.DPI)
+		CopiaUsuario.Insertar(Hash.String(), "Eliminar", dpI, datosUsuario.Nombre, datosUsuario.Correo, datosUsuario.Contra, datosUsuario.Cuenta)
 		if existe == true {
 			regresa = append(regresa, "EL USUARIO HA SIDO ELIMINADO")
 		}else{
@@ -951,7 +1035,6 @@ func IniciarSesion (w http.ResponseWriter, r *http.Request){
 	}
 	json.Unmarshal(reqBody, &Inicio)
 	dpi := validarDPI(Usuario.Raiz, Inicio.Nombre)
-
 	contra := validarContra(Usuario.Raiz, Inicio.Nombre, Inicio.Contra)
 
 	if dpi == true {
@@ -1094,20 +1177,31 @@ func AgregarComentarios(w http.ResponseWriter, r *http.Request){
 			if Tiendas.NombreTienda == Comen.NombreTienda && Tiendas.Calificacion == Comen.Calificacion{
 				if len(Comen.Comentarios) == 1 {
 					Tiendas.Comentarios.Insertar(Comen.Comentarios[0].Dpi, Comen.Comentarios[0].Comentario, Comen.Comentarios[0].Fecha)
+					var Hash strings.Builder
+					fmt.Fprintf(&Hash, "%x", sha256.Sum256([]byte(Comen.NombreTienda+Comen.Departamento+strconv.Itoa(Comen.Calificacion)+strconv.Itoa(Comen.Comentarios[0].Dpi)+Comen.Comentarios[0].Comentario+Comen.Comentarios[0].Fecha)))
+					CopiaComentariosTienda.Insertar(Hash.String(), "Crear", Comen.NombreTienda,Comen.Departamento,Comen.Calificacion,"",Comen.Comentarios[0].Dpi,Comen.Comentarios[0].Fecha,Comen.Comentarios[0].Comentario)
 					m = Mensaje{"Ingresado"}
 				}else{
 					posicion := 0
 					var tabla *Comentarios.TablaHash
+					var respondiendo string
 					for i := 0; i < len(Comen.Comentarios); i++ {
 						if i == 0 {
 							posicion = Tiendas.Comentarios.Buscar(Comen.Comentarios[i].Dpi, Comen.Comentarios[i].Comentario, Comen.Comentarios[i].Fecha)
 							tabla = Tiendas.Comentarios.Arreglo[posicion].Respuestas
+							respondiendo = respondiendo+strconv.Itoa(Comen.Comentarios[i].Dpi)+"$"+Comen.Comentarios[i].Comentario+"$"+Comen.Comentarios[i].Fecha+"&"
 						}else if i < len(Comen.Comentarios)-1{
+							respondiendo = respondiendo+strconv.Itoa(Comen.Comentarios[i].Dpi)+"$"+Comen.Comentarios[i].Comentario+"$"+Comen.Comentarios[i].Fecha+"&"
 							posicion = tabla.Buscar(Comen.Comentarios[i].Dpi, Comen.Comentarios[i].Comentario, Comen.Comentarios[i].Fecha)
 							temp := tabla.Arreglo[posicion].Respuestas
 							tabla = temp
 						}else if i == len(Comen.Comentarios)-1{
+							respondiendo = respondiendo+strconv.Itoa(Comen.Comentarios[i].Dpi)+"$"+Comen.Comentarios[i].Comentario+"$"+Comen.Comentarios[i].Fecha
 							tabla.Insertar(Comen.Comentarios[i].Dpi, Comen.Comentarios[i].Comentario, Comen.Comentarios[i].Fecha)
+							var Hash strings.Builder
+							fmt.Fprintf(&Hash, "%x", sha256.Sum256([]byte(Comen.NombreTienda+Comen.Departamento+strconv.Itoa(Comen.Calificacion)+strconv.Itoa(Comen.Comentarios[i].Dpi)+Comen.Comentarios[i].Comentario+Comen.Comentarios[i].Fecha)))
+							CopiaComentariosTienda.Insertar(Hash.String(), "Crear", Comen.NombreTienda,Comen.Departamento,Comen.Calificacion,respondiendo,Comen.Comentarios[i].Dpi,Comen.Comentarios[i].Fecha,Comen.Comentarios[i].Comentario)
+
 							m = Mensaje{"Ingresado"}
 						}
 					}
@@ -1121,20 +1215,31 @@ func AgregarComentarios(w http.ResponseWriter, r *http.Request){
 				Arbol := AgregarComentarioProducto(Tiendas.Inventario.Raiz, Comen.Producto)
 				if len(Comen.Comentarios) == 1 {
 					Arbol.Comentarios.Insertar(Comen.Comentarios[0].Dpi, Comen.Comentarios[0].Comentario, Comen.Comentarios[0].Fecha)
+					var Hash strings.Builder
+					fmt.Fprintf(&Hash, "%x", sha256.Sum256([]byte(Comen.NombreTienda+Comen.Departamento+strconv.Itoa(Comen.Calificacion)+strconv.Itoa(Comen.Comentarios[0].Dpi)+Comen.Comentarios[0].Comentario+Comen.Comentarios[0].Fecha)))
+					CopiaComentariosProducto.Insertar(Hash.String(), "Crear", Comen.NombreTienda, Comen.Departamento, Comen.Calificacion, Comen.Producto,"", Comen.Comentarios[0].Dpi,Comen.Comentarios[0].Fecha,Comen.Comentarios[0].Comentario)
+
 					m = Mensaje{"Ingresado"}
 				}else{
 					posicion := 0
 					var tabla *Comentarios.TablaHash
+					var respondiendo string
 					for i := 0; i < len(Comen.Comentarios); i++ {
 						if i == 0 {
 							posicion = Arbol.Comentarios.Buscar(Comen.Comentarios[i].Dpi, Comen.Comentarios[i].Comentario, Comen.Comentarios[i].Fecha)
 							tabla = Arbol.Comentarios.Arreglo[posicion].Respuestas
+							respondiendo = respondiendo+strconv.Itoa(Comen.Comentarios[i].Dpi)+"$"+Comen.Comentarios[i].Comentario+"$"+Comen.Comentarios[i].Fecha+"&"
 						}else if i < len(Comen.Comentarios)-1{
 							posicion = tabla.Buscar(Comen.Comentarios[i].Dpi, Comen.Comentarios[i].Comentario, Comen.Comentarios[i].Fecha)
+							respondiendo = respondiendo+strconv.Itoa(Comen.Comentarios[i].Dpi)+"$"+Comen.Comentarios[i].Comentario+"$"+Comen.Comentarios[i].Fecha+"&"
 							temp := tabla.Arreglo[posicion].Respuestas
 							tabla = temp
 						}else if i == len(Comen.Comentarios)-1{
+							respondiendo = respondiendo+strconv.Itoa(Comen.Comentarios[i].Dpi)+"$"+Comen.Comentarios[i].Comentario+"$"+Comen.Comentarios[i].Fecha
 							tabla.Insertar(Comen.Comentarios[i].Dpi, Comen.Comentarios[i].Comentario, Comen.Comentarios[i].Fecha)
+							var Hash strings.Builder
+							fmt.Fprintf(&Hash, "%x", sha256.Sum256([]byte(Comen.NombreTienda+Comen.Departamento+strconv.Itoa(Comen.Calificacion)+strconv.Itoa(Comen.Comentarios[i].Dpi)+Comen.Comentarios[i].Comentario+Comen.Comentarios[i].Fecha)))
+							CopiaComentariosProducto.Insertar(Hash.String(), "Crear", Comen.NombreTienda,Comen.Departamento,Comen.Calificacion, Comen.Producto,respondiendo,Comen.Comentarios[i].Dpi,Comen.Comentarios[i].Fecha,Comen.Comentarios[i].Comentario)
 							m = Mensaje{"Ingresado"}
 						}
 					}
@@ -1143,7 +1248,6 @@ func AgregarComentarios(w http.ResponseWriter, r *http.Request){
 			Tiendas = Tiendas.Siguiente
 		}
 	}
-
 	w.WriteHeader(http.StatusCreated)
 	json.NewEncoder(w).Encode(m)
 }
@@ -1178,7 +1282,10 @@ func ObtenerComentarios(w http.ResponseWriter, r *http.Request){
 	}
 	regresa := General{comentarios}
 	w.WriteHeader(http.StatusCreated)
-	json.NewEncoder(w).Encode(regresa)
+	err := json.NewEncoder(w).Encode(regresa)
+	if err != nil {
+		fmt.Println(err)
+	}
 }
 
 func ObtenerComentariosP(w http.ResponseWriter, r *http.Request){
@@ -1211,7 +1318,10 @@ func ObtenerComentariosP(w http.ResponseWriter, r *http.Request){
 	}
 	regresa := General{comentarios}
 	w.WriteHeader(http.StatusCreated)
-	json.NewEncoder(w).Encode(regresa)
+	err := json.NewEncoder(w).Encode(regresa)
+	if err != nil {
+		fmt.Println(err)
+	}
 }
 
 func bloques () {
@@ -1221,13 +1331,195 @@ func bloques () {
 			panic(err)
 		}
 	}
+
+	CargaArchivosInicio()
+	CopiaUsuario.Generar()
+	t := time.Now()
+	fecha := fmt.Sprintf("%2d-%02d-%2d::%02d:%02d:%02d", t.Day(), t.Month(), t.Year(), t.Hour(), t.Minute(), t.Second())
 	cuenta := 0
 	for{
-		t := time.Now()
-		fecha := fmt.Sprintf("%2d-%02d-%2d::%02d:%02d:%02d", t.Day(), t.Month(), t.Year(), t.Hour(), t.Minute(), t.Second())
-		fmt.Println("hola"+strconv.Itoa(cuenta)+"->"+fecha)
-		time.Sleep(time.Minute * 1)
+		t = time.Now()
+		fecha = fmt.Sprintf("%2d-%02d-%2d::%02d:%02d:%02d", t.Day(), t.Month(), t.Year(), t.Hour(), t.Minute(), t.Second())
+		var ht,hp,hpp,hu,hct,hcp = "", "", "", "", "", ""
+		if CopiaTiendas.Raiz == nil {ht = ""}else{ht = CopiaTiendas.Raiz.Hash}
+		if CopiaProductos.Raiz == nil{hp = ""}else{hp = CopiaProductos.Raiz.Hash}
+		if CopiaPedidos.Raiz == nil{hpp = ""}else {hpp = CopiaPedidos.Raiz.Hash}
+		if CopiaUsuario.Raiz == nil{hu = ""}else {hu = CopiaUsuario.Raiz.Hash}
+		if CopiaComentariosTienda.Raiz == nil{hct = ""}else {hct = CopiaComentariosTienda.Raiz.Hash}
+		if CopiaComentariosProducto.Raiz == nil{hcp = ""}else{hcp = CopiaComentariosProducto.Raiz.Hash}
+
+		if CopiasGuardadas.Cabeza == nil && cuenta != 0{
+			t = time.Now()
+			fecha = fmt.Sprintf("%2d-%02d-%2d::%02d:%02d:%02d", t.Day(), t.Month(), t.Year(), t.Hour(), t.Minute(), t.Second())
+			Data := ht+hp+hpp+hu+hct+hcp
+			Hash := strings.Split(PruebaDeTrabajo(cuenta, fecha, Data, "-1"), "&")
+			nonce,_ := strconv.Atoi(Hash[1])
+			generalCopias := Guardar{HashBloque: Hash[0],Fecha: fecha, PreviousHash: "-1", Indice: cuenta, Data: Data, Nonce: nonce, CopiaTienda: CopiaTiendas, CopiaProducto: CopiaProductos, CopiaPedidos: CopiaPedidos, CopiaUsuarios: CopiaUsuario, CopiaComentariosTiendas: CopiaComentariosTienda, CopiaComentariosProductos: CopiaComentariosProducto, Grafo: &GrafoRe}
+			data, err := json.MarshalIndent(generalCopias, "", "  ")
+			if err != nil {
+				fmt.Println(err)
+			}
+			nombreArchivo := "bloques\\"+strconv.Itoa(cuenta)+".json"
+			for archivoExiste(nombreArchivo) != false{
+				cuenta++
+				nombreArchivo = "bloques\\"+strconv.Itoa(cuenta)+".json"
+			}
+			erro := ioutil.WriteFile(nombreArchivo, data, 0644)
+			if erro != nil {
+				fmt.Println(erro)
+			}
+			CopiasGuardadas.Insertar(&NodoGuardar{generalCopias, nil,nil})
+			//CopiaTiendas.Raiz, CopiaProductos.Raiz, CopiaPedidos.Raiz, CopiaUsuario.Raiz, CopiaComentariosProducto.Raiz, CopiaComentariosTienda.Raiz = nil,nil,nil,nil,nil,nil
+			fmt.Println("Archivo Creado"+fecha)
+		}else if cuenta  != 0 {
+			t = time.Now()
+			fecha = fmt.Sprintf("%2d-%02d-%2d::%02d:%02d:%02d", t.Day(), t.Month(), t.Year(), t.Hour(), t.Minute(), t.Second())
+			if CopiaTiendas.Raiz != nil {
+				if CopiaTiendas.Raiz.Hash == CopiasGuardadas.Cola.Bloque.CopiaTienda.Raiz.Hash {
+					ht = ""
+				}
+			}else{
+				CopiaTiendas.Raiz = CopiasGuardadas.Cola.Bloque.CopiaTienda.Raiz
+			}
+			if CopiaProductos.Raiz != nil {
+				if CopiaProductos.Raiz.Hash == CopiasGuardadas.Cola.Bloque.CopiaProducto.Raiz.Hash {
+					hp = ""
+				}
+			}else{
+				CopiaProductos.Raiz = CopiasGuardadas.Cola.Bloque.CopiaProducto.Raiz
+			}
+			if CopiaUsuario.Raiz != nil {
+				if CopiaUsuario.Raiz.Hash == CopiasGuardadas.Cola.Bloque.CopiaUsuarios.Raiz.Hash {
+					hu = ""
+				}
+			}else{
+				CopiaUsuario.Raiz = CopiasGuardadas.Cola.Bloque.CopiaUsuarios.Raiz
+			}
+			if CopiaPedidos.Raiz != nil {
+				if CopiaPedidos.Raiz.Hash == CopiasGuardadas.Cola.Bloque.CopiaPedidos.Raiz.Hash {
+					hpp = ""
+				}
+			}else{
+				CopiaPedidos.Raiz = CopiasGuardadas.Cola.Bloque.CopiaPedidos.Raiz
+			}
+			if CopiaComentariosTienda.Raiz != nil {
+				if CopiaComentariosTienda.Raiz.Hash == CopiasGuardadas.Cola.Bloque.CopiaComentariosTiendas.Raiz.Hash {
+					hct = ""
+				}
+			}else{
+				CopiaComentariosTienda.Raiz = CopiasGuardadas.Cola.Bloque.CopiaComentariosTiendas.Raiz
+			}
+			if CopiaComentariosProducto.Raiz != nil {
+				if CopiaComentariosProducto.Raiz.Hash == CopiasGuardadas.Cola.Bloque.CopiaComentariosProductos.Raiz.Hash {
+					hcp = ""
+				}
+			}else{
+				CopiaComentariosProducto.Raiz = CopiasGuardadas.Cola.Bloque.CopiaComentariosProductos.Raiz
+			}
+			Data := ht + hp + hpp + hu + hct + hcp
+			if Data == "" {
+				cuenta--
+				fmt.Println("Sin Cambios" + fecha)
+			} else {
+				Hash := strings.Split(PruebaDeTrabajo(cuenta, fecha, Data, CopiasGuardadas.Cola.Bloque.HashBloque), "&")
+				nonce, _ := strconv.Atoi(Hash[1])
+				generalCopias := Guardar{HashBloque: Hash[0], Fecha: fecha, PreviousHash: CopiasGuardadas.Cola.Bloque.HashBloque, Indice: cuenta, Data: Data, Nonce: nonce, CopiaTienda: CopiaTiendas, CopiaProducto: CopiaProductos, CopiaPedidos: CopiaPedidos, CopiaUsuarios: CopiaUsuario, CopiaComentariosTiendas: CopiaComentariosTienda, CopiaComentariosProductos: CopiaComentariosProducto, Grafo: &GrafoRe}
+				data, err := json.MarshalIndent(generalCopias, "", "  ")
+				if err != nil {
+					fmt.Println(err)
+				}
+				nombreArchivo := "bloques\\" + strconv.Itoa(cuenta) + ".json"
+				for archivoExiste(nombreArchivo) != false {
+					cuenta++
+					nombreArchivo = "bloques\\" + strconv.Itoa(cuenta) + ".json"
+				}
+				erro := ioutil.WriteFile(nombreArchivo, data, 0644)
+				if erro != nil {
+					fmt.Println(erro)
+				}
+				CopiasGuardadas.Insertar(&NodoGuardar{generalCopias, nil, nil})
+				//CopiaTiendas.Raiz, CopiaProductos.Raiz, CopiaPedidos.Raiz, CopiaUsuario.Raiz, CopiaComentariosProducto.Raiz, CopiaComentariosTienda.Raiz = nil, nil, nil, nil, nil, nil
+				fmt.Println("Archivo Creado" + fecha)
+			}
+		}
+		time.Sleep(time.Minute * 1/2)
 		cuenta++
+	}
+}
+
+func archivoExiste(ruta string) bool {
+	if _, err := os.Stat(ruta); os.IsNotExist(err) {
+		return false
+	}
+	return true
+}
+
+func PruebaDeTrabajo(indice int, Fecha string, Data string, PreviousHash string) string{
+	nonce := 0
+	for{
+		var cadena strings.Builder
+		fmt.Fprintf(&cadena, "%x", sha256.Sum256([]byte(strconv.Itoa(indice)+Fecha+Data+PreviousHash+strconv.Itoa(nonce))))
+		if strings.HasPrefix(cadena.String(), "0000") {
+			return cadena.String()+"&"+strconv.Itoa(nonce)
+		}
+		nonce++
+	}
+}
+
+func CargaArchivosInicio(){
+	contadorarchivos := 1
+
+	t := time.Now()
+	fecha := fmt.Sprintf("%2d-%02d-%2d::%02d:%02d:%02d", t.Day(), t.Month(), t.Year(), t.Hour(), t.Minute(), t.Second())
+	fmt.Println("Aplicación inicia: "+fecha)
+
+	for{
+		archivo,err := ioutil.ReadFile("bloques\\"+strconv.Itoa(contadorarchivos)+".json")
+		if err != nil {
+			break
+		}
+		generalRegresa := Guardar{}
+		err = json.Unmarshal(archivo, &generalRegresa)
+		datosTienda(generalRegresa.CopiaTienda.Raiz)
+		Vector = list.CrearMatriz()
+		//reportes.Arreglo(Vector)
+		GrafoRe = *generalRegresa.Grafo
+		if inicioReco != GrafoRe.PosicionInicialRobot {
+			b := GrafoRe.PosicionInicialRobot
+			c := GrafoRe.Entrega
+			inicioReco = b
+			finReco = c
+			nueva.Insertar(b, 0)
+			nueva.Insertar(c, 0)
+			for i := 0; i < len(GrafoRe.General); i++ {
+				a := GrafoRe.General[i]
+				nueva.Insertar(a.Nombre, 0)
+			}
+			for i := 0; i < len(GrafoRe.General); i++ {
+				a := GrafoRe.General[i]
+				for j := 0; j < len(a.Enlaces); j++ {
+					nueva.Enlazar(a.Nombre,a.Enlaces[j].Nombre)
+				}
+			}
+			nueva.Dibujar(b,c,GrafoRe.General, &GrafoRecorrido.ListaRecorrido{})
+		}
+		datosProductos(generalRegresa.CopiaProducto.Raiz)
+		datosUsuarios(generalRegresa.CopiaUsuarios.Raiz)
+		datosPedidos(generalRegresa.CopiaPedidos.Raiz)
+		comentariosTiendas(generalRegresa.CopiaComentariosTiendas.Raiz)
+		comentariosProductos(generalRegresa.CopiaComentariosProductos.Raiz)
+		contadorarchivos++
+	}
+	contadorarchivos = 1
+	for{
+		archivo,err := ioutil.ReadFile("bloques\\"+strconv.Itoa(contadorarchivos)+".json")
+		if err != nil {
+			break
+		}
+		generalRegresa := Guardar{}
+		err = json.Unmarshal(archivo, &generalRegresa)
+		CopiasGuardadas.Insertar(&NodoGuardar{generalRegresa, nil,nil})
+		contadorarchivos++
 	}
 }
 
@@ -1579,6 +1871,312 @@ func Respuestas(resp *Comentarios.TablaHash) *[]ComentariosReg{
 	return &res
 }
 
+func inOrdenDatos(raiz *Inventario.NodoArbol, codigo int) *Inventario.NodoArbol{
+	if raiz!=nil {
+		if raiz.Codigo == codigo {
+			return raiz
+		}
+		a := inOrdenDatos(raiz.Izq, codigo)
+		if a != nil {
+			return a
+		}
+		b := inOrdenDatos(raiz.Der, codigo)
+		if b != nil {
+			return b
+		}
+	}
+	return nil
+}
+
+func DatosUsuario (pagina *Usuarios.Pagina, dpi int) *Usuarios.NodoUsuario{
+	if pagina != nil {
+		for i := 0; i < len(pagina.Llaves); i++ {
+			if pagina.Llaves[i] != nil {
+				if pagina.Llaves[i].Usuario.DPI == strconv.Itoa(dpi) {
+					return pagina.Llaves[i].Usuario
+				}
+			}
+		}
+		for i := 0; i < len(pagina.Llaves); i++ {
+			if pagina.Llaves[i] != nil {
+				if pagina.Llaves[i].Usuario.DPI > strconv.Itoa(dpi) && i == 0 {
+					a := DatosUsuario(pagina.Llaves[i].Izq, dpi)
+					if a != nil {
+						return a
+					}
+				}else if pagina.Llaves[i].Usuario.DPI < strconv.Itoa(dpi){
+					a := DatosUsuario(pagina.Llaves[i].Der, dpi)
+					if a != nil {
+						return a
+					}
+				}else if pagina.Llaves[i].Usuario.DPI < strconv.Itoa(dpi) && i == len(pagina.Llaves) {
+					a := DatosUsuario(pagina.Llaves[i].Der, dpi)
+					if a != nil {
+						return a
+					}
+				}
+			}
+		}
+	}
+	return nil
+}
+
+func datosTienda(raiz *ArbolMerkle.Nodo){
+	if raiz!=nil {
+		if raiz.Izquierda == nil && raiz.Derecha == nil && raiz.NombreTienda != ""{
+			existe := CopiaTiendas.ExisteTienda(CopiaTiendas.Raiz, raiz.NombreTienda, raiz.Tipo, raiz.Indice, raiz.Departamento, raiz.NombreTienda, raiz.DescripcionTienda, raiz.ContactoTienda, raiz.Calificacion, raiz.Logo)
+			if existe == false {
+				tienda := Listas.Tiendas{NombreTienda: raiz.NombreTienda, Descripcion: raiz.DescripcionTienda, Contacto: raiz.ContactoTienda, Calificacion: raiz.Calificacion, Logo: raiz.Logo}
+				depa := Listas.Departamentos{NombreDepartamento: raiz.Departamento, Tienda: tienda}
+				nuevo := Listas.Nodo{Indice: raiz.Indice, Departamento: depa }
+				list.Insertar(&nuevo)
+				CopiaTiendas.Insertar(raiz.Hash, raiz.Tipo, nuevo.Indice,nuevo.Departamento.NombreDepartamento, raiz.NombreTienda, raiz.DescripcionTienda, raiz.ContactoTienda,raiz.Calificacion,raiz.Logo)
+			}
+		}
+		datosTienda(raiz.Izquierda)
+		datosTienda(raiz.Derecha)
+	}
+}
+
+func datosProductos(raiz *ArbolMerkle.NodoProductos){
+	if raiz!=nil {
+		if raiz.Izquierda == nil && raiz.Derecha == nil && raiz.NombreProducto != ""{
+			existe := CopiaProductos.ExisteProducto(CopiaProductos.Raiz, raiz.Hash, raiz.Tipo, raiz.Tienda, raiz.Departamento, raiz.Calificacion, raiz.NombreProducto, raiz.Codigo, raiz.Descripcion, raiz.Precio, raiz.Cantidad, raiz.Imagen, raiz.Almacenamiento)
+			if existe == false {
+				Indi := list.Indi()
+				Departa := list.Departa()
+				NombreTienda := raiz.Tienda
+				Departamento := raiz.Departamento
+				Calificacion := raiz.Calificacion
+				Tercero := posicionTercero(NombreTienda, Departamento,Calificacion, Indi, Departa)
+				imp := Vector[Tercero].ListGA.Cabeza
+				for imp != nil {
+					if imp.NombreTienda == NombreTienda{
+						var arbolPosicion *Inventario.Arbol
+						if imp.Inventario.Raiz == nil {
+							arbolPosicion = imp.Inventario.NuevoArbol()
+						}else{
+							arbolPosicion = &imp.Inventario
+						}
+						nodoArbol.NombreProducto = raiz.NombreProducto
+						nodoArbol.Codigo = raiz.Codigo
+						nodoArbol.Descripcion = raiz.Descripcion
+						nodoArbol.Precio =  raiz.Precio
+						nodoArbol.Cantidad = raiz.Cantidad
+						nodoArbol.Imagen = raiz.Imagen
+						nodoArbol.Almacenamiento = raiz.Almacenamiento
+						arbolPosicion.Insertar(nodoArbol.NombreProducto, nodoArbol.Codigo, nodoArbol.Descripcion, nodoArbol.Precio, nodoArbol.Cantidad, nodoArbol.Imagen, nodoArbol.Almacenamiento)
+						CopiaProductos.Insertar(raiz.Hash, raiz.Tipo, NombreTienda, Departamento, Calificacion, raiz.NombreProducto, raiz.Codigo, raiz.Descripcion, raiz.Precio, raiz.Cantidad, raiz.Imagen, raiz.Almacenamiento)
+						imp.Inventario = *arbolPosicion
+					}
+					imp = imp.Siguiente
+				}
+			}
+		}
+		datosProductos(raiz.Izquierda)
+		datosProductos(raiz.Derecha)
+	}
+}
+
+func datosUsuarios(raiz *ArbolMerkle.NodoUsuarios){
+	if raiz!=nil {
+		if raiz.Izquierda == nil && raiz.Derecha == nil && raiz.Nombre != ""{
+			existeU := CopiaUsuario.ExisteUsuario(CopiaUsuario.Raiz, raiz.Hash, raiz.Tipo, raiz.DPI, raiz.Nombre, raiz.Correo, raiz.Password, raiz.Cuenta )
+			if existeU == false {
+				if raiz.Tipo == "Eliminar" {
+					Usuario.ExisteBEliminar(Usuario.Raiz, raiz.DPI, raiz.Password)
+					CopiaUsuario.Insertar(raiz.Hash, raiz.Tipo, raiz.DPI, raiz.Nombre, raiz.Correo, raiz.Password, raiz.Cuenta)
+				}else{
+					existe := existeB(Usuario.Raiz, raiz.DPI)
+					if existe == false {
+						Usuario.Insertar(Usuarios.NuevaLlave(raiz.DPI, raiz.Nombre, raiz.Correo, raiz.Password, raiz.Cuenta))
+						CopiaUsuario.Insertar(raiz.Hash, raiz.Tipo, raiz.DPI, raiz.Nombre, raiz.Correo, raiz.Password, raiz.Cuenta)
+					}
+				}
+			}
+
+		}
+		datosUsuarios(raiz.Izquierda)
+		datosUsuarios(raiz.Derecha)
+	}
+}
+
+func datosPedidos(raiz *ArbolMerkle.NodoPedidos){
+	if raiz!=nil {
+		if raiz.Derecha == nil && raiz.Izquierda == nil && raiz.Tienda != "" {
+			existeP := CopiaPedidos.ExistePedido(CopiaPedidos.Raiz, raiz.Hash, raiz.Tipo, raiz.Fecha, raiz.Tienda, raiz.Departamento, raiz.Calificacion, raiz.Cliente, raiz.Producto, raiz.Cantidad)
+			if existeP == false {
+				Indi := list.Indi()
+				Departa := list.Departa()
+				Tercero := posicionTercero(raiz.Tienda, raiz.Departamento, raiz.Calificacion, Indi, Departa)
+				imp := Vector[Tercero].ListGA.Cabeza
+				fecha := raiz.Fecha
+				dia,_ := strconv.Atoi(strings.Split(fecha, "-")[0])
+				mes,_ := strconv.Atoi(strings.Split(fecha, "-")[1])
+				anio,_ := strconv.Atoi(strings.Split(fecha, "-")[2])
+				for imp != nil{
+					if imp.NombreTienda == raiz.Tienda && imp.Calificacion == raiz.Calificacion {
+						existeAnio := EncontrarAnio(&listaAnioa, anio)
+						if existeAnio == false {
+							var listaMes MatrizDispersa.ListaMes
+							nodoAnio := MatrizDispersa.NodoAnio{Anio: anio, ListaMatricesMes: &listaMes}
+							listaAnioa.Insertar(&nodoAnio)
+
+						}
+						existeMes := EncontrarMes(&listaAnioa, anio, mes)
+						if existeMes == false {
+							impm := listaAnioa.Cabeza
+							for impm != nil {
+								if impm.Anio == anio {
+									nodoMes := MatrizDispersa.NodoMes{Mes: mes, MatrizMes: &MatrizDispersa.Matriz{Mes: mes, Anio: anio}}
+									impm.ListaMatricesMes.Insertar(&nodoMes)
+								}
+								impm = impm.Siguiente
+							}
+						}
+
+						arbolTiend := imp.Inventario.Raiz
+						arbolito := Compras.DescontarProducto(arbolTiend, raiz.Producto, raiz.Cantidad)
+						imp.Inventario.Raiz = arbolito
+						existeProducto := inOrden(imp.Inventario.Raiz, raiz.Producto)
+						if existeProducto == true {
+							impa := listaAnioa.Cabeza
+							for impa != nil {
+								if impa.Anio == anio {
+									impr := impa.ListaMatricesMes.Cabeza
+									for impr != nil {
+										if impr.Mes == mes {
+											nombreProducto := inOrdenNombre(imp.Inventario.Raiz, raiz.Producto)
+											var recorrido GrafoRecorrido.ListaRecorrido
+											for i := 0; i < len(raiz.Recorrido); i++ {
+												recorrido.InsertarRec(&raiz.Recorrido[i])
+											}
+											nodoPedido := metodosMatriz.NuevoNodoPedido(raiz.Fecha, raiz.Tienda, raiz.Departamento, raiz.Calificacion, raiz.Cliente, nombreProducto, raiz.Producto, raiz.Cantidad, strconv.Itoa(dia), &recorrido)
+											impr.MatrizMes.Insertar(nodoPedido)
+											var recorridoPeido []GrafoRecorrido.NodoRecorrido
+											imprp := recorrido.Cabeza
+											for imprp != nil{
+												nuevo := GrafoRecorrido.NodoRecorrido{Viene: imprp.Viene, Va: imprp.Va, Costo: imprp.Costo, Siguiente: nil, Anterior: nil}
+												recorridoPeido = append(recorridoPeido, nuevo)
+												imprp = imprp.Siguiente
+											}
+											CopiaPedidos.Insertar(raiz.Hash, "Crear", fecha, raiz.Tienda, raiz.Departamento, raiz.Calificacion, raiz.Cliente, raiz.Producto, raiz.Cantidad, recorridoPeido)
+
+										}
+										impr = impr.Siguiente
+									}
+								}
+								impa = impa.Siguiente
+							}
+						}
+					}
+					imp = imp.Siguiente
+				}
+			}
+		}
+		datosPedidos(raiz.Izquierda)
+		datosPedidos(raiz.Derecha)
+	}
+}
+
+func comentariosTiendas(raiz *ArbolMerkle.NodoComentario){
+	if raiz !=nil{
+		if raiz.Derecha == nil && raiz.Izquierda == nil && raiz.Tienda != ""{
+			existeCT := CopiaComentariosTienda.ExisteComentarioT(CopiaComentariosTienda.Raiz, raiz.Hash, raiz.Tipo, raiz.Tienda, raiz.Departamento, raiz.Calificacion, raiz.Respondiendo, raiz.Dpi, raiz.Fecha, raiz.Comentario)
+			if existeCT == false {
+				Indi := list.Indi()
+				Departa := list.Departa()
+				Tercero := posicionTercero(raiz.Tienda, raiz.Departamento, raiz.Calificacion, Indi, Departa)
+				Tiendas := Vector[Tercero].ListGA.Cabeza
+				for Tiendas != nil {
+					if Tiendas.NombreTienda == raiz.Tienda && Tiendas.Calificacion == raiz.Calificacion{
+						if raiz.Respondiendo == "" {
+							Tiendas.Comentarios.Insertar(raiz.Dpi, raiz.Comentario, raiz.Fecha)
+							CopiaComentariosTienda.Insertar(raiz.Hash, raiz.Tipo, raiz.Tienda,raiz.Departamento,raiz.Calificacion,raiz.Respondiendo,raiz.Dpi,raiz.Fecha,raiz.Comentario)
+						}else{
+							resp := strings.Split(raiz.Respondiendo, "&")
+							var comentariosJson []Comentarios.Respuestas
+							for i := 0; i < len(resp); i++ {
+								x := strings.Split(resp[i], "$")
+								dpi,_ := strconv.Atoi(x[0])
+								comentariosJson = append(comentariosJson, Comentarios.Respuestas{Dpi: dpi, Comentario: x[1], Fecha: x[2]})
+							}
+							posicion := 0
+							var tabla *Comentarios.TablaHash
+							for i := 0; i < len(comentariosJson); i++ {
+								if i == 0 {
+									posicion = Tiendas.Comentarios.Buscar(comentariosJson[i].Dpi, comentariosJson[i].Comentario, comentariosJson[i].Fecha)
+									tabla = Tiendas.Comentarios.Arreglo[posicion].Respuestas
+								}else if i < len(comentariosJson)-1{
+									posicion = tabla.Buscar(comentariosJson[i].Dpi, comentariosJson[i].Comentario, comentariosJson[i].Fecha)
+									temp := tabla.Arreglo[posicion].Respuestas
+									tabla = temp
+								}else if i == len(comentariosJson)-1{
+									tabla.Insertar(comentariosJson[i].Dpi, comentariosJson[i].Comentario, comentariosJson[i].Fecha)
+									CopiaComentariosTienda.Insertar(raiz.Hash, raiz.Tipo, raiz.Tienda,raiz.Departamento,raiz.Calificacion,raiz.Respondiendo, comentariosJson[i].Dpi,comentariosJson[i].Fecha,comentariosJson[i].Comentario)
+								}
+							}
+						}
+					}
+					Tiendas = Tiendas.Siguiente
+				}
+			}
+
+		}
+
+		 comentariosTiendas(raiz.Izquierda)
+		 comentariosTiendas(raiz.Derecha)
+	}
+}
+
+func comentariosProductos(raiz *ArbolMerkle.NodoComentarioProducto){
+	if raiz !=nil{
+		if raiz.Derecha == nil && raiz.Izquierda == nil && raiz.Tienda != ""{
+			existeCP := CopiaComentariosProducto.ExisteComentarioP(CopiaComentariosProducto.Raiz, raiz.Hash, raiz.Tipo, raiz.Tienda, raiz.Departamento, raiz.Calificacion, raiz.CodigoProducto, raiz.Respondiendo, raiz.Dpi, raiz.Fecha, raiz.Comentario)
+			if existeCP == false {
+				Indi := list.Indi()
+				Departa := list.Departa()
+				Tercero := posicionTercero(raiz.Tienda, raiz.Departamento, raiz.Calificacion, Indi, Departa)
+				Tiendas := Vector[Tercero].ListGA.Cabeza
+				for Tiendas != nil {
+					if Tiendas.NombreTienda == raiz.Tienda && Tiendas.Calificacion == raiz.Calificacion{
+						Arbol := AgregarComentarioProducto(Tiendas.Inventario.Raiz, raiz.CodigoProducto)
+						if raiz.Respondiendo == "" {
+							Arbol.Comentarios.Insertar(raiz.Dpi, raiz.Comentario, raiz.Fecha)
+							CopiaComentariosProducto.Insertar(raiz.Hash, raiz.Tipo, raiz.Tienda,raiz.Departamento,raiz.Calificacion, raiz.CodigoProducto,raiz.Respondiendo,raiz.Dpi,raiz.Fecha,raiz.Comentario)
+						}else{
+							resp := strings.Split(raiz.Respondiendo, "&")
+							var comentariosJson []Comentarios.Respuestas
+							for i := 0; i < len(resp); i++ {
+								x := strings.Split(resp[i], "$")
+								dpi,_ := strconv.Atoi(x[0])
+								comentariosJson = append(comentariosJson, Comentarios.Respuestas{Dpi: dpi, Comentario: x[1], Fecha: x[2]})
+							}
+							posicion := 0
+							var tabla *Comentarios.TablaHash
+							for i := 0; i < len(comentariosJson); i++ {
+								if i == 0 {
+									posicion = Arbol.Comentarios.Buscar(comentariosJson[i].Dpi, comentariosJson[i].Comentario, comentariosJson[i].Fecha)
+									tabla = Arbol.Comentarios.Arreglo[posicion].Respuestas
+								}else if i < len(comentariosJson)-1{
+									posicion = tabla.Buscar(comentariosJson[i].Dpi, comentariosJson[i].Comentario, comentariosJson[i].Fecha)
+									temp := tabla.Arreglo[posicion].Respuestas
+									tabla = temp
+								}else if i == len(comentariosJson)-1{
+									tabla.Insertar(comentariosJson[i].Dpi, comentariosJson[i].Comentario, comentariosJson[i].Fecha)
+									CopiaComentariosProducto.Insertar(raiz.Hash, raiz.Tipo, raiz.Tienda,raiz.Departamento,raiz.Calificacion, raiz.CodigoProducto,raiz.Respondiendo, comentariosJson[i].Dpi,comentariosJson[i].Fecha,comentariosJson[i].Comentario)
+								}
+							}
+						}
+					}
+					Tiendas = Tiendas.Siguiente
+				}
+			}
+		}
+		comentariosProductos(raiz.Izquierda)
+		comentariosProductos(raiz.Derecha)
+	}
+}
 
 //--------------------------------------------------ESTRUCTURAS REGRESO-------------------------------------------------
 
@@ -1677,4 +2275,42 @@ type ComentariosReg struct {
 	Fecha string `json:"Fecha"`
 	Comentario string `json:"Comentario"`
 	Respuestas []ComentariosReg `json:"Respuestas"`
+}
+
+type Guardar struct {
+	HashBloque string `json:"HashBloque"`
+	Indice int
+	Fecha string
+	Data string
+	Nonce int
+	PreviousHash string
+	CopiaTienda *ArbolMerkle.Arbol `json:"Tiendas"`
+	CopiaProducto *ArbolMerkle.ArbolProductos `json:"Productos"`
+	CopiaPedidos *ArbolMerkle.ArbolPedidos `json:"Pedidos"`
+	CopiaUsuarios *ArbolMerkle.ArbolUsuarios `json:"Usuarios"`
+	CopiaComentariosTiendas *ArbolMerkle.ArbolComentarios `json:"ComentariosT"`
+	CopiaComentariosProductos *ArbolMerkle.ArbolComentariosProducto `json:"ComentariosP"`
+	Grafo *GrafoRecorrido.Archivo `json:"Grafo"`
+}
+
+type NodoGuardar struct{
+	Bloque Guardar
+	Siguiente *NodoGuardar
+	Anterior *NodoGuardar
+}
+
+type ListaGuardar struct{
+	Cabeza *NodoGuardar
+	Cola *NodoGuardar
+}
+
+func (L *ListaGuardar) Insertar(nuevo *NodoGuardar) {
+	if L.Cabeza == nil{
+		L.Cabeza = nuevo
+		L.Cola = nuevo
+	}else{
+		L.Cola.Siguiente = nuevo
+		nuevo.Anterior = L.Cola
+		L.Cola = nuevo
+	}
 }
