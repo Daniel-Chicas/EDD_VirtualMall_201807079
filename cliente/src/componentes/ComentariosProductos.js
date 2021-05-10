@@ -1,8 +1,8 @@
 import {React, useEffect, useState} from 'react'
 import '../css/Comentarios.css'
-import { Button, Header, Icon, Segment, Form, Comment, Input, Label} from 'semantic-ui-react'
+import { Button, Header,  Form, Comment,  Label} from 'semantic-ui-react'
 import NavBar from '../componentes/NavBar'
-import {BrowserRouter as Router, Route} from 'react-router-dom'
+import {BrowserRouter as Router} from 'react-router-dom'
 import Com from '../componentes/ComentarioProducto'
 const axios=require('axios').default
 

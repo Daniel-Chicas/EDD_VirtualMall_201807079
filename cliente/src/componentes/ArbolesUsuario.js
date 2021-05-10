@@ -4,7 +4,6 @@ import {BrowserRouter as Router} from 'react-router-dom'
 import { Button, Header, Icon, Segment, Label, Input} from 'semantic-ui-react'
 import '../Inicio.css'
 import axios from 'axios'
-import UsuariosPDF from './UsuariosPDF'
 var crypto = require('crypto');
 
 function ArbolesUsuario() {

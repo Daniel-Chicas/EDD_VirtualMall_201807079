@@ -1,5 +1,5 @@
 import React from 'react'
-import { Button, Header, Icon, Segment, Form, Comment, Input} from 'semantic-ui-react'
+import {Comment} from 'semantic-ui-react'
 import Comentario from '../componentes/ComentarioProducto'
 import '../css/Comentarios.css'
 

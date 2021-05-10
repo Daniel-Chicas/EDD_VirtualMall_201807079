@@ -1,4 +1,4 @@
-import {React, useState, useEffect} from 'react'
+import {React} from 'react'
 import {BrowserRouter as Router, Route} from 'react-router-dom'
 import Login from '../componentesLogin/Login'
 import CrearUsuario from '../componentesLogin/CrearUsuario'
@@ -20,6 +20,13 @@ import Recorrido from '../componentes/Recorrido'
 import CambiarClave from '../componentes/CambiarClave'
 import Comentarios from '../componentes/Comentarios'
 import ComentariosProductos from '../componentes/ComentariosProductos'
+import ArbolesMerkle from './ArbolesMerkle'
+import ArbolTiendas from './ArbolTiendas'
+import ArbolProductos from './ArbolProductos'
+import ArbolPedidos from './ArbolPedidos'
+import ArbolUsuarios from './ArbolUsuarios'
+import ArbolComentariosT from './ArbolComentariosT'
+import ArbolComentariosP from './ArbolComentariosP'
 
 import '../Inicio.css'
 
@@ -47,6 +54,13 @@ function Inicio() {
         <Route path="/CambiarClave" component={CambiarClave} />
         <Route path="/Comentarios" component={Comentarios} />
         <Route path="/ComentariosP" component={ComentariosProductos}/>
+        <Route path="/ArbolesMerkle" component={ArbolesMerkle}/>
+        <Route path="/ArbolTiendas" component={ArbolTiendas}/>
+        <Route path="/ArbolProductos" component={ArbolProductos}/>
+        <Route path="/ArbolPedidos" component={ArbolPedidos}/>
+        <Route path="/ArbolUsuarios" component={ArbolUsuarios}/>
+        <Route path="/ArbolComentariosT" component={ArbolComentariosT}/>
+        <Route path="/ArbolComentariosP" component={ArbolComentariosP}/>
       </Router>
     </>
   )

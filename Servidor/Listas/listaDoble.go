@@ -416,7 +416,8 @@ func (L *Lista) CrearArray(indices []string, departamentos []string, m ListaM, e
 				if CE.Indice == indices[i] && CE.NombreDepartamento == departamentos[j] {
 					for k := 0; k < len(CE.Tienda); k++ {
 						tienda := CE.Tienda[k]
-						nuevo := NodoTienda{NombreTienda: tienda.NombreTienda, Descripcion: tienda.Descripcion, Contacto: tienda.Contacto, Calificacion: tienda.Calificacion, Logo: tienda.Logo}
+						tabla := Comentarios.NuevaTabla(7, 50, 20)
+						nuevo := NodoTienda{NombreTienda: tienda.NombreTienda, Descripcion: tienda.Descripcion, Contacto: tienda.Contacto, Calificacion: tienda.Calificacion, Logo: tienda.Logo, Comentarios: *tabla}
 						listado = append(listado, nuevo)
 					}
 					listaAgregar = burbuja(listado)

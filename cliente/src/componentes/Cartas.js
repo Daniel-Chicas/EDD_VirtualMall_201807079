@@ -1,6 +1,5 @@
 import React from 'react'
 import '../css/Carta.css'
-import Comentarios from './Comentarios'
 const axios=require('axios').default
 
 function Cartas(props) {

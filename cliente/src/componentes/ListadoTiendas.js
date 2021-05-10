@@ -1,9 +1,9 @@
 import {React, useEffect, useState} from 'react'
-import { Button, Header, Icon, Segment } from 'semantic-ui-react'
+import { Header, Icon, Segment } from 'semantic-ui-react'
 import Mosaico from './Mosaico'
 import '../css/Mosaico.css'
 import NavBar from '../componentes/NavBar'
-import {BrowserRouter as Router, Route} from 'react-router-dom'
+import {BrowserRouter as Router} from 'react-router-dom'
 
 const axios=require('axios').default
 

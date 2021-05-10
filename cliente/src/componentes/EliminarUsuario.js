@@ -1,6 +1,6 @@
 import {React, useState} from 'react'
 import NavBar from '../componentes/NavBar'
-import {BrowserRouter as Router, Route} from 'react-router-dom'
+import {BrowserRouter as Router} from 'react-router-dom'
 import { Button, Header, Icon, Segment } from 'semantic-ui-react'
 import { Input, Label } from 'semantic-ui-react'
 import '../Inicio.css'

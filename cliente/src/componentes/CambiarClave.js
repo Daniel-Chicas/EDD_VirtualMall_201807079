@@ -1,7 +1,7 @@
 import {React, useState} from 'react'
 import { Input, Header, Icon, Segment, Button, Label } from 'semantic-ui-react'
 import NavBar from '../componentes/NavBar'
-import {BrowserRouter as Router, Route} from 'react-router-dom'
+import {BrowserRouter as Router} from 'react-router-dom'
 import '../css/CargaArchivos.css'
 import '../Inicio.css'
 import axios from 'axios'

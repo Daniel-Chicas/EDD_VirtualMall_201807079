@@ -6,6 +6,7 @@ import (
 	"crypto/sha256"
 	"fmt"
 	"math"
+	"strconv"
 	"strings"
 )
 
@@ -44,11 +45,11 @@ func (this *ArbolPedidos) Insertar(hash string, tipo string,fecha string, tienda
 		var uno strings.Builder
 		fmt.Fprintf(&uno, "%x", sha256.Sum256([]byte("-1")))
 		lista.PushBack(NuevoNodoPedido(uno.String(), "", "", "-1","",-1,-1,-1,0,nil,nil,nil))
-		this.construirArbol(lista)
+		this.ConstruirArbol(lista)
 	}else{
 		lista := this.ObtenerLista()
 		lista.PushBack(n)
-		this.construirArbol(lista)
+		this.ConstruirArbol(lista)
 	}
 }
 
@@ -69,7 +70,7 @@ func obtenerListaPedidos(lista *list.List, actual *NodoPedidos){
 	}
 }
 
-func (this *ArbolPedidos) construirArbol(lista *list.List){
+func (this *ArbolPedidos) ConstruirArbol(lista *list.List){
 	size := float64(lista.Len())
 	cant := 1
 	for (size/2) > 1 {
@@ -102,7 +103,15 @@ func (L *ArbolPedidos) Generar(){
 	fmt.Fprint(&cadena, "digraph ArbolTiendas{\n")
 	fmt.Fprintf(&cadena, "node[shape=\"record\"];\n")
 	if L.Raiz != nil {
-		fmt.Fprintf(&cadena, "node%p[label=\"{Hash: %v|HashIzquierdo: %v|HashDerecho: %v}\" ];\n", &(*L.Raiz), L.Raiz.Hash, L.Raiz.Izquierda.Hash, L.Raiz.Derecha.Hash)
+		if L.Raiz.Izquierda != nil && L.Raiz.Derecha != nil {
+			var hash strings.Builder
+			fmt.Fprintf(&hash, "%x", sha256.Sum256([]byte(L.Raiz.Izquierda.Hash+L.Raiz.Derecha.Hash)))
+			if hash.String() == L.Raiz.Hash {
+				fmt.Fprintf(&cadena, "node%p[color=\"green\" label=\"{Hash: %v|HashIzquierdo: %v|HashDerecho: %v}\" ];\n", &(*L.Raiz), L.Raiz.Hash, L.Raiz.Izquierda.Hash, L.Raiz.Derecha.Hash)
+			}else{
+				fmt.Fprintf(&cadena, "node%p[color=\"red\" label=\"{Hash: %v|HashIzquierdo: %v|HashDerecho: %v}\" ];\n", &(*L.Raiz), L.Raiz.Hash, L.Raiz.Izquierda.Hash, L.Raiz.Derecha.Hash)
+			}
+		}
 		L.generar(&cadena, L.Raiz, L.Raiz.Izquierda, true)
 		L.generar(&cadena, L.Raiz, L.Raiz.Derecha, false)
 	}
@@ -112,13 +121,31 @@ func (L *ArbolPedidos) Generar(){
 
 func (L *ArbolPedidos) generar(cadena *strings.Builder, padre *NodoPedidos, actual *NodoPedidos, izquierda bool){
 	if actual != nil {
-		if actual.Tienda != "" {
-			fmt.Fprintf(cadena, "node%p[label=\"{Hash: %v|Tipo: %s|Cliente: %d|Codigo: %d}\" ];\n", &(*actual), actual.Hash, actual.Tipo, actual.Cliente, actual.Producto)
+		if actual.Tienda != "" && actual.Izquierda == nil && actual.Derecha == nil{
+			var Hash strings.Builder
+			fmt.Fprintf(&Hash, "%x", sha256.Sum256([]byte(actual.Fecha+strconv.Itoa(actual.Cliente)+actual.Tienda+actual.Departamento+strconv.Itoa(actual.Calificacion)+strconv.Itoa(actual.Producto))))
+			if actual.Hash == Hash.String() {
+				fmt.Fprintf(cadena, "node%p[color=\"green\" label=\"{Hash: %v|Tipo: %s|Cliente: %d|Codigo: %d}\" ];\n", &(*actual), actual.Hash, actual.Tipo, actual.Cliente, actual.Producto)
+			}else{
+				fmt.Fprintf(cadena, "node%p[color=\"red\" label=\"{Hash: %v|Tipo: %s|Cliente: %d|Codigo: %d}\" ];\n", &(*actual), actual.Hash, actual.Tipo, actual.Cliente, actual.Producto)
+			}
 		}else{
 			if actual.Izquierda != nil && actual.Derecha != nil {
-				fmt.Fprintf(cadena, "node%p[label=\"{Hash: %v|HashIzquierdo: %v|HashDerecho: %v}\" ];\n", &(*actual), actual.Hash, actual.Izquierda.Hash, actual.Derecha.Hash)
+				var hash strings.Builder
+				fmt.Fprintf(&hash, "%x", sha256.Sum256([]byte(actual.Izquierda.Hash+actual.Derecha.Hash)))
+				if actual.Hash == hash.String() {
+					fmt.Fprintf(cadena, "node%p[color = \"green\" label=\"{Hash: %v|HashIzquierdo: %v|HashDerecho: %v}\" ];\n", &(*actual), actual.Hash, actual.Izquierda.Hash, actual.Derecha.Hash)
+				}else{
+					fmt.Fprintf(cadena, "node%p[color = \"red\" label=\"{Hash: %v|HashIzquierdo: %v|HashDerecho: %v}\" ];\n", &(*actual), actual.Hash, actual.Izquierda.Hash, actual.Derecha.Hash)
+				}
 			}else{
-				fmt.Fprintf(cadena, "node%p[label=\"{Hash: %v|Agrega: -1}\" ];\n", &(*actual), actual.Hash)
+				var hash strings.Builder
+				fmt.Fprintf(&hash, "%x", sha256.Sum256([]byte("-1")))
+				if actual.Hash == hash.String() {
+					fmt.Fprintf(cadena, "node%p[color=\"green\" label=\"{Hash: %v|Agrega: -1}\" ];\n", &(*actual), actual.Hash)
+				}else{
+					fmt.Fprintf(cadena, "node%p[color=\"red\" label=\"{Hash: %v|Agrega: -1}\" ];\n", &(*actual), actual.Hash)
+				}
 			}
 		}
 		if izquierda{
@@ -129,4 +156,26 @@ func (L *ArbolPedidos) generar(cadena *strings.Builder, padre *NodoPedidos, actu
 		L.generar(cadena, actual, actual.Izquierda, true)
 		L.generar(cadena, actual, actual.Derecha, false)
 	}
+}
+
+func (L *ArbolPedidos) Arreglar(raiz *NodoPedidos, lista *list.List) *list.List{
+	if raiz != nil {
+		if raiz.Izquierda == nil && raiz.Derecha == nil {
+			if raiz.Tienda != "" {
+				var Hash strings.Builder
+				fmt.Fprintf(&Hash, "%x", sha256.Sum256([]byte(raiz.Fecha+strconv.Itoa(raiz.Cliente)+raiz.Tienda+raiz.Departamento+strconv.Itoa(raiz.Calificacion)+strconv.Itoa(raiz.Producto))))
+
+				raiz.Hash = Hash.String()
+				lista.PushBack(raiz)
+			}else{
+				var hash strings.Builder
+				fmt.Fprintf(&hash, "%x", sha256.Sum256([]byte("-1")))
+				raiz.Hash = hash.String()
+				lista.PushBack(raiz)
+			}
+		}
+		L.Arreglar(raiz.Izquierda, lista)
+		L.Arreglar(raiz.Derecha, lista)
+	}
+	return lista
 }

@@ -179,7 +179,5 @@ func (L *ListaAdyacencia) DFS2(aux *Lista, actual *Vertice){
 	for e := actual.Adyacentes.Cabeza; e != nil; e=e.Siguiente{
 		L.DFS2(aux, e.Vertice)
 	}
-
-
 }
 

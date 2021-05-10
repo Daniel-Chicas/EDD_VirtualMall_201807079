@@ -46,11 +46,11 @@ func (this *Arbol) Insertar(hash string, tipo string, indice string, depa string
 		var uno strings.Builder
 		fmt.Fprintf(&uno, "%x", sha256.Sum256([]byte("-1")))
 		lista.PushBack(NuevoNodo(uno.String(), "", "","","","","",-1,"", nil, nil))
-		this.construirArbol(lista)
+		this.ConstruirArbol(lista)
 	}else{
 		lista := this.ObtenerLista()
 		lista.PushBack(n)
-		this.construirArbol(lista)
+		this.ConstruirArbol(lista)
 	}
 }
 
@@ -71,7 +71,7 @@ func obtenerLista(lista *list.List, actual *Nodo){
 	}
 }
 
-func (this *Arbol) construirArbol(lista *list.List){
+func (this *Arbol) ConstruirArbol(lista *list.List){
 	size := float64(lista.Len())
 	cant := 1
 	for (size/2) > 1 {
@@ -104,7 +104,15 @@ func (L *Arbol) Generar(){
 	fmt.Fprint(&cadena, "digraph ArbolTiendas{\n")
 	fmt.Fprintf(&cadena, "node[shape=\"record\"];\n")
 	if L.Raiz != nil {
-		fmt.Fprintf(&cadena, "node%p[label=\"{Hash: %v|HashIzquierdo: %v|HashDerecho: %v}\" ];\n", &(*L.Raiz), L.Raiz.Hash, L.Raiz.Izquierda.Hash, L.Raiz.Derecha.Hash)
+		if L.Raiz.Izquierda != nil && L.Raiz.Derecha != nil {
+			var hash strings.Builder
+			fmt.Fprintf(&hash, "%x", sha256.Sum256([]byte(L.Raiz.Izquierda.Hash+L.Raiz.Derecha.Hash)))
+			if hash.String() == L.Raiz.Hash {
+				fmt.Fprintf(&cadena, "node%p[color=\"green\"  label=\"{Hash: %v|HashIzquierdo: %v|HashDerecho: %v}\" ];\n", &(*L.Raiz), L.Raiz.Hash, L.Raiz.Izquierda.Hash, L.Raiz.Derecha.Hash)
+			}else{
+				fmt.Fprintf(&cadena, "node%p[color=\"red\" label=\"{Hash: %v|HashIzquierdo: %v|HashDerecho: %v}\" ];\n", &(*L.Raiz), L.Raiz.Hash, L.Raiz.Izquierda.Hash, L.Raiz.Derecha.Hash)
+			}
+		}
 		L.generar(&cadena, L.Raiz, L.Raiz.Izquierda, true)
 		L.generar(&cadena, L.Raiz, L.Raiz.Derecha, false)
 	}
@@ -114,13 +122,31 @@ func (L *Arbol) Generar(){
 
 func (L *Arbol) generar(cadena *strings.Builder, padre *Nodo, actual *Nodo, izquierda bool){
 	if actual != nil {
-		if actual.NombreTienda != "" {
-			fmt.Fprintf(cadena, "node%p[label=\"{Hash: %v|Tienda: %s|Contacto: %s|Calificacion: %d}\" ];\n", &(*actual), actual.Hash, actual.Tipo, actual.NombreTienda, actual.Calificacion)
+		if actual.NombreTienda != "" && actual.Izquierda == nil && actual.Derecha == nil{
+			var hash strings.Builder
+			fmt.Fprintf(&hash, "%x", sha256.Sum256([]byte(actual.Indice+actual.Departamento+actual.NombreTienda+actual.DescripcionTienda+actual.ContactoTienda+strconv.Itoa(actual.Calificacion)+actual.Logo)))
+			if actual.Hash == hash.String() {
+				fmt.Fprintf(cadena, "node%p[color=\"green\"  label=\"{Hash: %v|Tienda: %s|Contacto: %s|Calificacion: %d}\" ];\n", &(*actual), actual.Hash, actual.Tipo, actual.NombreTienda, actual.Calificacion)
+			}else{
+				fmt.Fprintf(cadena, "node%p[color=\"red\" label=\"{Hash: %v|Tienda: %s|Contacto: %s|Calificacion: %d}\" ];\n", &(*actual), actual.Hash, actual.Tipo, actual.NombreTienda, actual.Calificacion)
+			}
 		}else{
 			if actual.Izquierda != nil && actual.Derecha != nil {
-				fmt.Fprintf(cadena, "node%p[label=\"{Hash: %v|HashIzquierdo: %v|HashDerecho: %v}\" ];\n", &(*actual), actual.Hash, actual.Izquierda.Hash, actual.Derecha.Hash)
+				var hash strings.Builder
+				fmt.Fprintf(&hash, "%x", sha256.Sum256([]byte(actual.Izquierda.Hash+actual.Derecha.Hash)))
+				if actual.Hash == hash.String() {
+					fmt.Fprintf(cadena, "node%p[color = \"green\" label=\"{Hash: %v|HashIzquierdo: %v|HashDerecho: %v}\" ];\n", &(*actual), actual.Hash, actual.Izquierda.Hash, actual.Derecha.Hash)
+				}else{
+					fmt.Fprintf(cadena, "node%p[color = \"red\" label=\"{Hash: %v|HashIzquierdo: %v|HashDerecho: %v}\" ];\n", &(*actual), actual.Hash, actual.Izquierda.Hash, actual.Derecha.Hash)
+				}
 			}else{
-				fmt.Fprintf(cadena, "node%p[label=\"{Hash: %v|Agrega: -1}\" ];\n", &(*actual), actual.Hash)
+				var hash strings.Builder
+				fmt.Fprintf(&hash, "%x", sha256.Sum256([]byte("-1")))
+				if actual.Hash == hash.String() {
+					fmt.Fprintf(cadena, "node%p[color=\"green\" label=\"{Hash: %v|Agrega: -1}\" ];\n", &(*actual), actual.Hash)
+				}else{
+					fmt.Fprintf(cadena, "node%p[color=\"red\" label=\"{Hash: %v|Agrega: -1}\" ];\n", &(*actual), actual.Hash)
+				}
 			}
 		}
 		if izquierda{
@@ -134,7 +160,7 @@ func (L *Arbol) generar(cadena *strings.Builder, padre *Nodo, actual *Nodo, izqu
 }
 
 func guardarArchivo(cadena string, nombreArchivo string) {
-	f, err := os.Create(nombreArchivo+".dot")
+	f, err := os.Create("..\\cliente\\src\\ArbolesMerkle\\diagrama.dot")
 	if err != nil {
 		fmt.Println(err)
 		return
@@ -145,16 +171,37 @@ func guardarArchivo(cadena string, nombreArchivo string) {
 		f.Close()
 		return
 	}
-	fmt.Println(strconv.Itoa(l)+" bytes escritos")
+	fmt.Println(strconv.Itoa(l)+" bytes written successfully")
 	err = f.Close()
 	if err != nil {
 		fmt.Println(err)
 		return
 	}
 	path, _ := exec.LookPath("dot")
-	cmd, _ := exec.Command(path, "-Tpdf", nombreArchivo+".dot").Output()
+	cmd, _ := exec.Command(path, "-Tpdf", "..\\cliente\\src\\ArbolesMerkle\\diagrama.dot").Output()
 	mode := int(0777)
-	ioutil.WriteFile(nombreArchivo+".pdf", cmd, os.FileMode(mode))
+	ioutil.WriteFile("..\\cliente\\src\\ArbolesMerkle\\"+nombreArchivo+".pdf", cmd, os.FileMode(mode))
+}
+
+func (L *Arbol) Arreglar(raiz *Nodo, lista *list.List) *list.List{
+	if raiz != nil {
+		if raiz.Izquierda == nil && raiz.Derecha == nil {
+			if raiz.NombreTienda != "" {
+				var hash strings.Builder
+				fmt.Fprintf(&hash, "%x", sha256.Sum256([]byte(raiz.Indice+raiz.Departamento+raiz.NombreTienda+raiz.DescripcionTienda+raiz.ContactoTienda+strconv.Itoa(raiz.Calificacion)+raiz.Logo)))
+				raiz.Hash = hash.String()
+				lista.PushBack(raiz)
+			}else{
+				var hash strings.Builder
+				fmt.Fprintf(&hash, "%x", sha256.Sum256([]byte("-1")))
+				raiz.Hash = hash.String()
+				lista.PushBack(raiz)
+			}
+		}
+		L.Arreglar(raiz.Izquierda, lista)
+		L.Arreglar(raiz.Derecha, lista)
+	}
+	return lista
 }
 
 

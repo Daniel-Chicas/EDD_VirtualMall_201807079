@@ -3,13 +3,13 @@ node[shape=box];
 MT[label="Mayo", style = filled, color=orange, group = 1];
 e0[shape = point, width = 0];
 e0[shape = point, width = 0];
-node0xc000101270[color=brown, label="Depa: Cocina", group = 1];
-MT->node0xc000101270;
-node0xc0001012c0[color=blue, label="Día: 4", group = 2];
-MT->node0xc0001012c0;
-{rank = same;MT;node0xc0001012c0;}
-node0xc00047c880[color=blue, label="PEDIDOS", group = 2];
-node0xc0001012c0->node0xc00047c880;
-node0xc000101270->node0xc00047c880;
-{rank = same;node0xc000101270;node0xc00047c880;}
+node0xc000041220[color=brown, label="Depa: Cocina", group = 1];
+MT->node0xc000041220;
+node0xc000041270[color=blue, label="Día: 6", group = 2];
+MT->node0xc000041270;
+{rank = same;MT;node0xc000041270;}
+node0xc000182280[color=blue, label="PEDIDOS", group = 2];
+node0xc000041270->node0xc000182280;
+node0xc000041220->node0xc000182280;
+{rank = same;node0xc000041220;node0xc000182280;}
 }
