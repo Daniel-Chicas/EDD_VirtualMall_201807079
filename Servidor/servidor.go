@@ -67,9 +67,15 @@ var nueva = GrafoRecorrido.NuevaListaAdyacencia()
 var inicioReco string
 var finReco string
 var LlaveEncriptar = ""
+var tiempo time.Duration
 
 func main(){
-
+	var cadena strings.Builder
+	fmt.Fprintf(&cadena, "%x", sha256.Sum256([]byte("1234")))
+	LlaveEncriptar = cadena.String()
+	Usuario.Insertar(Usuarios.NuevaLlave(1234567890101, "EDD2021", " auxiliar@edd.com", cadena.String(), "Administrador"))
+	x := (time.Minute * time.Duration(3)) / time.Duration(1)
+	tiempo = x
 	c := make(chan os.Signal, 1)
 	signal.Notify(c, os.Interrupt)
 
@@ -85,13 +91,24 @@ func main(){
 		log.Printf("failed to serve:+%v\n", err)
 	}
 
-	var cadena strings.Builder
-	fmt.Fprintf(&cadena, "%x", sha256.Sum256([]byte("1234")))
-	LlaveEncriptar = cadena.String()
-	Usuario.Insertar(Usuarios.NuevaLlave(1234567890101, "EDD2021", " auxiliar@edd.com", cadena.String(), "Administrador"))
+}
+
+func serve(ctx context.Context) (err error) {
 
 	router := mux.NewRouter()
 
+	srv := &http.Server{
+		Addr:    ":3000",
+		Handler: router,
+	}
+
+	go func() {
+		if err = srv.ListenAndServe(); err != nil && err != http.ErrServerClosed {
+			log.Fatalf("listen:%+s\n", err)
+		}
+	}()
+
+	log.Printf("Server Started")
 	router.HandleFunc("/", inicio).Methods("Get")
 	router.HandleFunc("/cargarArchivos", cargar).Methods("Post")
 	router.HandleFunc("/getArreglo", arreglo).Methods("Get")
@@ -117,36 +134,13 @@ func main(){
 	router.HandleFunc("/ComentariosP/{DatosTienda}", ObtenerComentariosP).Methods("Get")
 	router.HandleFunc("/HacerArboles", HacerArboles).Methods("Get")
 	router.HandleFunc("/VerificarArboles", VerificarArboles).Methods("Get")
+	//log.Fatal(http.ListenAndServe(":3000", router))
 	go bloques()
-	log.Fatal(http.ListenAndServe(":3000", router))
 
-
-}
-
-func serve(ctx context.Context) (err error) {
-
-	mux := http.NewServeMux()
-	mux.Handle("/", http.HandlerFunc(
-		func(w http.ResponseWriter, r *http.Request) {
-			fmt.Fprintf(w, "okay")
-		},
-	))
-
-	srv := &http.Server{
-		Addr:    ":6969",
-		Handler: mux,
-	}
-
-	go func() {
-		if err = srv.ListenAndServe(); err != nil && err != http.ErrServerClosed {
-			log.Fatalf("listen:%+s\n", err)
-		}
-	}()
-
-	log.Printf("server started")
 
 	<-ctx.Done()
 
+	FinAplicacion()
 	log.Printf("server stopped")
 
 	ctxShutDown, cancel := context.WithTimeout(context.Background(), 5*time.Second)
@@ -159,18 +153,12 @@ func serve(ctx context.Context) (err error) {
 	}
 
 	log.Printf("server exited properly")
-
 	if err == http.ErrServerClosed {
 		err = nil
 	}
 
 	return
 }
-
-
-
-
-
 
 func indexHandler(w http.ResponseWriter, req *http.Request) {
 	setupResponse(&w, req)
@@ -1219,8 +1207,27 @@ func CambiarContra(w http.ResponseWriter, r *http.Request){
 	if encriptar.LlaveAntigua == LlaveEncriptar {
 		LlaveEncriptar = encriptar.LlaveNueva
 		m = Mensaje{"Si"}
-	}else{
+	}else if encriptar.LlaveAntigua != ""{
 		m = Mensaje{"No"}
+	}
+	if encriptar.Tiempo != "0" && encriptar.LlaveAntigua == "" && encriptar.LlaveNueva == ""{
+		if s, err := strconv.ParseFloat(encriptar.Tiempo, 64); err == nil {
+			var a,b float64 = 1,1
+			var aux float64 = 1
+			for aux != s {
+				aux = a/b
+				if aux < s {
+					a++
+				}else if aux > s {
+					a--
+					b++
+				}
+			}
+			tiempo = (time.Minute * time.Duration(a)) / time.Duration(b)
+			m = Mensaje{"Acepta"}
+		}else{
+			fmt.Println(err)
+		}
 	}
 	w.WriteHeader(http.StatusCreated)
 	json.NewEncoder(w).Encode(m)
@@ -1493,64 +1500,10 @@ func bloques () {
 		if CopiaComentariosProducto.Raiz == nil{hcp = ""}else{hcp = CopiaComentariosProducto.Raiz.Hash}
 
 		if CopiasGuardadas.Cabeza == nil  && guarda == true{
-			if CopiaTiendas.Raiz != nil {
-				if CopiaTiendas.Raiz.Hash == CopiasGuardadas.Cola.Bloque.CopiaTienda.Raiz.Hash {
-					ht = ""
-				}
-			}else{
-				if CopiasGuardadas.Cola != nil{
-					CopiaTiendas.Raiz = CopiasGuardadas.Cola.Bloque.CopiaTienda.Raiz
-				}
-			}
-			if CopiaProductos.Raiz != nil {
-				if CopiaProductos.Raiz.Hash == CopiasGuardadas.Cola.Bloque.CopiaProducto.Raiz.Hash {
-					hp = ""
-				}
-			}else{
-				if CopiasGuardadas.Cola != nil{
-					CopiaProductos.Raiz = CopiasGuardadas.Cola.Bloque.CopiaProducto.Raiz
-				}
-			}
-			if CopiaUsuario.Raiz != nil {
-				if CopiaUsuario.Raiz.Hash == CopiasGuardadas.Cola.Bloque.CopiaUsuarios.Raiz.Hash {
-					hu = ""
-				}
-			}else{
-				if CopiasGuardadas.Cola != nil{
-					CopiaUsuario.Raiz = CopiasGuardadas.Cola.Bloque.CopiaUsuarios.Raiz
-				}
-			}
-			if CopiaPedidos.Raiz != nil {
-				if CopiaPedidos.Raiz.Hash == CopiasGuardadas.Cola.Bloque.CopiaPedidos.Raiz.Hash {
-					hpp = ""
-				}
-			}else{
-				if CopiasGuardadas.Cola != nil{
-					CopiaPedidos.Raiz = CopiasGuardadas.Cola.Bloque.CopiaPedidos.Raiz
-				}
-			}
-			if CopiaComentariosTienda.Raiz != nil {
-				if CopiaComentariosTienda.Raiz.Hash == CopiasGuardadas.Cola.Bloque.CopiaComentariosTiendas.Raiz.Hash {
-					hct = ""
-				}
-			}else{
-				if CopiasGuardadas.Cola != nil{
-					CopiaComentariosTienda.Raiz = CopiasGuardadas.Cola.Bloque.CopiaComentariosTiendas.Raiz
-				}
-			}
-			if CopiaComentariosProducto.Raiz != nil {
-				if CopiaComentariosProducto.Raiz.Hash == CopiasGuardadas.Cola.Bloque.CopiaComentariosProductos.Raiz.Hash {
-					hcp = ""
-				}
-			}else{
-				if CopiasGuardadas.Cola != nil{
-					CopiaComentariosProducto.Raiz = CopiasGuardadas.Cola.Bloque.CopiaComentariosProductos.Raiz
-				}
-			}
 			Data := ht + hp + hpp + hu + hct + hcp
 			if Data == "" {
 				cuenta--
-				fmt.Println("Sin Cambios" + fecha)
+				fmt.Println("Sin Cambios: " + fecha)
 			}else {
 				t = time.Now()
 				fecha = fmt.Sprintf("%2d-%02d-%2d::%02d:%02d:%02d", t.Day(), t.Month(), t.Year(), t.Hour(), t.Minute(), t.Second())
@@ -1589,7 +1542,7 @@ func bloques () {
 				CopiaComentariosTienda.Raiz = &copiaCt
 				copiaCp := *CopiasGuardadas.Cola.Bloque.CopiaComentariosProductos.Raiz
 				CopiaComentariosProducto.Raiz = &copiaCp
-				fmt.Println("Archivo Creado"+fecha)
+				fmt.Println("Archivo Creado: "+fecha)
 			}
 		}else if guarda == true{
 			t = time.Now()
@@ -1640,7 +1593,7 @@ func bloques () {
 			Data := ht + hp + hpp + hu + hct + hcp
 			if Data == "" {
 				cuenta--
-				fmt.Println("Sin Cambios" + fecha)
+				fmt.Println("Sin Cambios: " + fecha)
 			}else {
 				Hash := strings.Split(PruebaDeTrabajo(cuenta, fecha, Data, CopiasGuardadas.Cola.Bloque.HashBloque), "&")
 				nonce, _ := strconv.Atoi(Hash[1])
@@ -1677,10 +1630,10 @@ func bloques () {
 				CopiaComentariosTienda.Raiz = &copiaCt
 				copiaCp := *CopiasGuardadas.Cola.Bloque.CopiaComentariosProductos.Raiz
 				CopiaComentariosProducto.Raiz = &copiaCp
-				fmt.Println("Archivo Creado"+fecha)
+				fmt.Println("Archivo Creado: "+fecha)
 			}
 		}
-		time.Sleep(time.Minute * 1/10)
+		time.Sleep(tiempo)
 		guarda = true
 		cuenta++
 	}
@@ -1787,6 +1740,120 @@ func CargaArchivosInicio(){
 		CopiaComentariosProducto.Raiz = &copiaCp
 		contadorarchivos++
 	}
+}
+
+func FinAplicacion(){
+	cuenta := 0
+	for i := CopiasGuardadas.Cabeza; i != nil ; i = i.Siguiente {
+		cuenta++
+	}
+	t := time.Now()
+	fecha := fmt.Sprintf("%2d-%02d-%2d::%02d:%02d:%02d", t.Day(), t.Month(), t.Year(), t.Hour(), t.Minute(), t.Second())
+	var ht,hp,hpp,hu,hct,hcp = "", "", "", "", "", ""
+	if CopiaTiendas.Raiz == nil {ht = ""}else{ht = CopiaTiendas.Raiz.Hash}
+	if CopiaProductos.Raiz == nil{hp = ""}else{hp = CopiaProductos.Raiz.Hash}
+	if CopiaPedidos.Raiz == nil{hpp = ""}else {hpp = CopiaPedidos.Raiz.Hash}
+	if CopiaUsuario.Raiz == nil{hu = ""}else {hu = CopiaUsuario.Raiz.Hash}
+	if CopiaComentariosTienda.Raiz == nil{hct = ""}else {hct = CopiaComentariosTienda.Raiz.Hash}
+	if CopiaComentariosProducto.Raiz == nil{hcp = ""}else{hcp = CopiaComentariosProducto.Raiz.Hash}
+		if CopiaTiendas.Raiz != nil {
+			if CopiaTiendas.Raiz.Hash == CopiasGuardadas.Cola.Bloque.CopiaTienda.Raiz.Hash {
+				ht = ""
+			}
+		}else{
+			if CopiasGuardadas.Cola != nil{
+				CopiaTiendas.Raiz = CopiasGuardadas.Cola.Bloque.CopiaTienda.Raiz
+			}
+		}
+		if CopiaProductos.Raiz != nil {
+			if CopiaProductos.Raiz.Hash == CopiasGuardadas.Cola.Bloque.CopiaProducto.Raiz.Hash {
+				hp = ""
+			}
+		}else{
+			if CopiasGuardadas.Cola != nil{
+				CopiaProductos.Raiz = CopiasGuardadas.Cola.Bloque.CopiaProducto.Raiz
+			}
+		}
+		if CopiaUsuario.Raiz != nil {
+			if CopiaUsuario.Raiz.Hash == CopiasGuardadas.Cola.Bloque.CopiaUsuarios.Raiz.Hash {
+				hu = ""
+			}
+		}else{
+			if CopiasGuardadas.Cola != nil{
+				CopiaUsuario.Raiz = CopiasGuardadas.Cola.Bloque.CopiaUsuarios.Raiz
+			}
+		}
+		if CopiaPedidos.Raiz != nil {
+			if CopiaPedidos.Raiz.Hash == CopiasGuardadas.Cola.Bloque.CopiaPedidos.Raiz.Hash {
+				hpp = ""
+			}
+		}else{
+			if CopiasGuardadas.Cola != nil{
+				CopiaPedidos.Raiz = CopiasGuardadas.Cola.Bloque.CopiaPedidos.Raiz
+			}
+		}
+		if CopiaComentariosTienda.Raiz != nil {
+			if CopiaComentariosTienda.Raiz.Hash == CopiasGuardadas.Cola.Bloque.CopiaComentariosTiendas.Raiz.Hash {
+				hct = ""
+			}
+		}else{
+			if CopiasGuardadas.Cola != nil{
+				CopiaComentariosTienda.Raiz = CopiasGuardadas.Cola.Bloque.CopiaComentariosTiendas.Raiz
+			}
+		}
+		if CopiaComentariosProducto.Raiz != nil {
+			if CopiaComentariosProducto.Raiz.Hash == CopiasGuardadas.Cola.Bloque.CopiaComentariosProductos.Raiz.Hash {
+				hcp = ""
+			}
+		}else{
+			if CopiasGuardadas.Cola != nil{
+				CopiaComentariosProducto.Raiz = CopiasGuardadas.Cola.Bloque.CopiaComentariosProductos.Raiz
+			}
+		}
+		Data := ht + hp + hpp + hu + hct + hcp
+		if Data == "" {
+			cuenta--
+			fmt.Println("Sin Cambios: " + fecha)
+		}else {
+			t = time.Now()
+			fecha = fmt.Sprintf("%2d-%02d-%2d::%02d:%02d:%02d", t.Day(), t.Month(), t.Year(), t.Hour(), t.Minute(), t.Second())
+			Hash := strings.Split(PruebaDeTrabajo(cuenta, fecha, Data, "-1"), "&")
+			nonce,_ := strconv.Atoi(Hash[1])
+			generalCopias := Guardar{HashBloque: Hash[0],Fecha: fecha, PreviousHash: "-1", Indice: cuenta, Data: Data, Nonce: nonce, ClaveArbolB: LlaveEncriptar, CopiaTienda: CopiaTiendas, CopiaProducto: CopiaProductos, CopiaPedidos: CopiaPedidos, CopiaUsuarios: CopiaUsuario, CopiaComentariosTiendas: CopiaComentariosTienda, CopiaComentariosProductos: CopiaComentariosProducto, Grafo: &GrafoRe}
+			data, err := json.MarshalIndent(generalCopias, "", "  ")
+			if err != nil {
+				fmt.Println(err)
+			}
+			nombreArchivo := "bloques\\"+strconv.Itoa(cuenta)+".json"
+			for archivoExiste(nombreArchivo) != false{
+				cuenta++
+				nombreArchivo = "bloques\\"+strconv.Itoa(cuenta)+".json"
+			}
+			erro := ioutil.WriteFile(nombreArchivo, data, 0644)
+			if erro != nil {
+				fmt.Println(erro)
+			}
+			CopiasGuardadas.Insertar(&NodoGuardar{generalCopias, nil,nil})
+			CopiaTiendas = ArbolMerkle.NuevoArbol()
+			CopiaProductos = ArbolMerkle.NuevoArbolProducto()
+			CopiaPedidos = ArbolMerkle.NuevoArbolPedidos()
+			CopiaUsuario = ArbolMerkle.NuevoArbolUsuarios()
+			CopiaComentariosTienda = ArbolMerkle.NuevoArbolComentarios()
+			CopiaComentariosProducto = ArbolMerkle.NuevoArbolComentariosProducto()
+			copia := *CopiasGuardadas.Cola.Bloque.CopiaTienda.Raiz
+			CopiaTiendas.Raiz = &copia
+			copiaP := *CopiasGuardadas.Cola.Bloque.CopiaProducto.Raiz
+			CopiaProductos.Raiz = &copiaP
+			copiaPp := *CopiasGuardadas.Cola.Bloque.CopiaPedidos.Raiz
+			CopiaPedidos.Raiz = &copiaPp
+			copiaU := *CopiasGuardadas.Cola.Bloque.CopiaUsuarios.Raiz
+			CopiaUsuario.Raiz = &copiaU
+			copiaCt := *CopiasGuardadas.Cola.Bloque.CopiaComentariosTiendas.Raiz
+			CopiaComentariosTienda.Raiz = &copiaCt
+			copiaCp := *CopiasGuardadas.Cola.Bloque.CopiaComentariosProductos.Raiz
+			CopiaComentariosProducto.Raiz = &copiaCp
+			fmt.Println("Archivo Creado"+fecha)
+		}
 }
 
 //-------------------------------------------------MÉTODOS--------------------------------------------------------------
@@ -2530,6 +2597,8 @@ type CerrarSesion struct{
 type Encriptar struct {
 	LlaveAntigua string `json:"LlaveA"`
 	LlaveNueva string `json:"LlaveN"`
+	Tiempo string `json:"Tiempo"`
+	
 }
 
 type General struct{

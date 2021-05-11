@@ -159,7 +159,6 @@ func (L *ArbolComentariosProducto) generar(cadena *strings.Builder, padre *NodoC
 	}
 }
 
-
 func (L *ArbolComentariosProducto) Arreglar(raiz *NodoComentarioProducto, lista *list.List) *list.List{
 	if raiz != nil {
 		if raiz.Izquierda == nil && raiz.Derecha == nil {

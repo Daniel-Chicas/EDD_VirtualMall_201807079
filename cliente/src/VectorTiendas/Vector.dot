@@ -1,8 +1,8 @@
-digraph Daniel32{
+digraph Daniel51{
 node[shape=record];
-node160[color=brown, fillcolor=red, label="{Indice: Q|Cocina}|{Pos: 160|Calificación: 1}"];
-node161[color=yellow, fillcolor=green, label="{Indice: Q|Cocina}|{Pos: 161|Calificación: 2}"];
-node162[color=brown, fillcolor=green, label="{Indice: Q|Cocina}|{Pos: 162|Calificación: 3}"];
-node163[color=violet, fillcolor=yellow, label="{Indice: Q|Cocina}|{Pos: 163|Calificación: 4}"];
-node164[color=blue, fillcolor=red, label="{Indice: Q|Cocina}|{Pos: 164|Calificación: 5}"];
+node255[color=violet, fillcolor=green, label="{Indice: Z|Reproductores web}|{Pos: 255|Calificación: 1}"];
+node256[color=brown, fillcolor=pink, label="{Indice: Z|Reproductores web}|{Pos: 256|Calificación: 2}"];
+node257[color=orange, fillcolor=gray, label="{Indice: Z|Reproductores web}|{Pos: 257|Calificación: 3}"];
+node258[color=red, fillcolor=pink, label="{Indice: Z|Reproductores web}|{Pos: 258|Calificación: 4}"];
+node259[color=pink, fillcolor=gray, label="{Indice: Z|Reproductores web}|{Pos: 259|Calificación: 5}"];
 }
