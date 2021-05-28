@@ -1,8 +1,8 @@
 digraph Daniel51{
 node[shape=record];
-node255[color=violet, fillcolor=green, label="{Indice: Z|Reproductores web}|{Pos: 255|Calificación: 1}"];
-node256[color=brown, fillcolor=pink, label="{Indice: Z|Reproductores web}|{Pos: 256|Calificación: 2}"];
-node257[color=orange, fillcolor=gray, label="{Indice: Z|Reproductores web}|{Pos: 257|Calificación: 3}"];
-node258[color=red, fillcolor=pink, label="{Indice: Z|Reproductores web}|{Pos: 258|Calificación: 4}"];
-node259[color=pink, fillcolor=gray, label="{Indice: Z|Reproductores web}|{Pos: 259|Calificación: 5}"];
+node255[color=gray, fillcolor=blue, label="{Indice: Z|Smart Home}|{Pos: 255|Calificación: 1}"];
+node256[color=green, fillcolor=violet, label="{Indice: Z|Smart Home}|{Pos: 256|Calificación: 2}"];
+node257[color=red, fillcolor=green, label="{Indice: Z|Smart Home}|{Pos: 257|Calificación: 3}"];
+node258[color=violet, fillcolor=green, label="{Indice: Z|Smart Home}|{Pos: 258|Calificación: 4}"];
+node259[color=brown, fillcolor=pink, label="{Indice: Z|Smart Home}|{Pos: 259|Calificación: 5}"];
 }

@@ -74,7 +74,7 @@ func main(){
 	fmt.Fprintf(&cadena, "%x", sha256.Sum256([]byte("1234")))
 	LlaveEncriptar = cadena.String()
 	Usuario.Insertar(Usuarios.NuevaLlave(1234567890101, "EDD2021", " auxiliar@edd.com", cadena.String(), "Administrador"))
-	x := (time.Minute * time.Duration(3)) / time.Duration(1)
+	x := (time.Minute * time.Duration(5)) / time.Duration(1)
 	tiempo = x
 	c := make(chan os.Signal, 1)
 	signal.Notify(c, os.Interrupt)
@@ -1726,18 +1726,18 @@ func CargaArchivosInicio(){
 		CopiaComentariosTienda = ArbolMerkle.NuevoArbolComentarios()
 		CopiaComentariosProducto = ArbolMerkle.NuevoArbolComentariosProducto()
 
-		copia := *CopiasGuardadas.Cola.Bloque.CopiaTienda.Raiz
-		CopiaTiendas.Raiz = &copia
-		copiaP := *CopiasGuardadas.Cola.Bloque.CopiaProducto.Raiz
-		CopiaProductos.Raiz = &copiaP
-		copiaPp := *CopiasGuardadas.Cola.Bloque.CopiaPedidos.Raiz
-		CopiaPedidos.Raiz = &copiaPp
-		copiaU := *CopiasGuardadas.Cola.Bloque.CopiaUsuarios.Raiz
-		CopiaUsuario.Raiz = &copiaU
-		copiaCt := *CopiasGuardadas.Cola.Bloque.CopiaComentariosTiendas.Raiz
-		CopiaComentariosTienda.Raiz = &copiaCt
-		copiaCp := *CopiasGuardadas.Cola.Bloque.CopiaComentariosProductos.Raiz
-		CopiaComentariosProducto.Raiz = &copiaCp
+		copia := CopiasGuardadas.Cola.Bloque.CopiaTienda.Raiz
+		CopiaTiendas.Raiz = copia
+		copiaP := CopiasGuardadas.Cola.Bloque.CopiaProducto.Raiz
+		CopiaProductos.Raiz = copiaP
+		copiaPp := CopiasGuardadas.Cola.Bloque.CopiaPedidos.Raiz
+		CopiaPedidos.Raiz = copiaPp
+		copiaU := CopiasGuardadas.Cola.Bloque.CopiaUsuarios.Raiz
+		CopiaUsuario.Raiz = copiaU
+		copiaCt := CopiasGuardadas.Cola.Bloque.CopiaComentariosTiendas.Raiz
+		CopiaComentariosTienda.Raiz = copiaCt
+		copiaCp := CopiasGuardadas.Cola.Bloque.CopiaComentariosProductos.Raiz
+		CopiaComentariosProducto.Raiz = copiaCp
 		contadorarchivos++
 	}
 }
